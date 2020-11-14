@@ -19,7 +19,7 @@
 </tr>
 <tr>
   <td>{% trans "Middle name" %}</td>
-  <td>{{ user.middle_name|default_if_none:'' }}</td>
+  <td>{{ user.gpsfunuser.middle_name|default_if_none:'' }}</td>
 </tr>
 <tr>
   <td>{% trans "Last name" %}</td>
@@ -27,11 +27,11 @@
 </tr>
 <tr>
   <td>{% trans "Address" %}</td>
-  <td>{{ user.address }}</td>
+  <td>{{ user.gpsfunuser.address }}</td>
 </tr>
 <tr>
   <td>{% trans "Nickname on geocaching.su" %}</td>
-  <td>{{ user.gcsu_username|default_if_none:"" }}</td>
+  <td>{{ user.gpsfunuser.gcsu_username|default_if_none:"" }}</td>
 </tr>
 
 </table>

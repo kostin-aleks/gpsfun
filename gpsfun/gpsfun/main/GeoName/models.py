@@ -69,6 +69,7 @@ class GeoCity(models.Model):
             return ''
 
     def address_string(self):
+        print('address string')
         return u'{}, {}, {}'.format(self.country_name(),
                                    self.region_name(),
                                    self.name or ''
