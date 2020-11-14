@@ -7,7 +7,6 @@ from django.utils.translation import ugettext_lazy as _
 from gpsfun.main.GeoName.models import GeoCity
 from gpsfun.main.GeoMap.models import Location
 from gpsfun.main.GeoCachSU.models import Geocacher
-from location_field.models.plain import PlainLocationField
 
 signals.post_save.connect(create_custom_user, sender=User)
 
@@ -18,8 +17,6 @@ class GPSFunUser(models.Model):
     geocity = models.ForeignKey(
         GeoCity, null=True, db_index=True, on_delete=models.CASCADE)
     # location = models.ForeignKey(Location, null=True, on_delete=models.CASCADE)
-    location = PlainLocationField(
-        based_fields=['city'], zoom=7, null=True, blank=True)
     middle_name = models.CharField(max_length=32, null=True, blank=True)
     gcsu_username = models.CharField(max_length=32, unique=True, null=True)
 
