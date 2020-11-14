@@ -1,0 +1,14 @@
+{% load i18n %}
+<div class="navbar">
+
+  {% include "Geocaching_su/filter_details.html" %}
+      {% include "table_paginator.html" %}
+      <form id="changelist-search" class="pagination navbar-search pull-right" action="" method="get">
+        <a href="#modal_filter_form" class="btn btn-default btn-xs" role="button" title="{% trans 'Filter form' %}" data-toggle="modal"><icon class="glyphicon glyphicon-filter" title="{% trans 'Filter' %}" /></a>
+        
+        <input type="text" class="search-query" placeholder="{% trans "Search" %}" name="search" value="{{ controller.search_value|default_if_none:"" }}" id="searchbar" >
+        <input type="image" value="Search" src="/img/search-icon.png">
+      </form>
+
+</div>  
+<script type="text/javascript">$("#searchbar").focus();</script>

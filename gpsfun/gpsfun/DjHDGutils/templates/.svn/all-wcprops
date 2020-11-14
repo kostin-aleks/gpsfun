@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/repos/!svn/ver/1681/DjHDGutils/trunk/templates
+END
+ajax_jsconfig.js
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/repos/!svn/ver/1614/DjHDGutils/trunk/templates/ajax_jsconfig.js
+END
+simple_menu.html
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/repos/!svn/ver/1679/DjHDGutils/trunk/templates/simple_menu.html
+END
+base_paginator.html
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/repos/!svn/ver/1149/DjHDGutils/trunk/templates/base_paginator.html
+END
+datatable_test.html
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/repos/!svn/ver/1149/DjHDGutils/trunk/templates/datatable_test.html
+END
+datatable.html
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/repos/!svn/ver/1151/DjHDGutils/trunk/templates/datatable.html
+END
+paginator.html
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/repos/!svn/ver/1656/DjHDGutils/trunk/templates/paginator.html
+END

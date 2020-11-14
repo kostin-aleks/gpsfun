@@ -1,0 +1,30 @@
+{% extends "base.html" %}{% load i18n %}{% get_current_language as LANGUAGE_CODE %}
+{% block menu_company %}id="selected" {% endblock %}
+
+{% block content %}
+<h1>{% trans 'Recent News' %}</h1>
+
+{% load thumbnail %}
+{% for article in latest %}
+
+<TABLE border=0>
+  <TR>
+    <TD colspan=2><span class=PUBDATE>&nbsp;{{ article.pub_date|date:"d.m.Y" }}&nbsp;</span>&nbsp;&nbsp;<span class="text"><B><a href="{{ article.get_absolute_url }}">{{ article.title }}</a></b></span></TD>
+  </TR>
+  <TR>
+    
+    <TD valign=top rowspan="2"><img src="{{ article.get_photo_url|thumbnail:"width=70" }}" alt="Мир Чудес" border="0"></TD>
+    <TD>
+      <p class="text">
+	<strong>{{ article.pub_date|date:"d M Y" }}</strong><br>
+	{{ article.description|truncatewords:"50" }}
+	<a href="./news/280907.html">Далее >></a></p>
+    </TD>
+  </TR>
+</TABLE>
+
+
+{% endfor %}
+
+{% endblock %}
+

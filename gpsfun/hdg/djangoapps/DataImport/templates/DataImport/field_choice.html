@@ -1,0 +1,152 @@
+{% extends "DataImport/data_import_wizard.html" %}
+{% load i18n %}
+
+{% block extrahead %}
+{{ block.super }}
+<script type='text/JavaScript'>
+
+// refresh handlers of all replaceable by ajax element 
+function refresh_handlers()
+{
+    document.getElementById('id_appmodel').onchange = set_appmodel
+    document.getElementById('id_django_fields').ondblclick = set_field_match
+    document.getElementById('id_field_match').ondblclick = clear_field_match
+}
+
+function set_appmodel()
+{
+    document.field_match_form.action.value = 'set_appmodel'
+
+    xml_http_call_url('', '', 
+                      function(content, status, xml_request) 
+                      {
+                          if (content.errors) {
+                              alert('Error:\n'+content.errors)   
+                          }    
+                          else
+                          {
+                              replaceElement('id_django_fields', 
+                                             content.django_fields_html)
+                              replaceElement('id_field_match', 
+                                             content.field_match_html)
+                              refresh_handlers()
+                          }
+            
+                      }, 
+                      function(status) {}, 
+                      formContents()
+                     )
+}
+
+
+function set_field_match()
+{
+    document.field_match_form.action.value = 'set_field_match'
+    xml_http_call_url('', '', 
+                      function(content, status, xml_request) 
+                      {
+                          if (content.errors) {
+                              alert('Error:\n'+content.errors)   
+                          }    
+                          else
+                          {   
+                              replaceElement('id_field_match', 
+                                             content.field_match_html)
+                              refresh_handlers()
+
+                              // select next field
+                              field = document.field_match_form.field_match
+                              // choise next field
+                              if (field.selectedIndex < field.length - 1)
+                                  field.selectedIndex++
+                          }   
+                      }, 
+                      function(status) {},
+                      formContents()
+                     )
+}  
+
+function clear_field_match()
+{
+    document.field_match_form.action.value = 'clear_field_match'
+    xml_http_call_url('', '', 
+                      function(content, status, xml_request) 
+                      {
+                          if (content.errors) {
+                              alert('Error:\n'+content.errors)   
+                          }    
+                          else
+                          {   
+                              // refresh html
+                              replaceElement('id_field_match', 
+                                             content.field_match_html)
+
+                              refresh_handlers()
+
+                              // select next field
+                              field = document.field_match_form.field_match
+                              
+                              // choise prev field
+                              if (field.selectedIndex > 0)
+                                  field.selectedIndex--
+                          }    
+
+                      }, 
+                      function(status) {}, 
+                      formContents()
+                     )
+}
+
+
+connect(window, 'onload', function() {
+    refresh_handlers()
+})
+
+</script>
+{% endblock %}
+
+{% block active_step %}
+
+  <form enctype="multipart/form-data" name="field_match_form" 
+        method="post" action="" id="mainform">
+    
+    {{ form.action }}
+
+    <div class="two-list-panel">
+      <div class="two-list-side"> 
+        {{ form.field_match.label }}
+        <br />
+        <div class="select-list">
+          {{ form.field_match }}       
+        </div>  
+      </div>
+
+      <div class="two-list-center"> 
+        <br />
+        <input type="button" value="<"  
+               onclick="set_field_match()" />
+        <br />
+        <input type="button" value=">"  
+               onclick="clear_field_match()" />   
+      </div>  
+        
+      <div class="two-list-side"> 
+        {{ form.appmodel }}
+        <br />
+        <span>{{ form.field.label }}</span> 
+        <div class="select-list">
+          {{ form.django_fields }} 
+        </div>     
+      </div>
+                  
+    </div>  
+
+    <div style="width: 100%">
+      <input type="button" value="{% trans 'OK' %}"
+             onclick="this.form.action.value = 'finish'; 
+                      this.form.submit()" />
+    </div>
+  
+  </form>
+
+{% endblock %}

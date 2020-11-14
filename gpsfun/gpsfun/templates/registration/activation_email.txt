@@ -1,0 +1,7 @@
+{% load i18n %}{% blocktrans %}GPS-Fun registration process is not comlete.
+
+Go to the link:
+http://{{ site }}/accounts/activate/{{ activation_key }}/
+
+Thank you!
+{% endblocktrans %}

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>{% load i18n %}
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+    <link type="text/css" rel="stylesheet" media="all" href="{{ STATIC_URL }}{{ page.css }}" />
+    <script src="/static/app/grappelli/jquery/jquery-1.6.2.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.form.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/interface.js"></script>
+  </head>
+  <body>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/manage.js"></script>
+
+    <div class="body">
+      <form name="logout" action="/adv_admin/logout/"></form>
+      <form name="delextbookmark" action="{#% url del-extbookmark %#}" method="post">
+	<input type="hidden" name="link_id" value="" id="todel_link_id">
+      </form>
+      <div class="head">
+	<img src="{{ STATIC_URL }}{{ page.logo }}">
+
+      </div>
+      <div class="toolbar"> {% trans 'Menu' %}
+	<select  onChange="document.logout.submit()">
+	  <option>{% trans 'Logged in as' %} {{ request.user }}</option>
+	  <option>{% trans 'Logout' %}</option>
+	</select>
+
+      </div>
+
+      <div class="adminContent">
+	<div class="categories">
+
+          {% for column in page.columns %}
+	  <div class="{{ column.title }}">
+
+	    {% for subtopic in column.subtopics %}
+	    <h2>{{ subtopic.topic }}</h2>
+	    <ul>
+	      {% for topic in subtopic.topics %}
+	      <li><a class="sub-categories" href="{{ topic.link }}">{{ topic }}</a>
+                <p>&nbsp; </p></li>
+	      {% endfor %}
+
+            </ul>
+            {% endfor %}
+
+          </div>
+          {% endfor %}
+	  <div class="col3">
+	    <h2>{% trans 'External bookmarks' %}</h2>
+	    <ul>
+	      <div id="content"></div>
+	      {% for bmk in extbookmarks %}
+	      <li><a class="sub-categories" href="{{ bmk.link }}">{{ bmk.title }}</a> <p> <a href="javascript:del_link({{ bmk.id }},'{{ bmk.link }}'); "><img src="{{ STATIC_URL }}manage/images/del.jpg"></a> </p> </li>
+	      {% endfor %}
+	      <li class="add-right"><img src="{{ STATIC_URL }}manage/images/add.jpg" />&nbsp;<a id="add-extbookmark" href="#">{% trans 'add' %}</a>  </li>
+	    </ul>
+
+	  </div>
+	</div>
+	<div class="information">
+	  <h2>{% trans 'Information Panel' %}</h2>
+	  <dl>
+	    {% for line in page.info %}
+	    <dt>{{ line.0 }}:</dt> <dd>{{ line.1 }}</dd>
+	    {% endfor %}
+	  </dl>
+	</div>
+      </div>
+
+    </div>
+
+    <hr>
+
+    <div id="layer1">
+      <div id="layer1_handle">
+	<a href="#" id="close">[ x ]</a>
+	{% trans 'Add external bookmark' %}
+      </div>
+      <div id="layer1_content">
+	<form id="layer1_form" method="post" action="{#% url add-extbookmark %#}">
+	  <b>{% trans 'URL' %}</b><br />
+	  <input type="text" name="url" size="50"><br />
+	  <b>{% trans 'Title' %}</b><br />
+	  <input type="text" name="title" size="50"><br />
+	  <input type="checkbox" name="public"><b>{% trans 'Public' %}</b><br />
+	  <input type="submit" name="submit" value="Save" />
+	</form>
+      </div>
+    </div>
+
+  </body>
+</html>

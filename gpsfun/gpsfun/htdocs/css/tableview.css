@@ -1,0 +1,149 @@
+.table_setup_layer {
+    border: 1px solid #b8b9bb; 
+    z-index: 2000; 
+    display: none; 
+    position: absolute; 
+    background-color: #f8f8f8; 
+    padding: 10px 10px 10px 10px;
+    overflow: hidden;
+    box-shadow: 7px 7px 5px #888;
+    -moz-box-shadow: 7px 7px 5px #888;
+    -webkit-box-shadow: 7px 7px 5px #888;
+}
+
+.table_setup_layer ul{
+    padding-left: 0px;
+}
+.table_setup_layer h1{
+    font: bold 14px Tahoma, Arial, sans-serif;
+    margin-top: 0px; 
+    border-bottom: 2px solid #b8b9bb;
+    padding-bottom: 5px;
+}
+.table_setup_layer th,td {
+    padding-bottom: 5px;
+    padding-top: 5px;
+}
+.table_setup_layer th{
+    width: 10em;
+    height: 100%;
+    overflow: hidden;
+}
+.table_setup_layer ul li input{
+    margin-right:10px;
+}
+.dialog_popup_layer {
+    border: 1px solid #b8b9bb; 
+    z-index: 2000; 
+    display: none; 
+    position: absolute; 
+    background-color: #f8f8f8; 
+    padding: 10px 10px 10px 10px;
+    overflow: hidden;
+    box-shadow: 7px 7px 5px #888;
+    -moz-box-shadow: 7px 7px 5px #888;
+    -webkit-box-shadow: 7px 7px 5px #888;    
+    font-size: 1.6em;
+}
+.dialog_popup_layer ul{
+    padding-left: 0px;
+}
+.dialog_popup_layer h1{
+    font: bold 14px Tahoma, Arial, sans-serif;
+    margin-top: 0px; 
+    border-bottom: 2px solid #b8b9bb;
+    padding-bottom: 5px;
+}
+.dialog_popup_layer h3{
+    margin-top: 3px;
+    margin-bottom: 10px;
+    background-color: #faea95;
+    padding: 8px 0 8px 4px;
+}
+.dialog_popup_layer th,td {
+    padding-bottom: 5px;
+    padding-top: 5px;
+}
+.dialog_popup_layer th{
+    width: 10em;
+    height: 100%;
+    overflow: hidden;
+}
+.dialog_popup_layer ul li input{
+    margin-right:10px;
+}
+.dialog_popup_layer .submit-row{
+    background-color: transparent;
+}
+.tableview-saved-search {
+    margin-top: 5px;
+    background: #EDEDED;
+    padding: 10px;
+}
+
+.tableview-saved-search h4 {
+    display: inline;
+    padding: 5px;
+}
+
+.tableview-saved-search ul {
+    display: inline;
+}
+
+.tableview-saved-search li {
+    display: inline;
+    margin-left: 3px;
+    margin-right: 3px;
+
+}
+
+
+.tableview TABLE {
+    border: 1px solid #eeeeee;
+    width: 100%;
+
+}
+
+.tableview TH {
+    background-color: #8ca8e6;
+    padding: 2px;  
+
+}
+#column_phone_mobile th{
+    width: 135px;
+}
+
+.callsign_add_popup {
+    overflow: auto;
+    display: none;
+    width:600px;
+    height:200px;
+    position:absolute;
+    background-color: #FFFFFF;
+    border: 1px solid #000000;
+
+}
+/* box-shadow */
+
+
+/* end */
+#id_tags, #id_job {
+    width: 200px;
+}
+.current-row-focus {
+        
+}
+#close-dialog {
+    background:url(/static/img/close.png) no-repeat 0 0;
+    width: 16px;
+    height: 16px;
+    margin: -35px 0 0 0;
+    float: right;
+}
+#close-dialog:hover {
+    background:url(/static/img/close-hover.png) no-repeat 0 0;
+}
+
+.narrow50 {
+    width: 50%;
+}

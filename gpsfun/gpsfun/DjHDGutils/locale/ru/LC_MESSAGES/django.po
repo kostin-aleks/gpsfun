@@ -1,0 +1,112 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-09-11 07:32-0500\n"
+"PO-Revision-Date: 2009-09-11 15:32+0300\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: newforms.py:406
+msgid "Form has error"
+msgstr "В форме обнаружена ошибка"
+
+#: tableview/templates/table_body.html:69
+msgid "Profile"
+msgstr "Профиль"
+
+#: tableview/templates/table_body.html:73
+msgid "Columns"
+msgstr "Колонки"
+
+#: tableview/templates/table_body.html:74
+msgid "Filter"
+msgstr "Фильтр"
+
+#: tableview/templates/table_body.html:75
+msgid "Remember as default state"
+msgstr "Запомнить как состояние по умолчанию"
+
+#: tableview/templates/table_body.html:76
+msgid "Remember state as"
+msgstr "Запомнить состояние как"
+
+#: tableview/templates/table_body.html:90
+msgid "Saved profiles"
+msgstr "Записанные профили"
+
+#: tableview/templates/table_body.html:93
+#: tableview/templates/table_body.html:95
+msgid "default"
+msgstr "умолчание"
+
+#: tableview/templates/table_body.html:120
+msgid "Save"
+msgstr "Записать"
+
+#: tableview/templates/table_body.html:125
+msgid "Filter form"
+msgstr "Форма фильтрации"
+
+#: tableview/templates/table_body.html:130
+msgid "Apply"
+msgstr "Применить"
+
+#: templatetags/datetimetags.py:31
+msgid "year"
+msgid_plural "years"
+msgstr[0] "год"
+msgstr[1] "годы"
+
+#: templatetags/datetimetags.py:32
+msgid "month"
+msgid_plural "months"
+msgstr[0] "месяц"
+msgstr[1] "месяцы"
+
+#: templatetags/datetimetags.py:33
+msgid "week"
+msgid_plural "weeks"
+msgstr[0] "неделя"
+msgstr[1] "недели"
+
+#: templatetags/datetimetags.py:34
+msgid "day"
+msgid_plural "days"
+msgstr[0] "день"
+msgstr[1] "дни"
+
+#: templatetags/datetimetags.py:40
+#, python-format
+msgid "1 minute ago"
+msgid_plural "%(minutes)d minutes ago"
+msgstr[0] "1 минута назад"
+msgstr[1] "%(minutes)d минут назад"
+
+#: templatetags/datetimetags.py:44
+msgid "less than 1 minute ago"
+msgstr "менее чем 1 минута назад"
+
+#: templatetags/datetimetags.py:46
+#, python-format
+msgid "1 hour ago"
+msgid_plural "%(hours)d hours ago"
+msgstr[0] "1 час назад"
+msgstr[1] "%(hours)d часов назад"
+
+#: templatetags/datetimetags.py:50
+#, python-format
+msgid "yesterday at %s"
+msgstr "вчера в %s"
+
+#: templatetags/datetimetags.py:58
+#, python-format
+msgid "%(number)d %(type)s ago"
+msgstr "%(number)d %(type)s назад"

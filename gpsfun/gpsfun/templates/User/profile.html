@@ -1,0 +1,45 @@
+{% extends "base_bootstrap.html" %}
+{% load i18n %}
+
+{% block menu_item_profile %}active{% endblock %}
+
+{% block content_span12 %}
+<h3>{% trans "Profile"%}</h3>
+
+{% if user.is_authenticated %}
+<div class="container">
+<table class="table">
+<tr>
+  <td>{% trans "User name" %}</td>
+  <td>{{ user.username }}</td>
+</tr>
+<tr>
+  <td>{% trans "First name" %}</td>
+  <td>{{ user.first_name }}</td>
+</tr>
+<tr>
+  <td>{% trans "Middle name" %}</td>
+  <td>{{ user.middle_name|default_if_none:'' }}</td>
+</tr>
+<tr>
+  <td>{% trans "Last name" %}</td>
+  <td>{{ user.last_name }}</td>
+</tr>
+<tr>
+  <td>{% trans "Address" %}</td>
+  <td>{{ user.address }}</td>
+</tr>
+<tr>
+  <td>{% trans "Nickname on geocaching.su" %}</td>
+  <td>{{ user.gcsu_username|default_if_none:"" }}</td>
+</tr>
+
+</table>
+</div>
+
+</br>
+<a class="btn btn-default" href="{% url 'user-profile-edit' %}">{% trans "Edit my profile"%}</a>
+{% endif %}
+
+{% endblock %}
+

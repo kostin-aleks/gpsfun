@@ -1,0 +1,3007 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-04-05 22:28+0100\n"
+"PO-Revision-Date: 2013-02-07 21:50\n"
+"Last-Translator: Aleksandr Kostin <galdor@ukr.net>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+"X-Translated-Using: django-rosetta 0.6.8\n"
+
+#: geocaching_su_stat/decorators.py:26
+msgid "Set valid nickname for geocaching.su in your profile"
+msgstr "Добавьте в свой профиль Ваш ник на geocaching.su "
+
+#: geocaching_su_stat/views.py:42
+msgid "Jan"
+msgstr "Янв"
+
+#: geocaching_su_stat/views.py:42
+msgid "Feb"
+msgstr "Фев"
+
+#: geocaching_su_stat/views.py:42
+msgid "Mar"
+msgstr "Мар"
+
+#: geocaching_su_stat/views.py:42
+msgid "Apr"
+msgstr "Апр"
+
+#: geocaching_su_stat/views.py:42
+msgid "May"
+msgstr "Май"
+
+#: geocaching_su_stat/views.py:42
+msgid "Jun"
+msgstr "Июн"
+
+#: geocaching_su_stat/views.py:43
+msgid "Jul"
+msgstr "Июл"
+
+#: geocaching_su_stat/views.py:43
+msgid "Aug"
+msgstr "Авг"
+
+#: geocaching_su_stat/views.py:43
+msgid "Sep"
+msgstr "Сен"
+
+#: geocaching_su_stat/views.py:43
+msgid "Oct"
+msgstr "Окт"
+
+#: geocaching_su_stat/views.py:43
+msgid "Nov"
+msgstr "Ноя"
+
+#: geocaching_su_stat/views.py:43
+msgid "Dec"
+msgstr "Дек"
+
+#: geocaching_su_stat/views.py:66 geocaching_su_stat/views.py:129
+#: geocaching_su_stat/views.py:153 geocaching_su_stat/views.py:300
+#: geocaching_su_stat/views.py:368 geocaching_su_stat/views.py:468
+#: geocaching_su_stat/views.py:515
+#: templates/Geocaching_su/geocaching_su_index.html:18
+#: templates/Geocaching_su/personal_statistics.html:32 user/forms.py:17
+msgid "Country"
+msgstr "Страна"
+
+#: geocaching_su_stat/views.py:66 geocaching_su_stat/views.py:76
+#: templates/Geocaching_su/found_my_caches.html:22
+#: templates/Geocaching_su/my_found_caches.html:22
+msgid "All"
+msgstr "Все"
+
+#: geocaching_su_stat/views.py:76 geocaching_su_stat/views.py:133
+#: geocaching_su_stat/views.py:157 user/forms.py:23
+msgid "Admin Subject"
+msgstr "регион"
+
+#: geocaching_su_stat/views.py:109
+msgid "Any"
+msgstr "Любой"
+
+#: geocaching_su_stat/views.py:111 geocaching_su_stat/views.py:126
+msgid "Cach Type"
+msgstr "Тип тайника"
+
+#: geocaching_su_stat/views.py:224
+msgid "Cach"
+msgstr "Тайник"
+
+#: geocaching_su_stat/views.py:225
+msgid "Created"
+msgstr "Создан"
+
+#: geocaching_su_stat/views.py:226
+msgid "Author"
+msgstr "Автор"
+
+#: geocaching_su_stat/views.py:230
+#: templates/Geocaching_su/found_my_caches.html:28
+#: templates/Geocaching_su/my_found_caches.html:28
+#: templates/Geocaching_su/personal_statistics.html:87
+#: templates/Geocaching_su/personal_statistics.html:159
+msgid "Recommendations"
+msgstr "Рекомендации"
+
+#: geocaching_su_stat/views.py:232
+msgid "Grade"
+msgstr "Оценка"
+
+#: geocaching_su_stat/views.py:235 geocaching_su_stat/views.py:258
+#: geocaching_su_stat/views.py:305 geocaching_su_stat/views.py:421
+#: geocaching_su_stat/views.py:427 geocaching_su_stat/views.py:433
+#: geocaching_su_stat/views.py:439 geocaching_su_stat/views.py:444
+#: geocaching_su_stat/views.py:449 geocaching_su_stat/views.py:455
+#: geocaching_su_stat/views.py:460
+msgid "Found"
+msgstr "Посещения"
+
+#: geocaching_su_stat/views.py:236
+msgid "Rank"
+msgstr "Ранг"
+
+#: geocaching_su_stat/views.py:259 geocaching_su_stat/views.py:470
+#: geocaching_su_stat/views.py:517
+msgid "Points"
+msgstr "Баллы"
+
+#: geocaching_su_stat/views.py:296 geocaching_su_stat/views.py:364
+#: geocaching_su_stat/views.py:464 geocaching_su_stat/views.py:511
+#: templates/Geocaching_su/found_my_caches.html:21
+#: templates/Geocaching_su/my_found_caches.html:21
+msgid "Nickname"
+msgstr "Ник"
+
+#: geocaching_su_stat/views.py:301 geocaching_su_stat/views.py:369
+#: geocaching_su_stat/views.py:469 geocaching_su_stat/views.py:516
+#: templates/Geocaching_su/region_found_caches.html:23
+msgid "Region"
+msgstr "Регион"
+
+#: geocaching_su_stat/views.py:302 geocaching_su_stat/views.py:370
+msgid "Registered"
+msgstr "Регистрация"
+
+#: geocaching_su_stat/views.py:304 geocaching_su_stat/views.py:419
+#: geocaching_su_stat/views.py:425 geocaching_su_stat/views.py:431
+#: geocaching_su_stat/views.py:437 geocaching_su_stat/views.py:442
+#: geocaching_su_stat/views.py:447 geocaching_su_stat/views.py:453
+#: geocaching_su_stat/views.py:458
+msgid "Created by"
+msgstr "Создал"
+
+#: geocaching_su_stat/views.py:306
+#: templates/Geocaching_su/found_my_caches.html:27
+#: templates/Geocaching_su/my_found_caches.html:27
+#: templates/Geocaching_su/personal_statistics.html:83
+#: templates/Geocaching_su/personal_statistics.html:155
+msgid "Average grade"
+msgstr "Ср. оценка"
+
+#: geocaching_su_stat/views.py:307
+msgid "Av. grade of his caches"
+msgstr "Ср. оценка его тайников"
+
+#: geocaching_su_stat/views.py:618
+msgid "All caches"
+msgstr "Все тайники"
+
+#: geocaching_su_stat/views.py:628
+msgid "Unreal caches"
+msgstr "Нереальные тайники"
+
+#: geocaching_su_stat/views.py:637
+msgid "Real caches"
+msgstr "Реальные тайники"
+
+#: geocaching_su_stat/views.py:643 geocaching_su_stat/views.py:670
+#, python-format
+msgid "%s. All caches"
+msgstr "%s. Все тайники"
+
+#: geocaching_su_stat/views.py:652 geocaching_su_stat/views.py:679
+#, python-format
+msgid "%s. Unreal caches"
+msgstr "%s. Нереальные тайники"
+
+#: geocaching_su_stat/views.py:661 geocaching_su_stat/views.py:688
+#, python-format
+msgid "%s. Real caches"
+msgstr "%s. Реальные тайники"
+
+#: geocaching_su_stat/views.py:808 geocaching_su_stat/views.py:825
+msgid "Undefined"
+msgstr "Неизвестно"
+
+#: geocaching_su_stat/views.py:1271 main/GeoCachSU/utils.py:29
+#: main/GeoCachSU/utils.py:43 main/GeoCachSU/utils.py:56
+#: main/GeoCachSU/utils.py:74 main/GeoCachSU/utils.py:91
+msgid "all"
+msgstr "все"
+
+#: geocaching_su_stat/views.py:1730
+msgid "All years"
+msgstr "Все годы"
+
+#: geocaching_su_stat/views.py:1751
+#, python-format
+msgid "Current year %s"
+msgstr "Текущий год %s"
+
+#: geokret/views.py:31
+msgid "Find the waypoint"
+msgstr "Найти тайник или крота"
+
+#: main/utils.py:90
+msgid "Ukraine"
+msgstr "Украина"
+
+#: main/utils.py:93
+msgid "Armenia"
+msgstr "Армения"
+
+#: main/utils.py:96
+msgid "Azerbaijan"
+msgstr "Азербайджан"
+
+#: main/utils.py:99
+msgid "Belarus"
+msgstr "Белоруссия"
+
+#: main/utils.py:102
+msgid "Estonia"
+msgstr "Эстония"
+
+#: main/utils.py:105
+msgid "Georgia"
+msgstr "Грузия"
+
+#: main/utils.py:108
+msgid "Kazakhstan"
+msgstr "Казахстан"
+
+#: main/utils.py:111
+msgid "Kyrgyzstan"
+msgstr "Киргизия"
+
+#: main/utils.py:114
+msgid "Latvia"
+msgstr "Латвия"
+
+#: main/utils.py:117
+msgid "Lithuania"
+msgstr "Литва"
+
+#: main/utils.py:120
+msgid "Moldova"
+msgstr "Молдавия"
+
+#: main/utils.py:123
+msgid "Tajikistan"
+msgstr "Таджикистан"
+
+#: main/utils.py:126
+msgid "Turkmenistan"
+msgstr "Туркмения"
+
+#: main/utils.py:129
+msgid "Uzbekistan"
+msgstr "Узбекистан"
+
+#: main/utils.py:134
+msgid "Zhytomyrs'ka Oblast'"
+msgstr "Житомирская обл."
+
+#: main/utils.py:137
+msgid "Zaporiz'ka Oblast'"
+msgstr "Запорожская обл."
+
+#: main/utils.py:140
+msgid "Zakarpats'ka Oblast'"
+msgstr "Закарпатская обл."
+
+#: main/utils.py:143
+msgid "Volyns'ka Oblast'"
+msgstr "Волынская обл."
+
+#: main/utils.py:146
+msgid "Vinnyts'ka Oblast'"
+msgstr "Винницкая обл."
+
+#: main/utils.py:149
+msgid "Ternopil's'ka Oblast'"
+msgstr "Тернопольская обл."
+
+#: main/utils.py:152
+msgid "Sumy"
+msgstr "Сумская обл."
+
+#: main/utils.py:155
+msgid "Misto Sevastopol'"
+msgstr "Севастополь"
+
+#: main/utils.py:158
+msgid "Rivnens'ka Oblast'"
+msgstr "Ровненская обл."
+
+#: main/utils.py:161
+msgid "Poltava"
+msgstr "Полтавская обл."
+
+#: main/utils.py:164
+msgid "Odessa"
+msgstr "Одесская обл."
+
+#: main/utils.py:167
+msgid "Mykolayivs'ka Oblast'"
+msgstr "Николаевская обл."
+
+#: main/utils.py:170
+msgid "L'vivs'ka Oblast'"
+msgstr "Львовская обл."
+
+#: main/utils.py:173
+msgid "Luhans'ka Oblast'"
+msgstr "Луганская обл."
+
+#: main/utils.py:176
+msgid "Kiev"
+msgstr "Киевская обл."
+
+#: main/utils.py:179
+msgid "Misto Kyyiv"
+msgstr "Киев"
+
+#: main/utils.py:182
+msgid "Respublika Krym"
+msgstr "Республика Крым"
+
+#: main/utils.py:185
+msgid "Kirovohrads'ka Oblast'"
+msgstr "Кировоградская обл."
+
+#: main/utils.py:188
+msgid "Khmel'nyts'ka Oblast'"
+msgstr "Хмельницкая обл."
+
+#: main/utils.py:191
+msgid "Kherson"
+msgstr "Херсонская обл."
+
+#: main/utils.py:194
+msgid "Kharkivs'ka Oblast'"
+msgstr "Харьковская обл."
+
+#: main/utils.py:197
+msgid "Ivano-Frankivs'ka Oblast'"
+msgstr "Ивано-Франковская обл."
+
+#: main/utils.py:200
+msgid "Donets'ka Oblast'"
+msgstr "Донецкая обл."
+
+#: main/utils.py:203
+msgid "Dnipropetrovska Oblast'"
+msgstr "Днепропетровская обл."
+
+#: main/utils.py:206
+msgid "Chernivets'ka Oblast'"
+msgstr "Черновецкая обл."
+
+#: main/utils.py:209
+msgid "Chernihivs'ka Oblast'"
+msgstr "Черниговская обл."
+
+#: main/utils.py:212
+msgid "Cherkas'ka Oblast'"
+msgstr "Черкасская обл."
+
+#: main/utils.py:215
+msgid "Yaroslavskaya Oblast'"
+msgstr "Ярославская обл."
+
+#: main/utils.py:218
+msgid "Voronezhskaya Oblast'"
+msgstr "Воронежская обл."
+
+#: main/utils.py:221
+msgid "Vologodskaya Oblast'"
+msgstr "Вологодская обл."
+
+#: main/utils.py:224
+msgid "Volgogradskaya Oblast'"
+msgstr "Волгоградская обл."
+
+#: main/utils.py:227
+msgid "Ul'yanovskaya Oblast'"
+msgstr "Ульяновская обл."
+
+#: main/utils.py:230
+msgid "Udmurtskaya Respublika"
+msgstr "Удмуртcкая республика"
+
+#: main/utils.py:233
+msgid "Tverskaya Oblast'"
+msgstr "Тверская обл."
+
+#: main/utils.py:236
+msgid "Tul'skaya Oblast'"
+msgstr "Тульская обл."
+
+#: main/utils.py:239
+msgid "Respublika Tatarstan"
+msgstr "Республика Татарстан"
+
+#: main/utils.py:242
+msgid "Tambovskaya Oblast'"
+msgstr "Тамбовская обл."
+
+#: main/utils.py:245
+msgid "Stavropol'skiy Kray"
+msgstr "Ставропольский край"
+
+#: main/utils.py:248
+msgid "Smolenskaya Oblast'"
+msgstr "Смоленская обл."
+
+#: main/utils.py:251
+msgid "Saratovskaya Oblast'"
+msgstr "Саратовская обл."
+
+#: main/utils.py:254
+msgid "Samarskaya Oblast'"
+msgstr "Самарская обл."
+
+#: main/utils.py:257
+msgid "Ryazanskaya Oblast'"
+msgstr "Рязанская обл."
+
+#: main/utils.py:260
+msgid "Rostovskaya Oblast'"
+msgstr "Ростовская обл."
+
+#: main/utils.py:263
+msgid "Pskovskaya Oblast'"
+msgstr "Псковская обл."
+
+#: main/utils.py:266
+msgid "Perm Krai"
+msgstr "Пермский край"
+
+#: main/utils.py:269
+msgid "Penzenskaya Oblast'"
+msgstr "Пензенская обл."
+
+#: main/utils.py:272
+msgid "Orlovskaya Oblast'"
+msgstr "Орловская обл."
+
+#: main/utils.py:275
+msgid "Orenburgskaya Oblast'"
+msgstr "Оренбургская обл."
+
+#: main/utils.py:278
+msgid "Novgorodskaya Oblast'"
+msgstr "Новгородская обл."
+
+#: main/utils.py:281
+msgid "Respublika Severnaya Osetiya-Alaniya"
+msgstr "Республика Северная Осетия — Алания"
+
+#: main/utils.py:284
+msgid "Nenetskiy Avtonomnyy Okrug"
+msgstr "Ненецкий автономный округ"
+
+#: main/utils.py:287
+msgid "Murmansk"
+msgstr "Мурманская обл."
+
+#: main/utils.py:290
+msgid "Moscow"
+msgstr "Москва"
+
+#: main/utils.py:293
+msgid "Moskovskaya"
+msgstr "Московская обл."
+
+#: main/utils.py:296
+msgid "Respublika Mordoviya"
+msgstr "Республика Мордовия"
+
+#: main/utils.py:299
+msgid "Respublika Mariy-El"
+msgstr "Республика Марий Эл"
+
+#: main/utils.py:302
+msgid "Lipetskaya Oblast'"
+msgstr "Липецкая обл."
+
+#: main/utils.py:305
+msgid "Leningrad"
+msgstr "Ленинградская обл."
+
+#: main/utils.py:308
+msgid "Sankt-Peterburg"
+msgstr "Санкт-Петербург"
+
+#: main/utils.py:311
+msgid "Kurskaya Oblast'"
+msgstr "Курская обл."
+
+#: main/utils.py:314
+msgid "Krasnodarskiy Kray"
+msgstr "Краснодарский край"
+
+#: main/utils.py:317
+msgid "Kostromskaya Oblast'"
+msgstr "Костромская обл."
+
+#: main/utils.py:320
+msgid "Respublika Komi"
+msgstr "Республика Коми"
+
+#: main/utils.py:323
+msgid "Kirovskaya Oblast'"
+msgstr "Кировская обл."
+
+#: main/utils.py:326
+msgid "Respublika Kareliya"
+msgstr "Республика Карелия"
+
+#: main/utils.py:329
+msgid "Karachayevo-Cherkesskaya Respublika"
+msgstr "Карачаево-Черкесская республика"
+
+#: main/utils.py:332
+msgid "Kaluzhskaya Oblast'"
+msgstr "Калужская обл."
+
+#: main/utils.py:335
+msgid "Respublika Kalmykiya"
+msgstr "Республика Калмыкия"
+
+#: main/utils.py:338
+msgid "Kaliningradskaya Oblast'"
+msgstr "Калининградская обл."
+
+#: main/utils.py:341
+msgid "Kabardino-Balkarskaya Respublika"
+msgstr "Кабардино-Балкарская республика"
+
+#: main/utils.py:344
+msgid "Ivanovskaya Oblast'"
+msgstr "Ивановская обл."
+
+#: main/utils.py:347
+msgid "Respublika Ingushetiya"
+msgstr "Республика Ингушетия"
+
+#: main/utils.py:350
+msgid "Nizhegorodskaya Oblast'"
+msgstr "Нижегородская обл."
+
+#: main/utils.py:353
+msgid "Dagestan"
+msgstr "Республика Дагестан"
+
+#: main/utils.py:356
+msgid "Chuvashia"
+msgstr "Чувашская республика"
+
+#: main/utils.py:359
+msgid "Chechnya"
+msgstr "Чеченская республика"
+
+#: main/utils.py:362
+msgid "Bryanskaya Oblast'"
+msgstr "Брянская обл."
+
+#: main/utils.py:365
+msgid "Belgorodskaya Oblast'"
+msgstr "Белгородская обл."
+
+#: main/utils.py:368
+msgid "Respublika Bashkortostan"
+msgstr "Республика Башкортостан"
+
+#: main/utils.py:371
+msgid "Astrakhanskaya Oblast'"
+msgstr "Астраханская обл."
+
+#: main/utils.py:374
+msgid "Arkhangelskaya"
+msgstr "Архангельская обл."
+
+#: main/utils.py:377
+msgid "Respublika Adygeya"
+msgstr "Республика Адыгея"
+
+#: main/utils.py:380
+msgid "Vladimirskaya Oblast'"
+msgstr "Владимирская обл."
+
+#: main/utils.py:383
+msgid "Yamalo-Nenetskiy Avtonomnyy Okrug"
+msgstr "Ямало-Ненецкий автономный округ"
+
+#: main/utils.py:386
+msgid "Tyumenskaya Oblast'"
+msgstr "Тюменская обл."
+
+#: main/utils.py:389
+msgid "Respublika Tyva"
+msgstr "Республика Тыва"
+
+#: main/utils.py:392
+msgid "Tomskaya Oblast'"
+msgstr "Томская обл."
+
+#: main/utils.py:395
+msgid "Sverdlovskaya Oblast'"
+msgstr "Свердловская обл."
+
+#: main/utils.py:398
+msgid "Omskaya Oblast'"
+msgstr "Омская обл."
+
+#: main/utils.py:401
+msgid "Novosibirskaya Oblast'"
+msgstr "Новосибирская обл."
+
+#: main/utils.py:404
+msgid "Kurganskaya Oblast'"
+msgstr "Курганская обл."
+
+#: main/utils.py:407
+msgid "Krasnoyarskiy Kray"
+msgstr "Красноярский край"
+
+#: main/utils.py:410
+msgid "Khanty-Mansiyskiy Avtonomnyy Okrug"
+msgstr "Ханты-Мансийский автономный округ - Югра"
+
+#: main/utils.py:413
+msgid "Respublika Khakasiya"
+msgstr "Республика Хакасия"
+
+#: main/utils.py:416
+msgid "Kemerovskaya Oblast'"
+msgstr "Кемеровская обл."
+
+#: main/utils.py:419
+msgid "Respublika Altay"
+msgstr "Республика Алтай"
+
+#: main/utils.py:422
+msgid "Chelyabinskaya Oblast'"
+msgstr "Челябинская обл."
+
+#: main/utils.py:425
+msgid "Altayskiy Kray"
+msgstr "Алтайский край"
+
+#: main/utils.py:428
+msgid "Respublika Sakha (Yakutiya)"
+msgstr "Республика Саха (Якутия)"
+
+#: main/utils.py:431
+msgid "Primorskiy Kray"
+msgstr "Приморский край"
+
+#: main/utils.py:434
+msgid "Khabarovsk Krai"
+msgstr "Хабаровский край"
+
+#: main/utils.py:437
+msgid "Irkutskaya Oblast'"
+msgstr "Иркутская обл."
+
+#: main/utils.py:440
+msgid "Zabaikalski Kray"
+msgstr "Забайкальский край"
+
+#: main/utils.py:443
+msgid "Jewish Autonomous Oblast"
+msgstr "Еврейская автономная обл."
+
+#: main/utils.py:446
+msgid "Amurskaya Oblast'"
+msgstr "Амурская обл."
+
+#: main/utils.py:449
+msgid "Respublika Buryatiya"
+msgstr "Республика Бурятия"
+
+#: main/utils.py:452
+msgid "Sakhalinskaya Oblast'"
+msgstr "Сахалинская обл."
+
+#: main/utils.py:455
+msgid "Magadanskaya Oblast'"
+msgstr "Магаданская обл."
+
+#: main/utils.py:458
+msgid "Kamtchatski Kray"
+msgstr "Камчатский край"
+
+#: main/utils.py:461
+msgid "Chukotskiy Avtonomnyy Okrug"
+msgstr "Чукотский автономный округ"
+
+#: main/utils.py:466
+msgid "Afghanistan"
+msgstr "Афганистан"
+
+#: main/utils.py:469 main/utils.py:1165
+msgid "Aland Islands"
+msgstr "Эландские Острова"
+
+#: main/utils.py:472
+msgid "Albania"
+msgstr "Албания"
+
+#: main/utils.py:475
+msgid "Algeria"
+msgstr "Алжир"
+
+#: main/utils.py:478
+msgid "American Samoa"
+msgstr "Американское Самоа"
+
+#: main/utils.py:481
+msgid "Andorra"
+msgstr "Андорра"
+
+#: main/utils.py:484
+msgid "Angola"
+msgstr "Ангола"
+
+#: main/utils.py:487
+msgid "Anguilla"
+msgstr "Ангилья"
+
+#: main/utils.py:490
+msgid "Antarctica"
+msgstr "Антарктика"
+
+#: main/utils.py:493
+msgid "Antigua and Barbuda"
+msgstr "Антигуа и Барбуда"
+
+#: main/utils.py:496
+msgid "Argentina"
+msgstr "Аргентина"
+
+#: main/utils.py:499
+msgid "Aruba"
+msgstr "Аруба"
+
+#: main/utils.py:502
+msgid "Australia"
+msgstr "Австралия"
+
+#: main/utils.py:505
+msgid "Austria"
+msgstr "Австрия"
+
+#: main/utils.py:508
+msgid "Bahamas"
+msgstr "Багамы"
+
+#: main/utils.py:511
+msgid "Bahrain"
+msgstr "Бахрейн"
+
+#: main/utils.py:514
+msgid "Bangladesh"
+msgstr "Бангладеш"
+
+#: main/utils.py:517
+msgid "Barbados"
+msgstr "Барбадос"
+
+#: main/utils.py:520
+msgid "Belgium"
+msgstr "Бельгия"
+
+#: main/utils.py:523
+msgid "Belize"
+msgstr "Белиз"
+
+#: main/utils.py:526
+msgid "Benin"
+msgstr "Бенин"
+
+#: main/utils.py:529
+msgid "Bermuda"
+msgstr "Бермуды"
+
+#: main/utils.py:532
+msgid "Bhutan"
+msgstr "Бутан"
+
+#: main/utils.py:535
+msgid "Bolivia"
+msgstr "Боливия"
+
+#: main/utils.py:538
+msgid "Bosnia and Herzegovina"
+msgstr "Босния и Герцеговина"
+
+#: main/utils.py:541
+msgid "Botswana"
+msgstr "Ботсвана"
+
+#: main/utils.py:544
+msgid "Bouvet Island"
+msgstr "Остров Буве"
+
+#: main/utils.py:547
+msgid "Brazil"
+msgstr "Бразилия"
+
+#: main/utils.py:550
+msgid "British Indian Ocean Territory"
+msgstr "Британская территория в Индийском океане"
+
+#: main/utils.py:553
+msgid "British Virgin Islands"
+msgstr "Британские Виргинские Острова"
+
+#: main/utils.py:556
+msgid "Brunei"
+msgstr "Бруней"
+
+#: main/utils.py:559
+msgid "Bulgaria"
+msgstr "Болгария"
+
+#: main/utils.py:562
+msgid "Burkina Faso"
+msgstr "Буркина-Фасо"
+
+#: main/utils.py:565
+msgid "Burundi"
+msgstr "Бурунди"
+
+#: main/utils.py:568
+msgid "Cambodia"
+msgstr "Камбоджа"
+
+#: main/utils.py:571
+msgid "Cameroon"
+msgstr "Камерун"
+
+#: main/utils.py:574
+msgid "Canada"
+msgstr "Канада"
+
+#: main/utils.py:577
+msgid "Cape Verde"
+msgstr "Кабо-Верде"
+
+#: main/utils.py:580
+msgid "Cayman Islands"
+msgstr "Каймановы Острова"
+
+#: main/utils.py:583
+msgid "Central African Republic"
+msgstr "Ценрально-Африканская Республика"
+
+#: main/utils.py:586
+msgid "Chad"
+msgstr "Чад"
+
+#: main/utils.py:589
+msgid "Chile"
+msgstr "Чили"
+
+#: main/utils.py:592
+msgid "China"
+msgstr "Китай"
+
+#: main/utils.py:595
+msgid "Christmas Island"
+msgstr "Остров Рождества"
+
+#: main/utils.py:598
+msgid "Cocos Islands"
+msgstr "Кокосовые Острова"
+
+#: main/utils.py:601
+msgid "Colombia"
+msgstr "Колумбия"
+
+#: main/utils.py:604
+msgid "Comoros"
+msgstr "Коморы"
+
+#: main/utils.py:607
+msgid "Cook Islands"
+msgstr "Острова Кука"
+
+#: main/utils.py:610
+msgid "Costa Rica"
+msgstr "Коста-Рика"
+
+#: main/utils.py:613
+msgid "Croatia"
+msgstr "Хорватия"
+
+#: main/utils.py:616
+msgid "Cuba"
+msgstr "Куба"
+
+#: main/utils.py:619
+msgid "Cyprus"
+msgstr "Кипр"
+
+#: main/utils.py:622
+msgid "Czech Republic"
+msgstr "Чехия"
+
+#: main/utils.py:625
+msgid "Democratic Republic of the Congo"
+msgstr "Демократическая Республика Конго"
+
+#: main/utils.py:628
+msgid "Denmark"
+msgstr "Дания"
+
+#: main/utils.py:631
+msgid "Dominica"
+msgstr "Доминика"
+
+#: main/utils.py:634
+msgid "Dominican Republic"
+msgstr "Доминиканская Республика"
+
+#: main/utils.py:637
+msgid "East Timor"
+msgstr "Восточный Тимор"
+
+#: main/utils.py:640
+msgid "Ecuador"
+msgstr "Эквадор"
+
+#: main/utils.py:643
+msgid "Egypt"
+msgstr "Египет"
+
+#: main/utils.py:646
+msgid "El Salvador"
+msgstr "Салвадор"
+
+#: main/utils.py:649
+msgid "Equatorial Guinea"
+msgstr "Экваториальная Гвинея"
+
+#: main/utils.py:652
+msgid "Eritrea"
+msgstr "Эритрея"
+
+#: main/utils.py:655
+msgid "Ethiopia"
+msgstr "Эфиопия"
+
+#: main/utils.py:658
+msgid "Falkland Islands"
+msgstr "Фолклендские Острова"
+
+#: main/utils.py:661
+msgid "Faroe Islands"
+msgstr "Фарерские Острова"
+
+#: main/utils.py:664
+msgid "Fiji"
+msgstr "Фиджи"
+
+#: main/utils.py:667
+msgid "Finland"
+msgstr "Финляндия"
+
+#: main/utils.py:670
+msgid "France"
+msgstr "Франция"
+
+#: main/utils.py:673
+msgid "French Guiana"
+msgstr "Французская Гвиана"
+
+#: main/utils.py:676
+msgid "French Polynesia"
+msgstr "Французская Полинезия"
+
+#: main/utils.py:679
+msgid "French Southern Territories"
+msgstr "Французские Южные Территории"
+
+#: main/utils.py:682
+msgid "Gabon"
+msgstr "Габон"
+
+#: main/utils.py:685
+msgid "Gambia"
+msgstr "Гамбия"
+
+#: main/utils.py:688
+msgid "Germany"
+msgstr "Германия"
+
+#: main/utils.py:691
+msgid "Ghana"
+msgstr "Гана"
+
+#: main/utils.py:694
+msgid "Gibraltar"
+msgstr "Гибралтар"
+
+#: main/utils.py:697
+msgid "Greece"
+msgstr "Греция"
+
+#: main/utils.py:700
+msgid "Greenland"
+msgstr "Гренландия"
+
+#: main/utils.py:703
+msgid "Grenada"
+msgstr "Гренада"
+
+#: main/utils.py:706
+msgid "Guadeloupe"
+msgstr "Гваделупа"
+
+#: main/utils.py:709
+msgid "Guam"
+msgstr "Гуам"
+
+#: main/utils.py:712
+msgid "Guatemala"
+msgstr "Гватемала"
+
+#: main/utils.py:715
+msgid "Guernsey"
+msgstr "Гернси"
+
+#: main/utils.py:718
+msgid "Guinea"
+msgstr "Гвинея"
+
+#: main/utils.py:721
+msgid "Guinea-Bissau"
+msgstr "Гвинея-Бисау"
+
+#: main/utils.py:724
+msgid "Guyana"
+msgstr "Гайана"
+
+#: main/utils.py:727
+msgid "Haiti"
+msgstr "Гаити"
+
+#: main/utils.py:730
+msgid "Heard Island and McDonald Islands"
+msgstr "Остров Херд и Острова Мкдональд"
+
+#: main/utils.py:733
+msgid "Honduras"
+msgstr "Гондурас"
+
+#: main/utils.py:736
+msgid "Hong Kong"
+msgstr "Гонконг"
+
+#: main/utils.py:739
+msgid "Hungary"
+msgstr "Венгрия"
+
+#: main/utils.py:742
+msgid "Iceland"
+msgstr "Исландия"
+
+#: main/utils.py:745
+msgid "India"
+msgstr "Индия"
+
+#: main/utils.py:748
+msgid "Indonesia"
+msgstr "Индонезия"
+
+#: main/utils.py:751
+msgid "Iran"
+msgstr "Иран"
+
+#: main/utils.py:754
+msgid "Iraq"
+msgstr "Ирак"
+
+#: main/utils.py:757
+msgid "Ireland"
+msgstr "Ирландия"
+
+#: main/utils.py:760
+msgid "Isle of Man"
+msgstr "Остров Мэн"
+
+#: main/utils.py:763
+msgid "Israel"
+msgstr "Израиль"
+
+#: main/utils.py:766
+msgid "Italy"
+msgstr "Италия"
+
+#: main/utils.py:769
+msgid "Ivory Coast"
+msgstr "Кот д'Ивуар"
+
+#: main/utils.py:772
+msgid "Jamaica"
+msgstr "Ямайка"
+
+#: main/utils.py:775
+msgid "Japan"
+msgstr "Япония"
+
+#: main/utils.py:778
+msgid "Jersey"
+msgstr "Джерси"
+
+#: main/utils.py:781
+msgid "Jordan"
+msgstr "Иордания"
+
+#: main/utils.py:784
+msgid "Kenya"
+msgstr "Кения"
+
+#: main/utils.py:787
+msgid "Kiribati"
+msgstr "Кирибати"
+
+#: main/utils.py:790
+msgid "Kuwait"
+msgstr "Кувейт"
+
+#: main/utils.py:793
+msgid "Laos"
+msgstr "Лаос"
+
+#: main/utils.py:796
+msgid "Lebanon"
+msgstr "Ливан"
+
+#: main/utils.py:799
+msgid "Lesotho"
+msgstr "Лесото"
+
+#: main/utils.py:802
+msgid "Liberia"
+msgstr "Либерия"
+
+#: main/utils.py:805
+msgid "Libya"
+msgstr "Ливия"
+
+#: main/utils.py:808
+msgid "Liechtenstein"
+msgstr "Лихтенштейн"
+
+#: main/utils.py:811
+msgid "Luxembourg"
+msgstr "Люксембург"
+
+#: main/utils.py:814
+msgid "Macao"
+msgstr "Макао"
+
+#: main/utils.py:817
+msgid "Macedonia"
+msgstr "Македония"
+
+#: main/utils.py:820
+msgid "Madagascar"
+msgstr "Мадагаскар"
+
+#: main/utils.py:823
+msgid "Malawi"
+msgstr "Малави"
+
+#: main/utils.py:826
+msgid "Malaysia"
+msgstr "Малайзия"
+
+#: main/utils.py:829
+msgid "Maldives"
+msgstr "Мальдивы"
+
+#: main/utils.py:832
+msgid "Mali"
+msgstr "Мали"
+
+#: main/utils.py:835
+msgid "Malta"
+msgstr "Малта"
+
+#: main/utils.py:838
+msgid "Marshall Islands"
+msgstr "Маршалловы Острова"
+
+#: main/utils.py:841
+msgid "Martinique"
+msgstr "Мартиника"
+
+#: main/utils.py:844
+msgid "Mauritania"
+msgstr "Мавритания"
+
+#: main/utils.py:847
+msgid "Mauritius"
+msgstr "Маврикий"
+
+#: main/utils.py:850
+msgid "Mayotte"
+msgstr "Майотта"
+
+#: main/utils.py:853
+msgid "Mexico"
+msgstr "Мексика"
+
+#: main/utils.py:856
+msgid "Micronesia"
+msgstr "Микронезия"
+
+#: main/utils.py:859
+msgid "Monaco"
+msgstr "Монако"
+
+#: main/utils.py:862
+msgid "Mongolia"
+msgstr "Монголия"
+
+#: main/utils.py:865
+msgid "Montenegro"
+msgstr "Черногория"
+
+#: main/utils.py:868
+msgid "Montserrat"
+msgstr "Монтсеррат"
+
+#: main/utils.py:871
+msgid "Morocco"
+msgstr "Марокко"
+
+#: main/utils.py:874
+msgid "Mozambique"
+msgstr "Мозамбик"
+
+#: main/utils.py:877
+msgid "Myanmar"
+msgstr "Мьянма"
+
+#: main/utils.py:880
+msgid "Namibia"
+msgstr "Намибия"
+
+#: main/utils.py:883
+msgid "Nauru"
+msgstr "Науру"
+
+#: main/utils.py:886
+msgid "Nepal"
+msgstr "Непал"
+
+#: main/utils.py:889
+msgid "Netherlands"
+msgstr "Нидерланды"
+
+#: main/utils.py:892
+msgid "Netherlands Antilles"
+msgstr "Нидерландские Антилы"
+
+#: main/utils.py:895
+msgid "New Caledonia"
+msgstr "Новая Каледония"
+
+#: main/utils.py:898
+msgid "New Zealand"
+msgstr "Новая Зеландия"
+
+#: main/utils.py:901
+msgid "Nicaragua"
+msgstr "Никарагуа"
+
+#: main/utils.py:904
+msgid "Niger"
+msgstr "Нигер"
+
+#: main/utils.py:907
+msgid "Nigeria"
+msgstr "Нигерия"
+
+#: main/utils.py:910
+msgid "Niue"
+msgstr "Ниуэ"
+
+#: main/utils.py:913
+msgid "Norfolk Island"
+msgstr "Остров Норфолк"
+
+#: main/utils.py:916
+msgid "North Korea"
+msgstr "КНДР"
+
+#: main/utils.py:919
+msgid "Northern Mariana Islands"
+msgstr "Северные Марианские Острова"
+
+#: main/utils.py:922
+msgid "Norway"
+msgstr "Норвегия"
+
+#: main/utils.py:925
+msgid "Oman"
+msgstr "Оман"
+
+#: main/utils.py:928
+msgid "Pakistan"
+msgstr "Пакистан"
+
+#: main/utils.py:931
+msgid "Palau"
+msgstr "Палау"
+
+#: main/utils.py:934
+msgid "Palestinian Territory"
+msgstr "Палестина"
+
+#: main/utils.py:937
+msgid "Panama"
+msgstr "Панама"
+
+#: main/utils.py:940
+msgid "Papua New Guinea"
+msgstr "Папуа Новая Гвинея"
+
+#: main/utils.py:943
+msgid "Paraguay"
+msgstr "Парагвай"
+
+#: main/utils.py:946
+msgid "Peru"
+msgstr "Перу"
+
+#: main/utils.py:949
+msgid "Philippines"
+msgstr "Филиппины"
+
+#: main/utils.py:952
+msgid "Pitcairn"
+msgstr "Питкерн"
+
+#: main/utils.py:955
+msgid "Poland"
+msgstr "Польша"
+
+#: main/utils.py:958
+msgid "Portugal"
+msgstr "Португалия"
+
+#: main/utils.py:961
+msgid "Puerto Rico"
+msgstr "Пуэрто-Рико"
+
+#: main/utils.py:964
+msgid "Qatar"
+msgstr "Катар"
+
+#: main/utils.py:967
+msgid "Republic of the Congo"
+msgstr "Республика Конго"
+
+#: main/utils.py:970
+msgid "Reunion"
+msgstr "Реюньон"
+
+#: main/utils.py:973
+msgid "Romania"
+msgstr "Румыния"
+
+#: main/utils.py:976
+msgid "Rwanda"
+msgstr "Руанда"
+
+#: main/utils.py:979
+msgid "Saint Barthelemy"
+msgstr "Сен-Бартелеми"
+
+#: main/utils.py:982
+msgid "Saint Helena"
+msgstr "Святая Елена"
+
+#: main/utils.py:985
+msgid "Saint Kitts and Nevis"
+msgstr "Сент-Китс и Гренадины"
+
+#: main/utils.py:988
+msgid "Saint Lucia"
+msgstr "Сент-Люсия"
+
+#: main/utils.py:991
+msgid "Saint Martin"
+msgstr "Сен-Мартин"
+
+#: main/utils.py:994
+msgid "Saint Pierre and Miquelon"
+msgstr "Сент-Пьер и Микелон"
+
+#: main/utils.py:997
+msgid "Saint Vincent and the Grenadines"
+msgstr "Сент-Винсент и Гренадины"
+
+#: main/utils.py:1000
+msgid "Samoa"
+msgstr "Самоа"
+
+#: main/utils.py:1003
+msgid "San Marino"
+msgstr "Сан-Марино"
+
+#: main/utils.py:1006
+msgid "Sao Tome and Principe"
+msgstr "Сан-Томе и Принсипи"
+
+#: main/utils.py:1009
+msgid "Saudi Arabia"
+msgstr "Саудовская Аравия"
+
+#: main/utils.py:1012
+msgid "Senegal"
+msgstr "Сенегал"
+
+#: main/utils.py:1015
+msgid "Serbia"
+msgstr "Сербия"
+
+#: main/utils.py:1018
+msgid "Serbia and Montenegro"
+msgstr "Сербия и Черногория"
+
+#: main/utils.py:1021
+msgid "Seychelles"
+msgstr "Сейшелы"
+
+#: main/utils.py:1024
+msgid "Sierra Leone"
+msgstr "Сьерра Леоне"
+
+#: main/utils.py:1027
+msgid "Singapore"
+msgstr "Сингапур"
+
+#: main/utils.py:1030
+msgid "Slovakia"
+msgstr "Словакия"
+
+#: main/utils.py:1033
+msgid "Slovenia"
+msgstr "Словения"
+
+#: main/utils.py:1036
+msgid "Solomon Islands"
+msgstr "Соломоновы Острова"
+
+#: main/utils.py:1039
+msgid "Somalia"
+msgstr "Сомали"
+
+#: main/utils.py:1042
+msgid "South Africa"
+msgstr "Южная Африка"
+
+#: main/utils.py:1045
+msgid "South Georgia and the South Sandwich Islands"
+msgstr "Южная Джорджия и Южные Сандвичевы Острова"
+
+#: main/utils.py:1048
+msgid "South Korea"
+msgstr "Корея"
+
+#: main/utils.py:1051
+msgid "Spain"
+msgstr "Испания"
+
+#: main/utils.py:1054
+msgid "Sri Lanka"
+msgstr "Шри-Ланка"
+
+#: main/utils.py:1057
+msgid "Sudan"
+msgstr "Судан"
+
+#: main/utils.py:1060
+msgid "Suriname"
+msgstr "Суринам"
+
+#: main/utils.py:1063
+msgid "Svalbard and Jan Mayen"
+msgstr "Шпицберген и Ян Майен"
+
+#: main/utils.py:1066
+msgid "Swaziland"
+msgstr "Свазиленд"
+
+#: main/utils.py:1069
+msgid "Sweden"
+msgstr "Швеция"
+
+#: main/utils.py:1072
+msgid "Switzerland"
+msgstr "Швейцария"
+
+#: main/utils.py:1075
+msgid "Syria"
+msgstr "Сирия"
+
+#: main/utils.py:1078
+msgid "Taiwan"
+msgstr "Тайвань"
+
+#: main/utils.py:1081
+msgid "Tanzania"
+msgstr "Танзания"
+
+#: main/utils.py:1084
+msgid "Thailand"
+msgstr "Таиланд"
+
+#: main/utils.py:1087
+msgid "Togo"
+msgstr "Того"
+
+#: main/utils.py:1090
+msgid "Tokelau"
+msgstr "Токелау"
+
+#: main/utils.py:1093
+msgid "Tonga"
+msgstr "Тонга"
+
+#: main/utils.py:1096
+msgid "Trinidad and Tobago"
+msgstr "Тринидад и Тобаго"
+
+#: main/utils.py:1099
+msgid "Tunisia"
+msgstr "Тунис"
+
+#: main/utils.py:1102
+msgid "Turkey"
+msgstr "Турция"
+
+#: main/utils.py:1105
+msgid "Turks and Caicos Islands"
+msgstr "Острова Теркс и Кайкос"
+
+#: main/utils.py:1108
+msgid "Tuvalu"
+msgstr "Тувалу"
+
+#: main/utils.py:1111
+msgid "U.S. Virgin Islands"
+msgstr "Виргинские Острова США"
+
+#: main/utils.py:1114
+msgid "Uganda"
+msgstr "Уганда"
+
+#: main/utils.py:1117
+msgid "United Arab Emirates"
+msgstr "ОАЭ"
+
+#: main/utils.py:1120
+msgid "United Kingdom"
+msgstr "Великобритания"
+
+#: main/utils.py:1123
+msgid "United States"
+msgstr "США"
+
+#: main/utils.py:1126
+msgid "United States Minor Outlying Islands"
+msgstr "Малые Тихоокеанские отдаленные острова США"
+
+#: main/utils.py:1129
+msgid "Uruguay"
+msgstr "Уругвай"
+
+#: main/utils.py:1132
+msgid "Vanuatu"
+msgstr "Вануату"
+
+#: main/utils.py:1135
+msgid "Vatican"
+msgstr "Ватикан"
+
+#: main/utils.py:1138
+msgid "Vatican City"
+msgstr "Ватикан"
+
+#: main/utils.py:1141
+msgid "Venezuela"
+msgstr "Венесуэла"
+
+#: main/utils.py:1144
+msgid "Vietnam"
+msgstr "Вьетнам"
+
+#: main/utils.py:1147
+msgid "Wallis and Futuna"
+msgstr "Уоллис и Футуна"
+
+#: main/utils.py:1150
+msgid "Western Sahara"
+msgstr "Западная Сахара"
+
+#: main/utils.py:1153
+msgid "Yemen"
+msgstr "Йемен"
+
+#: main/utils.py:1156
+msgid "Russia"
+msgstr "Россия"
+
+#: main/utils.py:1159
+msgid "Zambia"
+msgstr "Замбия"
+
+#: main/utils.py:1162
+msgid "Zimbabwe"
+msgstr "Зимбабве"
+
+#: main/utils.py:1169
+msgid "Zapadno-Kazakhstanskaya Oblast'"
+msgstr "Западно-Казахстанская обл."
+
+#: main/utils.py:1172
+msgid "Mangistauskaya Oblast'"
+msgstr "Мангистауская обл."
+
+#: main/utils.py:1175
+msgid "Atyrau Oblysy"
+msgstr "Атырауская обл."
+
+#: main/utils.py:1178
+msgid "Aktyubinskaya Oblast'"
+msgstr "Актюбинская обл."
+
+#: main/utils.py:1181
+msgid "East Kazakhstan"
+msgstr "Восточно-Казахстанская обл."
+
+#: main/utils.py:1184
+msgid "Akmolinskaya Oblast'"
+msgstr "Акмолинская обл."
+
+#: main/utils.py:1187
+msgid "Severo-Kazakhstanskaya Oblast'"
+msgstr "Северо-Казахстанская обл."
+
+#: main/utils.py:1190
+msgid "Pavlodarskaya Oblast'"
+msgstr "Павлодарская обл."
+
+#: main/utils.py:1193
+msgid "Qyzylorda Oblysy"
+msgstr "Кызылординская обл."
+
+#: main/utils.py:1196
+msgid "Qostanay Oblysy"
+msgstr "Костанайская обл."
+
+#: main/utils.py:1199
+msgid "Karagandinskaya Oblast'"
+msgstr "Карагандинская обл."
+
+#: main/utils.py:1202
+msgid "Zhambyl Oblysy"
+msgstr "Жамбылская обл."
+
+#: main/utils.py:1205
+msgid "Yuzhno-Kazakhstanskaya Oblast'"
+msgstr "Южно-Казахстанская обл."
+
+#: main/utils.py:1208
+msgid "Almaty Qalasy"
+msgstr "Алма-Ата"
+
+#: main/utils.py:1211
+msgid "Almaty Oblysy"
+msgstr "Алматинская обл."
+
+#: main/utils.py:1214
+msgid "Bayqongyr Qalasy"
+msgstr "Байконур"
+
+#: main/utils.py:1217
+msgid "Astana Qalasy"
+msgstr "Астана"
+
+#: main/utils.py:1220
+msgid "Vitsyebskaya Voblasts'"
+msgstr "Витебская обл."
+
+#: main/utils.py:1223
+msgid "Mahilyowskaya Voblasts'"
+msgstr "Могилёвская обл."
+
+#: main/utils.py:1226
+msgid "Minskaya Voblasts'"
+msgstr "Минская обл."
+
+#: main/utils.py:1229
+msgid "Horad Minsk"
+msgstr "Минск"
+
+#: main/utils.py:1232
+msgid "Hrodzyenskaya Voblasts'"
+msgstr "Гродненская обл."
+
+#: main/utils.py:1235
+msgid "Homyel'skaya Voblasts'"
+msgstr "Гомельская обл."
+
+#: main/utils.py:1238
+msgid "Brestskaya Voblasts'"
+msgstr "Брестская обл."
+
+#: main/GeoCachSU/models.py:12
+msgid "Event"
+msgstr "Событие"
+
+#: main/GeoCachSU/models.py:14
+msgid "Contest"
+msgstr "Конкурс"
+
+#: main/GeoCachSU/models.py:15 main/GeoMap/models.py:11
+msgid "Trad Multi step"
+msgstr "Пошаговый традиционный"
+
+#: main/GeoCachSU/models.py:16 main/GeoMap/models.py:12
+msgid "Virtual Multi step"
+msgstr "Пошаговый виртуальный"
+
+#: main/GeoCachSU/models.py:17 main/GeoMap/models.py:13
+#: main/GeoMap/models.py:38
+#: templates/Geocaching_su/personal_statistics.html:68
+#: templates/Geocaching_su/personal_statistics.html:140
+msgid "Traditional"
+msgstr "Традиционный"
+
+#: main/GeoCachSU/models.py:18 main/GeoMap/models.py:14
+#: main/GeoMap/models.py:39
+#: templates/Geocaching_su/personal_statistics.html:74
+#: templates/Geocaching_su/personal_statistics.html:146
+msgid "Virtual"
+msgstr "Виртуальный"
+
+#: main/GeoCachSU/utils.py:30
+msgid "all real"
+msgstr "все реальные"
+
+#: main/GeoCachSU/utils.py:31
+msgid "all unreal"
+msgstr "все нереальные"
+
+#: main/GeoMap/models.py:16
+msgid "Quest"
+msgstr "Квест"
+
+#: main/GeoMap/models.py:17
+msgid "Place of interest"
+msgstr "Точка (POI)"
+
+#: main/GeoMap/models.py:18 templates/Map/geokret_info.html:9
+msgid "Cache"
+msgstr "Тайник"
+
+#: main/GeoMap/models.py:19
+msgid "Treasure"
+msgstr "Клад"
+
+#: main/GeoMap/models.py:20
+msgid "Casket"
+msgstr "Ларец"
+
+#: main/GeoMap/models.py:21
+msgid "Crossing"
+msgstr "Пересечение"
+
+#: main/GeoMap/models.py:22
+msgid "Geodesy"
+msgstr "Геодезия"
+
+#: main/GeoMap/models.py:24
+msgid "Quiz"
+msgstr "Квиз"
+
+#: main/GeoMap/models.py:25
+msgid "Other"
+msgstr "Другой тип"
+
+#: main/GeoMap/models.py:26
+msgid "Moving"
+msgstr "Перемещающийся"
+
+#: main/GeoMap/models.py:27
+msgid "Webcam"
+msgstr "Вебкамера"
+
+#: main/GeoMap/models.py:40
+msgid "Multistep"
+msgstr "Пошаговый традиционный"
+
+#: main/GeoMap/models.py:41
+msgid "Virtual Multistep"
+msgstr "Пошаговый виртуальный"
+
+#: main/GeoMap/models.py:42
+msgid "Confluence"
+msgstr "Пересечение"
+
+#: main/GeoName/models.py:222
+msgid "-- choose country --"
+msgstr "-- выберите страну --"
+
+#: main/GeoName/models.py:233
+msgid "-- choose admin subject --"
+msgstr "-- выберите регион --"
+
+#: main/GeoName/models.py:246
+msgid "-- choose city --"
+msgstr "-- выберите город --"
+
+#: tableview/templates/table_body.html:71
+#: tableview/templates/table_body.html:73 templates/table_toolbar.html:9
+#: templates/AdminTable/quicksearch_form.html:16
+#: templates/Map/geocaching_map.html:67
+msgid "Search"
+msgstr "Поиск"
+
+#: tableview/templates/table_body.html:78
+msgid "Columns"
+msgstr "Столбцы"
+
+#: tableview/templates/table_body.html:79 templates/table_toolbar.html:7
+#: templates/AdminTable/controls.html:6 templates/Map/geocaching_map.html:69
+msgid "Filter"
+msgstr "Фильтр"
+
+#: tableview/templates/table_body.html:80
+msgid "Remember as default state"
+msgstr ""
+
+#: tableview/templates/table_body.html:81
+msgid "Remember state as"
+msgstr ""
+
+#: tableview/templates/table_body.html:108 templates/table_body.html:33
+#: templates/table_toolbar.html:7
+msgid "Filter form"
+msgstr "Фильтр"
+
+#: tableview/templates/table_body.html:113 templates/table_body.html:43
+msgid "Apply"
+msgstr "Применить"
+
+#: templates/404.html:5
+msgid "Page not found."
+msgstr "Страница не найдена"
+
+#: templates/404.html:7
+msgid "You requested"
+msgstr "Вы запросили"
+
+#: templates/404.html:8
+msgid "The page you are looking for can no longer be found in the database."
+msgstr "В базе данных нет такой страницы."
+
+#: templates/404.html:9
+msgid "It is possible the data has been deleted."
+msgstr "Возможно, страница была удалена."
+
+#: templates/404.html:12 templates/500.html:8
+msgid "Go back"
+msgstr "Вернуться"
+
+#: templates/404.html:13 templates/500.html:9
+msgid "Go to homepage"
+msgstr "На начальную страницу"
+
+#: templates/404.html:14 templates/500.html:10
+msgid "Contact administrator"
+msgstr "Сообщить администратору"
+
+#: templates/500.html:5
+msgid "Internal server error."
+msgstr "Внутренняя ошибка сервера. "
+
+#: templates/base.html:62 templates/base_bootstrap.html:68
+#: templates/gpsfun_admin/admin_menu.html:7
+msgid "Home"
+msgstr "Начало"
+
+#: templates/base.html:64 templates/base_bootstrap.html:80
+msgid "Caches Map"
+msgstr "Карта тайников"
+
+#: templates/base.html:65 templates/base_bootstrap.html:81
+msgid "GeoKrety"
+msgstr "ГеоКроты"
+
+#: templates/base.html:77 templates/base_bootstrap.html:90
+msgid "English"
+msgstr "Английский"
+
+#: templates/base.html:79 templates/base_bootstrap.html:92
+msgid "Russian"
+msgstr "Русский"
+
+#: templates/base_bootstrap.html:58
+msgid "Log out"
+msgstr "Выйти"
+
+#: templates/base_bootstrap.html:60 templates/registration/login.html:5
+msgid "Sign in"
+msgstr "Войти"
+
+#: templates/base_bootstrap.html:62 templates/registration/login.html:56
+msgid "Sign up"
+msgstr "Регистрация"
+
+#: templates/base_bootstrap.html:72
+msgid "geocaching.su"
+msgstr "geocaching.su"
+
+#: templates/base_bootstrap.html:73
+#: templates/Geocaching_su/geocaching_su_base.html:16
+#: templates/Geocaching_su/geocaching_su_index.html:20
+msgid "Caches"
+msgstr "Тайники"
+
+#: templates/base_bootstrap.html:74
+#: templates/Geocaching_su/geocacher_stat_countries.html:14
+#: templates/Geocaching_su/geocaching_su_base.html:17
+#: templates/Geocaching_su/geocaching_su_index.html:19
+msgid "Geocachers"
+msgstr "Геокешеры"
+
+#: templates/base_bootstrap.html:76
+#: templates/Geocaching_su/base_personal_statistics.html:14
+msgid "Personal statistics"
+msgstr "Персональная статистика"
+
+#: templates/db_update.html:7
+msgid ""
+"\n"
+"\t  We are sorry. Database is updating now. Visit us later, please.\n"
+"\t  "
+msgstr ""
+"\n"
+"Извините, сейчас обновляется информация в базе данных. Зайдите в этот раздел "
+"сайта попозже, пожалуйста."
+
+#: templates/index.html:6
+msgid "About"
+msgstr "О сайте"
+
+#: templates/index.html:9
+msgid ""
+"\n"
+"    On this site you will find information related to entertainment which is "
+"called <a href=\"http://en.wikipedia.org/wiki/Geocaching\" target=\"_blank"
+"\">geocaching</a>.<br/>\n"
+"I hope that the information presented here will complement the information "
+"from sites devoted to geocaching.\n"
+"    "
+msgstr ""
+"\n"
+"    Здесь вы найдете информацию, имеющую отношение к развлечению, которое "
+"называется <a href=\"http://ru.wikipedia.org/wiki/Геокэшинг\" target=\"_blank"
+"\">геокешингом</a>.<br/>\n"
+"Я надеюсь, что информация, представленная здесь, дополнит информацию с "
+"сайтов, посвященных геокешингу.\n"
+"    "
+
+#: templates/index.html:17
+msgid "Geocaching web sites"
+msgstr "Сайты, посвященные геокешингу"
+
+#: templates/index.html:29
+msgid ""
+"\n"
+"        Shukach Project is active interest in search and creation of caches "
+"and treasures. Walking through and creation of quests. Visiting of places of "
+"interest, local history and perception of the outside world. Popularization "
+"of outside activities, healthy lifestyle and tourism."
+msgstr ""
+"\n"
+"В основе проекта «Шукач» лежит поисковый туризм. Участники проекта называют "
+"себя шукачи (от украинского «шукати» - искать).<br/> Для шукачей характерны "
+"большая продолжительность поездки, большее количество посещаемых мест "
+"назначения и, соответственно, малая продолжительность пребывания в одном "
+"месте.<br/> Проект Шукач поддерживает геокэшинг в Украине."
+
+#: templates/index.html:43
+msgid ""
+"Welcome to Russian Geocaching Official Site!<br/>\n"
+"\t\n"
+"Vast territories, plenty of sights. rich and varied nature make geocahing in "
+"Russia extremely interesting.<br/> Play and travel throughout Russia to see "
+"its ancient monasteries and churches, charming country estates and museums, "
+"high mountains and deep canyons and locate a hidden cache there!"
+msgstr ""
+"В Россию геокэшинг пришел весной 2002 года. Основатели рассматривали "
+"геокэшинг, в первую очередь, не как спортивную забаву, а как инструмент "
+"обмена знаниями о родном крае. <br/>\n"
+"По правилам сайта geocaching.su, тайник рекомендуется создавать только в "
+"месте, которое представляет природный, исторический, культурный, "
+"географический интерес. Поэтому каждая точка, отмеченная координатами, "
+"обладает особой притягательной силой не только для владельцев GPS, но и для "
+"людей интересующихся историей родного края, географией и т.п.<br/>"
+
+#: templates/index.html:58
+msgid ""
+"We’re a collection of hikers, bikers, techno geeks, treasure seekers, "
+"scouts, families and just plain nature lovers who deserve to geocache the "
+"way we want.<br/>\n"
+"\n"
+"      <br/>And that’s exactly why we created this site – to put the power "
+"back in the hands of the community. And to finally give us all a voice in "
+"the way geocaching grows."
+msgstr ""
+"Члены нашего сообщества — туристы, велосипедисты, компьютерные фанаты, "
+"искатели сокровищ, скауты, семьи и просто любители природы, которые увлечены "
+"геокэшингом и любят играть по своим правилам.<br/>\n"
+"\n"
+"      <br/>Именно поэтому мы создали этот сайт — чтобы руководство сайтом "
+"находилось в руках сообщества. И чтобы все мы смогли внести свой вклад в "
+"развитие геокэшинга."
+
+#: templates/index.html:73
+msgid ""
+"OpenCaching.eu is a geocaching site providing a listing of all national "
+"OpenCaching services"
+msgstr ""
+"OpenCaching.eu - сайт геокешинга, представляющий список всех национальных "
+"сайтов сообщества OpenCaching"
+
+#: templates/table_body.html:42
+msgid "Close"
+msgstr "Закрыть"
+
+#: templates/table_filter_description.html:3
+msgid "Filter by:"
+msgstr "Выборка по условиям:"
+
+#: templates/AdminTable/confirm_action.html:4
+msgid "Please confirm global action apply"
+msgstr "Подтвердите это действие, пожалуйста"
+
+#: templates/AdminTable/confirm_action.html:6
+msgid "Selected items"
+msgstr "Выбранные строки"
+
+#: templates/AdminTable/confirm_action.html:20
+msgid "Confirm"
+msgstr "Подтвердить"
+
+#: templates/AdminTable/controls.html:7
+msgid "Preferences"
+msgstr "Настройки"
+
+#: templates/AdminTable/controls.html:13
+msgid "Quick Filter"
+msgstr "Quick Filter"
+
+#: templates/AdminTable/controls.html:17
+#: templates/AdminTable/search_form.html:436
+msgid "Action"
+msgstr "Действие"
+
+#: templates/AdminTable/controls.html:36
+msgid "Total:"
+msgstr "Всего:"
+
+#: templates/AdminTable/preferences_form.html:36
+msgid "Set preferences for current session"
+msgstr "Установить настройки для текущей сессии"
+
+#: templates/AdminTable/preferences_form.html:37
+msgid "Save Preferences as"
+msgstr "Записать настройки как"
+
+#: templates/AdminTable/preferences_form.html:38
+#: templates/AdminTable/quicksearch_form.html:17
+msgid "Cancel"
+msgstr "Отказаться"
+
+#: templates/AdminTable/render_search_field.html:2
+msgid "Range"
+msgstr "Диапазон"
+
+#: templates/AdminTable/render_search_field.html:2
+msgid "Min"
+msgstr "Мин"
+
+#: templates/AdminTable/render_search_field.html:2
+msgid "Max"
+msgstr "Макс"
+
+#: templates/AdminTable/render_search_field.html:5
+msgid "Exact match"
+msgstr "Точное совпадение"
+
+#: templates/AdminTable/render_search_field.html:8
+msgid "last"
+msgstr "последний"
+
+#: templates/AdminTable/render_search_field.html:8
+msgid "days"
+msgstr "дней"
+
+#: templates/AdminTable/render_search_field.html:9
+msgid "Period between"
+msgstr "Период между"
+
+#: templates/AdminTable/render_search_field.html:9
+msgid "and"
+msgstr "и"
+
+#: templates/AdminTable/render_search_field.html:9
+msgid "format"
+msgstr "формат"
+
+#: templates/AdminTable/render_search_field.html:9
+msgid "YYYY-MM-DD"
+msgstr "ГГГГ-ММ-ДД"
+
+#: templates/AdminTable/search_form.html:118
+#: templates/AdminTable/search_form.html:123
+msgid "Remove this line"
+msgstr "Удалить эту строку"
+
+#: templates/AdminTable/search_form.html:166
+msgid "Condition value not recognized"
+msgstr "Ошибочное значение в условии"
+
+#: templates/AdminTable/search_form.html:254
+msgid "Add Filter"
+msgstr "Добавить фильтр"
+
+#: templates/AdminTable/search_form.html:262
+msgid "Save this search as"
+msgstr "Сохранить поиск как"
+
+#: templates/AdminTable/search_form.html:328
+#: templates/AdminTable/search_form.html:343
+#: templates/AdminTable/search_form.html:350
+#: templates/AdminTable/search_form.html:399
+msgid "Choose condition"
+msgstr "Выберите условие"
+
+#: templates/AdminTable/search_form.html:329
+#: templates/AdminTable/search_form.html:351
+msgid "Equal"
+msgstr "равно"
+
+#: templates/AdminTable/search_form.html:331
+msgid "NOT Equal"
+msgstr "НЕ равно"
+
+#: templates/AdminTable/search_form.html:335
+msgid "Less Than"
+msgstr "меньше чем"
+
+#: templates/AdminTable/search_form.html:336
+msgid "Greater Than"
+msgstr "больше чем"
+
+#: templates/AdminTable/search_form.html:339
+msgid "Contains"
+msgstr "Содержит"
+
+#: templates/AdminTable/search_form.html:344
+msgid "True"
+msgstr "правда"
+
+#: templates/AdminTable/search_form.html:345
+msgid "False"
+msgstr "ложь"
+
+#: templates/AdminTable/search_form.html:352
+msgid "Since"
+msgstr "с"
+
+#: templates/AdminTable/search_form.html:353
+msgid "Before"
+msgstr "до"
+
+#: templates/AdminTable/search_form.html:354
+msgid "Date Range"
+msgstr "Date Range"
+
+#: templates/AdminTable/search_form.html:355
+msgid "Last Day"
+msgstr "Last Day"
+
+#: templates/AdminTable/search_form.html:356
+msgid "Last Week"
+msgstr "Last Week"
+
+#: templates/AdminTable/search_form.html:357
+msgid "Last Month"
+msgstr "Last Month"
+
+#: templates/AdminTable/search_form.html:358
+msgid "Last Year"
+msgstr "Last Year"
+
+#: templates/AdminTable/search_form.html:363
+msgid "NULL Not Specified"
+msgstr "NULL Not Specified"
+
+#: templates/AdminTable/search_form.html:374
+msgid "Add new filter (search)"
+msgstr "Добавить новый фильтр (поиск)"
+
+#: templates/AdminTable/search_form.html:384
+msgid "There are no filters defined"
+msgstr "Нет фильтра"
+
+#: templates/AdminTable/search_form.html:393
+msgid "Add new filter on column"
+msgstr "Добавить новый фильтр для столбца"
+
+#: templates/AdminTable/search_form.html:402
+msgid "Add filter line"
+msgstr "Добавить строку в фильтр"
+
+#: templates/AdminTable/search_form.html:405
+msgid "Start search"
+msgstr "Start search"
+
+#: templates/AdminTable/search_form.html:406
+msgid "Reset all filters"
+msgstr "Сбросить все фильтры"
+
+#: templates/AdminTable/search_form.html:407
+msgid "Save filter as"
+msgstr "Записать фильтр как"
+
+#: templates/AdminTable/search_form.html:415
+msgid "Help on setting filters"
+msgstr "Help on setting filters"
+
+#: templates/AdminTable/search_form.html:416
+msgid ""
+"For date field \"since\" can be specified as \"-X\" days. For example, to "
+"get data for last week, you can specify it as \"-7\". For last year: \"-365\""
+msgstr ""
+"Для даты поле \"since\" может быть установлено как \"-X\" дней. Например, "
+"чтобы получить дату неделю назад, вы можете установить \"-7\". Для года "
+"назад: \"-365\""
+
+#: templates/AdminTable/search_form.html:417
+msgid ""
+"For date field you can use \"d\", \"w\", \"h\" modifiers which mean days, "
+"weeks, hours and special \"midnight\" modifier. \"-\" is optional."
+msgstr ""
+"For date field you can use \"d\", \"w\", \"h\" modifiers which mean days, "
+"weeks, hours and special \"midnight\" modifier. \"-\" is optional."
+
+#: templates/AdminTable/search_form.html:418
+#, python-format
+msgid ""
+"Use %%s to specify template (you will be asked to provide value on call to "
+"this search)"
+msgstr ""
+"Используйте %%s чтобы назначить шаблон (вы увидите запрос ввести значение "
+"перед поиском this search)"
+
+#: templates/AdminTable/search_form.html:430
+msgid "Configured filters"
+msgstr "Сохраненные фильтры"
+
+#: templates/AdminTable/search_form.html:434
+msgid "Filter name"
+msgstr "Название фильтра"
+
+#: templates/AdminTable/search_form.html:435
+msgid "Access"
+msgstr "Доступ"
+
+#: templates/AdminTable/search_form.html:441
+msgid "Public"
+msgstr "Общедоступный"
+
+#: templates/AdminTable/search_form.html:441
+msgid "Private"
+msgstr "Частный"
+
+#: templates/AdminTable/search_form.html:442
+msgid "Run"
+msgstr "Запустить"
+
+#: templates/AdminTable/search_form.html:443
+msgid "Edit"
+msgstr "Изменить"
+
+#: templates/AdminTable/search_form.html:444
+msgid "Delete"
+msgstr "Убрать"
+
+#: templates/AdminTable/table.html:14 templates/AdminTable/table.html.py:21
+msgid "Select filter to apply"
+msgstr "Выберите фильтр"
+
+#: templates/AdminTable/table.html:56
+msgid "Select action to apply"
+msgstr "Выберите действие"
+
+#: templates/Geocaching_su/base_personal_statistics.html:15
+#: templates/Geocaching_su/cach_rank_by_found.html:6
+#: templates/Geocaching_su/cach_statistics.html:9
+#: templates/Geocaching_su/cache_statistics.html:16
+msgid "Rating caches on the number of entries in a logbook"
+msgstr "Рейтинг тайников по количеству записей в блокноте"
+
+#: templates/Geocaching_su/base_personal_statistics.html:15
+msgid "Charts"
+msgstr "Графики"
+
+#: templates/Geocaching_su/base_personal_statistics.html:16
+#: templates/Geocaching_su/found_my_caches.html:16
+msgid "Geocachers found my caches"
+msgstr "Кто нашёл мои тайники"
+
+#: templates/Geocaching_su/base_personal_statistics.html:16
+msgid "Who found my caches"
+msgstr "Кто нашел мои тайники"
+
+#: templates/Geocaching_su/base_personal_statistics.html:17
+msgid "Found by me"
+msgstr "Найденные мною"
+
+#: templates/Geocaching_su/base_personal_statistics.html:18
+msgid "Regions"
+msgstr "Регионы"
+
+#: templates/Geocaching_su/cach_rank_by_found.html:12
+#: templates/Geocaching_su/cach_rank_by_index.html:10
+#: templates/Geocaching_su/cach_statistics.html:8
+#: templates/Geocaching_su/cache_rank_by_index.html:6
+#: templates/Geocaching_su/cache_statistics.html:15
+msgid "Rating caches on the integrated index"
+msgstr "Рейтинг тайников по индексу"
+
+#: templates/Geocaching_su/cach_rank_by_found.html:14
+#: templates/Geocaching_su/cach_rank_by_index.html:13
+#: templates/Geocaching_su/cache_rank_by_index.html:8
+msgid ""
+"It is an attempt to calculate the index of \"quality\"of caches on the "
+"number of recommendations and number of entries in the logbook."
+msgstr ""
+"Это попытка вычислить показатель \"качества\" тайника по количеству "
+"рекомендаций и количеству записей в блокноте."
+
+#: templates/Geocaching_su/cach_rank_by_recommend.html:7
+#: templates/Geocaching_su/cach_statistics.html:10
+#: templates/Geocaching_su/cache_statistics.html:17
+msgid "Rating caches on the number of recommendations"
+msgstr "Рейтинг тайников по количеству рекомендаций"
+
+#: templates/Geocaching_su/cach_stat.html:17
+#: templates/Geocaching_su/cach_stat.html:75
+#: templates/Geocaching_su/cache_stat.html:21
+#: templates/Geocaching_su/cache_stat.html:89
+#: templates/Geocaching_su/geocacher_activity.html:41
+msgid "Year"
+msgstr "Год"
+
+#: templates/Geocaching_su/cach_stat.html:32
+#: templates/Geocaching_su/cache_stat.html:44
+msgid "Count of created caches per years per type"
+msgstr "Количество созданных тайников за год по типам"
+
+#: templates/Geocaching_su/cach_stat.html:38
+#: templates/Geocaching_su/cache_stat.html:52
+msgid "Caches Statistics"
+msgstr "Статистика тайников"
+
+#: templates/Geocaching_su/cach_stat.html:42
+#: templates/Geocaching_su/cache_stat.html:56
+msgid "Active caches"
+msgstr "Активные тайники"
+
+#: templates/Geocaching_su/cach_stat.html:58
+#: templates/Geocaching_su/cache_stat.html:72
+msgid "Caches statistics"
+msgstr "Статистика тайников"
+
+#: templates/Geocaching_su/cach_stat.html:64
+#: templates/Geocaching_su/cache_stat.html:78
+msgid "Count of caches over the years"
+msgstr "Количество тайников по годам"
+
+#: templates/Geocaching_su/cach_stat.html:65
+#: templates/Geocaching_su/cache_stat.html:79
+#: templates/Geocaching_su/geocacher_activity.html:23
+#: templates/Geocaching_su/geocacher_activity.html:32
+#: templates/Geocaching_su/geocacher_stat_countries.html:71
+msgid "Trend"
+msgstr "Тенденция"
+
+#: templates/Geocaching_su/cach_stat.html:71
+#: templates/Geocaching_su/cache_stat.html:85
+msgid "Creating of caches per years"
+msgstr "Количество созданных тайников по годам"
+
+#: templates/Geocaching_su/cach_stat.html:93
+#: templates/Geocaching_su/cache_stat.html:107
+msgid "Count of caches per years per type"
+msgstr ""
+"Количество созданных тайников по годам.<br/> Светлым цветом реальные тайники "
+"(TR, MS),<br/> темным цветом нереальные (VI, MV, EV, CT)"
+
+#: templates/Geocaching_su/cach_stat.html:94
+#: templates/Geocaching_su/cache_stat.html:108
+msgid "Chart"
+msgstr "График"
+
+#: templates/Geocaching_su/cach_statistics.html:11
+#: templates/Geocaching_su/cache_statistics.html:18
+msgid "Statistics"
+msgstr "Статистика"
+
+#: templates/Geocaching_su/cache_statistics.html:15
+msgid "Rating by the integrated index"
+msgstr "Рейтинг тайников по индексу"
+
+#: templates/Geocaching_su/cache_statistics.html:16
+msgid "Rating by logs"
+msgstr "Рейтинг по посещениям"
+
+#: templates/Geocaching_su/cache_statistics.html:17
+msgid "Rating by recommendations"
+msgstr "Рейтинг по рекомендациям"
+
+#: templates/Geocaching_su/coordinate_converter.html:11
+msgid "GPS Сoordinate Converter online"
+msgstr "Конвертер GPS координат"
+
+#: templates/Geocaching_su/found_my_caches.html:26
+#: templates/Geocaching_su/my_found_caches.html:26
+msgid "Last"
+msgstr "Последний"
+
+#: templates/Geocaching_su/geocacher_activity.html:7
+#: templates/Geocaching_su/geocacher_list_menu.html:2
+msgid "Geocachers activity"
+msgstr "Активность геокешеров"
+
+#: templates/Geocaching_su/geocacher_activity.html:14
+msgid "Number of acts of creation"
+msgstr "Создание, кол."
+
+#: templates/Geocaching_su/geocacher_activity.html:15
+msgid "Number of Visits"
+msgstr "Посещения, кол."
+
+#: templates/Geocaching_su/geocacher_activity.html:22
+msgid ""
+"Activities of geocachers by the years, light color for visits and dark color "
+"for creating"
+msgstr ""
+"Активность геокешеров по месяцам, темный цвет для создания, светлый для "
+"посещений тайников"
+
+#: templates/Geocaching_su/geocacher_activity.html:31
+msgid ""
+"Creating of caches by the years, light color for traditional, dark color for "
+"virtual caches"
+msgstr ""
+"Создание тайников по месяцам, светлый цвет для традиционных, темный для "
+"виртуальных"
+
+#: templates/Geocaching_su/geocacher_activity.html:42
+msgid "Month"
+msgstr "Месяц"
+
+#: templates/Geocaching_su/geocacher_activity.html:43
+msgid "Visits"
+msgstr "Посещения"
+
+#: templates/Geocaching_su/geocacher_activity.html:44
+msgid "Creating"
+msgstr "Создание"
+
+#: templates/Geocaching_su/geocacher_list_menu.html:9
+#: templates/Geocaching_su/geocacher_list_menu.html:18
+#: templates/Geocaching_su/geocacher_list_menu.html:27
+msgid "By all caches"
+msgstr "По всем тайникам"
+
+#: templates/Geocaching_su/geocacher_list_menu.html:10
+#: templates/Geocaching_su/geocacher_list_menu.html:19
+#: templates/Geocaching_su/geocacher_list_menu.html:28
+msgid "By unreal caches"
+msgstr "По нереальным тайникам"
+
+#: templates/Geocaching_su/geocacher_list_menu.html:11
+#: templates/Geocaching_su/geocacher_list_menu.html:20
+#: templates/Geocaching_su/geocacher_list_menu.html:29
+msgid "By real caches"
+msgstr "По реальным тайникам"
+
+#: templates/Geocaching_su/geocacher_list_menu.html:36
+msgid "Search Rating. All years"
+msgstr "Рейтинг по поиску. Все годы"
+
+#: templates/Geocaching_su/geocacher_list_menu.html:37
+msgid "Search Rating."
+msgstr "Рейтинг по поиску"
+
+#: templates/Geocaching_su/geocacher_stat.html:18
+msgid "Geocachers Activity"
+msgstr "Активность геокешеров"
+
+#: templates/Geocaching_su/geocacher_stat.html:19
+msgid "Geocachers Detail Statistics"
+msgstr "Подробная статистика геокешеров"
+
+#: templates/Geocaching_su/geocacher_stat.html:20
+msgid "Statistics by Countries"
+msgstr "Статистика по странам"
+
+#: templates/Geocaching_su/geocacher_stat_countries.html:7
+msgid "Statistics geocachers"
+msgstr "Статистика геокешеров"
+
+#: templates/Geocaching_su/geocacher_stat_countries.html:18
+msgid "Geocachers statistics"
+msgstr "Статистика геокешеров"
+
+#: templates/Geocaching_su/geocacher_stat_countries.html:43
+msgid "Active geocachers"
+msgstr "Активные геокешеры"
+
+#: templates/Geocaching_su/geocacher_stat_countries.html:47
+msgid "Active geocachers statistics"
+msgstr "Статистика активных геокешеров"
+
+#: templates/Geocaching_su/geocacher_stat_countries.html:70
+msgid "Count of geocachers over the years, all and active only"
+msgstr ""
+"Количество геокешеров по годам, светлый цвет для зарегистрированных, темный "
+"для активных (нашел хотя бы 1 тайник)"
+
+#: templates/Geocaching_su/geocaching_su_index.html:34
+msgid "GEOCACHING.SU. Statistics"
+msgstr "GEOCACHING.SU. Статистика"
+
+#: templates/Geocaching_su/geocaching_su_index.html:37
+msgid ""
+"I place here some statistics for <a href=\"geocaching.su\">geocaching.su</a>."
+"<br/>\n"
+"The statistical information is obtained by direct collection through "
+"crawling of pages.<br/>\n"
+"That is done with the permission of the site administration.<br/>\n"
+"As a consequence, my database is updated with some frequency, probably a "
+"couple of times a month.<br/>\n"
+"The second consequence - it is impossible to guarantee completeness.<br/>\n"
+"I would be grateful for information about mistakes in the data."
+msgstr ""
+"На сайте <a href=\"geocaching.su\" target=\"_blank\">geocaching.su</a> "
+"закрыта статистика.<br/>\n"
+"Я попробую заполнить эту нишу.<br/><br/>\n"
+"Замечу, что статистическая информация получается прямым сбором через обход "
+"страниц сайта. Это делается с разрешения администрации сайта.<br/><br>\n"
+"Как следствие, <ul><li>моя база обновляется с некоторой периодичностью, "
+"скорее всего пару раз в месяц,</li><br/>\n"
+"<li>невозможно гарантировать полноту данных.</li></ul><br/>\n"
+"Буду благодарен за информацию об ошибках в данных."
+
+#: templates/Geocaching_su/geocaching_su_index.html:43
+msgid "Last updated"
+msgstr "Последнее обновление"
+
+#: templates/Geocaching_su/geocaching_su_map.html:58
+msgid "Map"
+msgstr "Карта"
+
+#: templates/Geocaching_su/geocaching_su_map.html:70
+msgid "Log in"
+msgstr "Войти"
+
+#: templates/Geocaching_su/geocaching_su_map.html:92
+#: templates/Map/geocaching_map.html:73
+msgid "found"
+msgstr "Найдено"
+
+#: templates/Geocaching_su/geocaching_su_map.html:122
+msgid "-- all types --"
+msgstr "-- все типы --"
+
+#: templates/Geocaching_su/geocaching_su_map.html:131
+msgid "-- all caches --"
+msgstr "-- все --"
+
+#: templates/Geocaching_su/my_found_caches.html:16
+msgid "Caches found by me"
+msgstr "Чьи тайники я нашёл"
+
+#: templates/Geocaching_su/personal_charts.html:15
+#: templates/Geocaching_su/personal_charts.html:20
+#: templates/Geocaching_su/personal_charts.html:30
+#: templates/Geocaching_su/personal_charts.html:35
+msgid "month"
+msgstr "месяц"
+
+#: templates/Geocaching_su/personal_charts.html:15
+#: templates/Geocaching_su/personal_charts.html:20
+#: templates/Geocaching_su/personal_charts.html:25
+#: templates/Geocaching_su/personal_charts.html:30
+#: templates/Geocaching_su/personal_charts.html:35
+#: templates/Geocaching_su/personal_charts.html:40
+msgid "count"
+msgstr "количество"
+
+#: templates/Geocaching_su/personal_charts.html:25
+#: templates/Geocaching_su/personal_charts.html:40
+msgid "year"
+msgstr "год"
+
+#: templates/Geocaching_su/personal_charts.html:85
+msgid "Personal Statistics Charts"
+msgstr "Персональная статистика. Графики"
+
+#: templates/Geocaching_su/personal_charts.html:90
+#: templates/Geocaching_su/personal_statistics.html:53
+msgid "Statistics of founded caches"
+msgstr "Статистика найденных тайников"
+
+#: templates/Geocaching_su/personal_charts.html:102
+msgid "Found caches statistics"
+msgstr "Статистика найденных тайников"
+
+#: templates/Geocaching_su/personal_charts.html:108
+#: templates/Geocaching_su/personal_statistics.html:125
+msgid "Statistics of created caches"
+msgstr "Статистика созданных тайников"
+
+#: templates/Geocaching_su/personal_charts.html:120
+msgid "Created caches statistics"
+msgstr "Статистика созданных тайников"
+
+#: templates/Geocaching_su/personal_statistics.html:16
+msgid "Personal Statistics"
+msgstr "Персональная статистика"
+
+#: templates/Geocaching_su/personal_statistics.html:19
+#: templates/User/profile.html:8
+msgid "Profile"
+msgstr "Профиль"
+
+#: templates/Geocaching_su/personal_statistics.html:21
+msgid "See statisics for "
+msgstr "Посмотреть статистику для"
+
+#: templates/Geocaching_su/personal_statistics.html:23
+msgid "OK"
+msgstr "OK"
+
+#: templates/Geocaching_su/personal_statistics.html:28
+msgid "Registered since"
+msgstr "Дата регистрации"
+
+#: templates/Geocaching_su/personal_statistics.html:36
+msgid "Admin subject"
+msgstr "Регион"
+
+#: templates/Geocaching_su/personal_statistics.html:40
+msgid "Town"
+msgstr "Город"
+
+#: templates/Geocaching_su/personal_statistics.html:44
+msgid "Caching months"
+msgstr "месяцы геокешинга"
+
+#: templates/Geocaching_su/personal_statistics.html:45
+#: templates/Geocaching_su/region_found_caches.html:20
+msgid "from"
+msgstr "из"
+
+#: templates/Geocaching_su/personal_statistics.html:57
+#: templates/Geocaching_su/personal_statistics.html:129
+msgid "all years"
+msgstr "все годы"
+
+#: templates/Geocaching_su/personal_statistics.html:62
+#: templates/Geocaching_su/personal_statistics.html:134
+msgid "Total number"
+msgstr "Общее количество"
+
+#: templates/Geocaching_su/personal_statistics.html:91
+msgid "Average number of caches found in one month"
+msgstr "Среднее количество тайников, найденных за месяц"
+
+#: templates/Geocaching_su/personal_statistics.html:95
+msgid "Largest number of caches found in one month"
+msgstr "Самое большое кол-во найденных за месяц тайников"
+
+#: templates/Geocaching_su/personal_statistics.html:99
+msgid "Last found cache"
+msgstr "Последний найденный тайник"
+
+#: templates/Geocaching_su/personal_statistics.html:107
+#: templates/Geocaching_su/personal_statistics.html:183
+msgid "Milestones"
+msgstr "Вехи"
+
+#: templates/Geocaching_su/personal_statistics.html:111
+#: templates/Geocaching_su/personal_statistics.html:187
+msgid "Date"
+msgstr "Дата"
+
+#: templates/Geocaching_su/personal_statistics.html:112
+#: templates/Geocaching_su/personal_statistics.html:188
+msgid "Geocache"
+msgstr "Тайник"
+
+#: templates/Geocaching_su/personal_statistics.html:160
+msgid "for"
+msgstr "для"
+
+#: templates/Geocaching_su/personal_statistics.html:164
+msgid "Average number of caches created in one month"
+msgstr "Среднее кол-во созданных за месяц тайников"
+
+#: templates/Geocaching_su/personal_statistics.html:168
+msgid "Largest number of caches created in one month"
+msgstr "Максимальное кол-во созданных за месяц тайников"
+
+#: templates/Geocaching_su/personal_statistics.html:172
+msgid "Last created cache"
+msgstr "Последний созданный тайник"
+
+#: templates/Geocaching_su/personal_statistics.html:178
+msgid "Ratio recommended caches to all caches"
+msgstr "Процент рекомендованных тайников  "
+
+#: templates/Geocaching_su/region_found_caches.html:16
+msgid "Regions where I found my caches"
+msgstr "Регионы где я нашёл тайники"
+
+#: templates/Geocaching_su/region_found_caches.html:24
+msgid "Count"
+msgstr "Количество"
+
+#: templates/Geocaching_su/region_stat.html:32
+msgid "Geocachers Statistics"
+msgstr "Статистика геокешеров"
+
+#: templates/Map/cache_info.html:11
+msgid "created"
+msgstr "создан"
+
+#: templates/Map/cache_info.html:11
+msgid "by"
+msgstr "автором"
+
+#: templates/Map/geokret_info.html:17
+msgid "km"
+msgstr "км"
+
+#: templates/Map/geokrety_map.html:68
+msgid "Where"
+msgstr "Где"
+
+#: templates/Map/geokrety_map.html:76
+msgid "What"
+msgstr "Что"
+
+#: templates/Map/geokrety_map.html:86
+msgid "Map of caches where GeoKrety live"
+msgstr "Карта тайников, где живут ГеоКроты"
+
+#: templates/Map/geokrety_map.html:90
+msgid "Green traveler"
+msgstr "Зеленый путешественник"
+
+#: templates/Map/geokrety_map.html:91
+msgid "Practiced traveler, distance less than 500 km"
+msgstr "Опытный путешественник"
+
+#: templates/Map/geokrety_map.html:92
+msgid "Experienced traveler, distance more than 500 km"
+msgstr "Эксперт, расстояние больше 500 км"
+
+#: templates/User/profile.html:14 templates/User/profile_edit.html:41
+msgid "User name"
+msgstr "Логин"
+
+#: templates/User/profile.html:18 templates/User/profile_edit.html:48
+msgid "First name"
+msgstr "Имя"
+
+#: templates/User/profile.html:22 templates/User/profile_edit.html:55
+msgid "Middle name"
+msgstr "Отчество"
+
+#: templates/User/profile.html:26 templates/User/profile_edit.html:62
+msgid "Last name"
+msgstr "Фамилия"
+
+#: templates/User/profile.html:30
+msgid "Address"
+msgstr "Адрес"
+
+#: templates/User/profile.html:34
+msgid "Nickname on geocaching.su"
+msgstr "Ник на geocaching.su"
+
+#: templates/User/profile.html:44
+msgid "Edit my profile"
+msgstr "Редактировать профиль"
+
+#: templates/User/profile_edit.html:33
+msgid "Edit My Profile"
+msgstr "Редактировать профиль"
+
+#: templates/User/profile_edit.html:69
+msgid "Nickname (geocaching.su)"
+msgstr "Ник (geocaching.su)"
+
+#: templates/User/profile_edit.html:91
+msgid "Save Changes"
+msgstr "Сохранить изменения"
+
+#: templates/gpsfun_admin/admin_menu.html:9
+msgid "Logs"
+msgstr "Логи"
+
+#: templates/gpsfun_admin/admin_menu.html:11
+msgid "Data updating log"
+msgstr "Лог обновления данных"
+
+#: templates/gpsfun_admin/admin_menu.html:12
+msgid "Last updating"
+msgstr "Последнее обновление"
+
+#: templates/registration/activation_complete.html:6
+msgid ""
+"\n"
+"<h3>Thank you for your registration</h3>\n"
+"Your registration has been confirmed and is now comlete. <br/>We look "
+"forward to see you!\n"
+msgstr ""
+"\n"
+"<h3>Спасибо за регистрацию</h3>\n"
+"Ваша регистрация подтверждена. <br/>Рады Вас видеть на нашем сайте!\n"
+
+#: templates/registration/login.html:9 templates/registration/logout.html:14
+#, python-format
+msgid ""
+"\n"
+"You are signed in as <strong>%(username)s</strong>.  \n"
+"Do you want <a href=\"/accounts/logout/\">to log out</a>?\n"
+msgstr ""
+"\n"
+"Мы видим вас как пользователя <strong>%(username)s</strong>. \n"
+"Вы хотите <a href=\"/accounts/logout/\">выйти</a>?\n"
+
+#: templates/registration/login.html:35
+msgid "sign in"
+msgstr "войти"
+
+#: templates/registration/login.html:55
+msgid "Forgot password?"
+msgstr "Забыли пароль?"
+
+#: templates/registration/logout.html:6
+msgid ""
+"\n"
+"<h3>You are logged out</h3>\n"
+"Thanks for being with us. We are waiting for you again.\n"
+msgstr ""
+"\n"
+"<h3>Вы разлогинились</h3>\n"
+"Спасибо за использование сайта. Мы ждём Вас снова.\n"
+
+#: templates/registration/registration_complete.html:6
+msgid ""
+"<h3>Registration complete.</h3> \n"
+"Thank you for registering.<br/>\n"
+"We email you with a link to complete your registration.\n"
+"Check your email box.<br/>\n"
+msgstr ""
+"<h3>Регистрация</h3> \n"
+"Спасибо Вам за регистрацию.<br/>\n"
+"Мы выслали Вам email со ссылкой для подтверждения Вашей регистрации.\n"
+"Проверьте свою почту. Ссылка действительна в течение двух дней.<br/>\n"
+
+#: templates/registration/registration_form.html:10
+msgid "Registration"
+msgstr "Регистрация"
+
+#: templates/registration/registration_form.html:30
+msgid "Create My Account"
+msgstr "Создать учётную запись"
+
+#: user/forms.py:29
+msgid "City"
+msgstr "Город"
+
+#: user/forms.py:69
+msgid "Username"
+msgstr "Логин"
+
+#: user/forms.py:70
+msgid "This value may contain only letters, numbers and @/./+/-/_ characters."
+msgstr "Здесь допускаются только буквы, цифры и символы @/./+/-/_"
+
+#: user/views.py:40
+msgid "Your city changed"
+msgstr "Изменен город"
+
+#: user/views.py:47
+msgid "You reset city"
+msgstr "В Вашем профиле нет города"
+
+#: user/views.py:51
+msgid "Your location changed"
+msgstr "Местоположение изменено"
+
+#~ msgid "-- all resources --"
+#~ msgstr "-- все ресурсы --"
+
+#~ msgid "-- all regions --"
+#~ msgstr "-- все регионы --"
+
+#~ msgid "all contries"
+#~ msgstr "все страны"
+
+#~ msgid "search"
+#~ msgstr "поиск"
+
+#~ msgid "undefined"
+#~ msgstr "неизвестно"
+
+#~ msgid ""
+#~ "This map shows caches where GeoKrety live. <a href=\"http://geokrety.org/"
+#~ "help.php\" target=\"_blank\">Here</a> you can read more about GeoKrety."
+#~ "<br/>\n"
+#~ "\t  Look at map of GeoKrety <a href=\"http://geokrety.org/mapka_kretow."
+#~ "php?all=1\" target=\"_blank\">here</a> and <a href=\"http://geokrety.org/"
+#~ "mapa.php\" target=\"_blank\">here</a>."
+#~ msgstr ""
+#~ "Эта карта показывает тайники, где живут ГеоКроты. <a href=\"http://"
+#~ "geokrety.org/help_generate.php?help=ru&div_location=1.0\" target=\"_blank"
+#~ "\">Здесь</a> можно прочитать о ГеоКротах.<br/>\n"
+#~ "\tПосмотрите на карту ГеоКротов <a href=\"http://geokrety.org/"
+#~ "mapka_kretow.php?all=1\" target=\"_blank\">здесь</a> и <a href=\"http://"
+#~ "geokrety.org/mapa.php\" target=\"_blank\">здесь</a>."
+
+#~ msgid "Visited"
+#~ msgstr "Посещенные"
+
+#~ msgid "Not Visited"
+#~ msgstr "Непосещенные"
+
+#~ msgid "Åland Islands"
+#~ msgstr "Эландские Острова"
+
+#~ msgid "Save"
+#~ msgstr "Сохранить"
+
+#~ msgid "Geocachers detail statistics"
+#~ msgstr "Подробная статистика геокешеров"

@@ -1,0 +1,17 @@
+/* CSS Document */
+*						{padding:0px 0px 0px 0px; margin:0px 0px 0px 0px;}
+body					{text-align:center}
+table 					{border-collapse:collapse; border:0px; width:100%;}
+td						{vertical-align:top}
+th						{text-align:left; vertical-align:top}
+img						{border:none}
+ul 						{list-style:none}
+h2						{font-size:120%}
+h3						{font-size:110%}
+textarea .inputbox 		{width:350px; height:100px}
+
+.clr					{clear:both}
+.width					{width:98%}
+.middle					{vertical-align:middle}
+.main 					{margin: 0 auto;  display:table; text-align:left}
+.dt					{margin:auto; width:auto; display:table} /* align center (for topmenu)*/

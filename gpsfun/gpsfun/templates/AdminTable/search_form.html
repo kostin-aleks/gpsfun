@@ -1,0 +1,454 @@
+{% extends "gpsfun_admin/admin_base.html" %}
+{% load i18n %}
+{% block content %}
+{% load admintable %}
+
+
+<script type="text/javascript">
+var storedfilters=Array();
+function show_condition_input() {
+
+    if (this.value=='undefined') {
+		$('#value-input').empty();
+		$('#condition-selector').hide();
+    } else {
+		$('#condition-selector').show();
+    }
+
+    populate_condition_selector(this.value);
+}
+function clear_date_example() {
+    if (this.value=='YYYY-MM-DD') {
+	this.value='';
+    }
+}
+
+
+function delfilter(id) {
+    $('#filter-rule-'+id, null).remove();
+    var current_rules = $('li.filter-rule');
+    if (current_rules.length==0) {
+		$('#no-rules').show();
+		$('#start-search-submit').hide();
+		$('#save').hide();
+    }
+}
+
+function display_current_filters() {
+    {% for rule in table.search_rules_list %}
+    // {{ rule|safe }}
+    addfilter('{{ rule.field_name|safe }}', '{{ rule.field_title|safe }}',
+	      '{{ rule.condition_value|safe }}', '{{ rule.condition_title|safe }}',
+	      '{{ rule.value1|safe }}', '{{ rule.value2|safe }}');
+    {% endfor %}
+}
+
+function addfilter(field_name, field_title,
+		   condition_value, condition_title,
+		   value1, value2) {
+	alert([field_name, field_title,
+		   condition_value, condition_title,
+		   value1, value2]);
+    var current_rules = $('#li.filter-rule');
+    $('#no-rules').hide();
+    $('#start-search-submit').show();
+    $('#save').show();
+    var next_rule_id = Math.round(Math.random()*10000);
+    //var rule = LI({'class': 'filter-rule', 'id': 'filter-rule-'+next_rule_id});
+	var rule = $('<li></li>').attr('id','filter-rule-'+next_rule_id);
+	rule.addClass('filter-rule');
+	rule.append(jQuery('<span></span>').text('Field "'+field_title+'"'));
+	rule.append(jQuery('<span></span>').text(condition_title));
+    //appendChildNodes(rule, SPAN({'class': 'field'},'Field "'+field_title+'"'));
+    //appendChildNodes(rule, SPAN({'class': 'condition'}, condition_title));
+
+    if (condition_value=='eq' ||
+	condition_value=='ne' ||
+	condition_value=='lte' ||
+	condition_value=='gte' ||
+	condition_value=='like'
+       ) {
+			//appendChildNodes(rule, SPAN({'class': 'value'}, value1));
+			//appendChildNodes(rule, INPUT({'type': 'hidden',
+			//			      'name': field_name+':'+condition_value,
+			//			      'value': value1}));
+			rule.append(jQuery('<span></span>').text(value1));
+			rule.append(jQuery('<input/>').attr('type', 'hidden').attr('name', field_name+':'+condition_value).attr('value', value1));
+    } else if (condition_value=='null') {
+			//appendChildNodes(rule, INPUT({'type': 'hidden',
+			//	      'name': field_name+':'+condition_value,
+			//	      'value': 'true'}));
+			rule.append(jQuery('<input/>').attr('type', 'hidden').attr('name', field_name+':'+condition_value).attr('value', value1));
+    } else if (condition_value=='dtequal' ||
+	       condition_value=='before' ||
+	       condition_value=='since'
+	      ) {
+			//appendChildNodes(rule, SPAN({'class': 'value'}, value1));
+			//appendChildNodes(rule, INPUT({'type': 'hidden',
+			//	      'name': field_name+':'+condition_value,
+			//	      'value': value1}));
+			rule.append(jQuery('<span></span>').text(value1));
+			rule.append(jQuery('<input/>').attr('type', 'hidden').attr('name', field_name+':'+condition_value).attr('value', value1));
+    } else if (condition_value=='period' ||
+	       condition_value=='lastmonth' ||
+	       condition_value=='lastweek' ||
+	       condition_value=='lastday' ||
+	       condition_value=='lastyear' ) {
+			//appendChildNodes(rule, SPAN({'class': 'value'}, value1+
+			//	    ' - '+value2));
+			//appendChildNodes(rule, INPUT({'type': 'hidden',
+			//	      'name': field_name+':period', //+condition_value,
+			//	      'value': value1+'---'+value2}));
+			rule.append(jQuery('<span></span>').text(value1+' - '+value2));
+			rule.append(jQuery('<input/>').attr('type', 'hidden').attr('name', field_name+':period').attr('value', value1+'---'+value2));
+    } else if (condition_value=='true' ||
+	       condition_value=='false') {
+			//appendChildNodes(rule, INPUT({'type': 'hidden',
+			//	      'name': field_name+':'+condition_value,
+			//	      'value': condition_value}));
+			rule.append(jQuery('<input/>').attr('type', 'hidden').attr('name', field_name+':'+condition_value).attr('value', condition_value));
+    } else if (condition_value=='bool') {
+			//appendChildNodes(rule, INPUT({'type': 'hidden',
+			//	      'name': field_name+':'+condition_value,
+			//	      'value': value1}));
+			rule.append(jQuery('<input/>').attr('type', 'hidden').attr('name', field_name+':'+condition_value).attr('value', value1));
+    } else {
+			alert('unknown condition value: '+condition_value);
+    }
+    var anchor = jQuery('<a></a>').attr('href','#').text('{% trans 'Remove this line' %}');
+	anchor.click(function(){delfilter(''+next_rule_id);});
+	rule.append(anchor);
+    //appendChildNodes(rule, A({'href': '#',
+	//		      'onclick': 'delfilter('+next_rule_id+');'},
+	//		     '{% trans 'Remove this line' %}'))
+
+    // appendChildNodes(rule, INPUT({'type': 'text', 'name': 'value'})
+    //appendChildNodes('current-filters',rule);
+	$('#current-filters').append(rule);
+    return false;
+
+}
+
+function addfiltersubmit() {
+	var elm_selector = $('#field-selector')[0];
+    var field = elm_selector.options[elm_selector.selectedIndex]
+    var field_name = field.value;
+    var field_title = field.text;
+	var elm_condition = $('#condition-selector')[0]
+    var condition = elm_condition.options[elm_condition.selectedIndex];
+    var condition_value = condition.value;
+    var condition_title = condition.text;
+    var value1 = value2 = null;
+
+    if (condition_value=='eq'  || condition_value=='ne' || condition_value=='lte' ||
+	condition_value=='gte' || condition_value=='like') {
+		value1 = $('#value').val();
+    } else if (condition_value=='null') {
+		value1 = 'true';
+    } else if (condition_value=='dtequal' ||
+	       condition_value=='before' ||
+	       condition_value=='since'
+	      ) {
+	value1 = $('#dateinput1').val();
+    } else if (condition_value=='period' ||
+	       condition_value=='lastmonth' ||
+	       condition_value=='lastweek' ||
+	       condition_value=='lastday' ||
+	       condition_value=='lastyear' ) {
+		value1 = $('#dateinput1').val();
+		value2 = $('#dateinput2').val();
+
+    } else if (condition_value=='true' ||
+	       condition_value=='false') {
+		value1 = condition_value;
+
+    } else {
+		alert('{% trans 'Condition value not recognized' %}: '+condition_value);
+    }
+    addfilter(field_name, field_title, condition_value, condition_title, value1, value2);
+    return false;
+}
+
+function startfilter() {
+    for (var i=0; i<document.forms.length; i++) {
+    	var form = document.forms[i];
+    	if (form.id=='filters') {
+    	    form.submit();
+    	}
+    }
+}
+
+function resetallfilters() {
+    for (var i=0; i<document.forms.length; i++) {
+    	var form = document.forms[i];
+    	if (form.id=='filters') {
+	    $('#action-field-id').val('reset');
+    	    form.submit();
+    	}
+    }
+}
+
+
+function show_value_input() {
+    var today = '{{ today }}';
+    var lastweek = '{{ lastweek }}';
+    var lastmonth = '{{ lastmonth }}';
+    var lastyear = '{{ lastyear }}';
+    $('#value-input').empty();
+
+    if (this.value == 'eq' || this.value == 'lte' || this.value == 'gte' ||
+	this.value == 'ne' || this.value == 'like') {
+		$('#value-input').append(jQuery('<input/>').attr('type', 'text').attr('name', 'value').attr('id','value'));
+		//appendChildNodes('value-input', INPUT({'type': 'text', 'name': 'value', 'id': 'value'}));
+    } else if (this.value == 'null') {
+		// no action
+    } else if (this.value == 'undefined') {
+		$('#add-filter-submit').hide();
+		return false;
+    } else if (this.value == 'dtequal' || this.value == 'since' ||
+	       this.value == 'before') {
+		    $('#value-input').append(jQuery('<input/>').attr('type', 'text').attr('name', 'value').attr('id','dateinput1').attr('size', '9').attr('value', 'YYYY-MM-DD'));
+			//appendChildNodes('value-input', INPUT({'type': 'text', 'name': 'value',
+			//		       'size': '9',
+			//		       'maxlength': '10',
+			//		       'id': 'dateinput1',
+			//		       'value': 'YYYY-MM-DD'}));
+			$('#dateinput1').click(clear_date_example);
+
+    } else if (this.value == 'period' ||
+ 	       this.value == 'lastday'  || this.value == 'lastmonth' ||
+	       this.value == 'lastyear' || this.value == 'lastweek') {
+			$('#value-input').append(jQuery('<input/>').attr('type', 'text').attr('name', 'date_start').attr('id','dateinput1').attr('size', '9').attr('value', 'YYYY-MM-DD').attr('maxlength','10'));
+			//appendChildNodes('value-input', INPUT({'type': 'text', 'name': 'date_start',
+			//		       'size': '9',
+			//		       'id': 'dateinput1',
+			//		       'maxlength': '10',
+			//		       'value': 'YYYY-MM-DD'}));
+			$('#value-input').append(jQuery('<input/>').attr('type', 'text').attr('name', 'date_end').attr('id','dateinput2').attr('size', '9').attr('value', 'YYYY-MM-DD').attr('maxlength','10'));
+			//appendChildNodes('value-input', INPUT({'type': 'text', 'name': 'date_end',
+			//		       'size': '9',
+			//		       'id': 'dateinput2',
+			//		       'maxlength': '10',
+			//		       'value': 'YYYY-MM-DD'}));
+	if (this.value == 'lastday') {
+	    $('#dateinput1').val(today);
+	    $('#dateinput2').val(today);
+	} else if (this.value == 'lastmonth') {
+	    $('#dateinput1').val(lastmonth);
+	    $('#dateinput2').val(today);
+	} else if (this.value == 'lastweek') {
+	    $('#dateinput1').val(lastweek);
+	    $('#dateinput2').val(today);
+	} else if (this.value == 'lastyear') {
+	    $('#dateinput1').val(lastyear);
+	    $('#dateinput2').val(today);
+	} else {
+	    $('#dateinput1').click(clear_date_example);
+	    $('#dateinput2').click(clear_date_example);
+	}
+
+    } else {
+	// appendChildNodes('value-input', INPUT({'type': 'submit', 'value': 'Add'}));
+    }
+    //appendChildNodes('value-input', INPUT({'type': 'submit', 'name': 'add',
+//					   'value': '{% trans 'Add Filter' %}'}));
+
+    //setStyle($('add-filter-submit'),{'display': 'inline'});
+	$('#add-filter-submit').show()
+
+}
+
+function saveas() {
+    var filtername = prompt("{% trans 'Save this search as' %}", "");
+    if (filtername != null) {
+	$('#saveas-field').val(filtername);
+	startfilter();
+    }
+    return false;
+}
+
+function filter_info(obj) {
+    var info = null;
+    for (var i=0; i<storedfilters.length; i++) {
+	if ('delete-filter-'+storedfilters[i]['id']==obj.id) {
+	    info = storedfilters[i];
+	}
+    }
+    return info;
+}
+
+
+function deletefilter() {
+    // delete filter from configured filters table
+    info = filter_info(this);
+    //row_to_remove = 'filter-'+info['id'];
+    r = doSimpleXMLHttpRequest('', { {% for v in table.getvars_list %}{{ v.0 }}:'{{ v.1 }}',
+				     {% endfor %}
+				     action: 'delete',
+				     id: info['id']
+				   }).addCallback(function() {
+					//partial(removeElement, row_to_remove)
+					$('#filter-'+info['id']).remove();
+					}
+    );
+
+    //removeElement(row_to_remove);
+}
+
+window.onload = function () {
+    display_current_filters();
+    $('#add-filter-submit').hide();
+    $('#field-selector').change(show_condition_input);
+    $('#condition-selector').change(show_value_input);
+    $('#add-filter-submit').click(addfiltersubmit);
+    $('#reset-all-filters').click(resetallfilters);
+    $('#start-search-submit').click(startfilter);
+    $('#save').click(saveas);
+    {% for filter in table.configured_filters %}
+    $('#delete-filter-{{ filter.id }}').click(deletefilter);
+    storedfilters[storedfilters.length] = ({'name': '{{ filter.name }}',
+					    'href': '{{ table.getvars }}&action=delete&name={{ filter.name }}',
+					    'id': '{{ filter.id }}'});
+    {% endfor %}
+}
+
+function contains(s1, s2) {
+	if (s2.indexOf(s1)!=-1) {
+		return true;
+	} else {
+		return false;	
+	}
+}
+
+function populate_condition_selector(nametype) {
+    $('#value-input').empty();
+    //setStyle($('add-filter-submit'),{'display': 'none'});
+	$('#add-filter-submit').hide();
+    var condselectoritems = new Array();
+	condselectoritems.push(['undefined', "{% trans 'Choose condition' %}..."]);
+	condselectoritems.push(['eq', "== {% trans 'Equal' %}"]);
+    if (!contains(':datetime', nametype)) {
+		condselectoritems.push(['ne',"!= {% trans 'NOT Equal' %}"]);
+    }
+    switch(true) {
+    case(contains(':integer', nametype)):
+		condselectoritems.push(['lte',"< {% trans 'Less Than' %}"]);
+		condselectoritems.push(['gte',"> {% trans 'Greater Than' %}"]);
+		break;
+    case(contains(':varchar', nametype)):
+		condselectoritems.push(['like',"{% trans 'Contains' %}"]);
+		break;
+    case(contains(':bool', nametype)):
+		condselectoritems = new Array();
+		condselectoritems.push(['undefined',"{% trans 'Choose condition' %}"]);
+		condselectoritems.push(['true',"{% trans 'True' %}"]);
+		condselectoritems.push(['false',"{% trans 'False' %}"]);
+		break;
+
+    case(contains(':datetime', nametype)):
+		condselectoritems = new Array();
+		condselectoritems.push(['undefined',"{% trans 'Choose condition' %}"]);
+		condselectoritems.push(['dtequal',"{% trans 'Equal' %}"]);
+		condselectoritems.push(['since',"{% trans 'Since' %}"]);
+		condselectoritems.push(['before',"{% trans 'Before' %}"]);
+		condselectoritems.push(['period',"{% trans 'Date Range' %}"]);
+		condselectoritems.push(['lastday',"{% trans 'Last Day' %}"]);
+		condselectoritems.push(['lastweek',"{% trans 'Last Week' %}"]);
+		condselectoritems.push(['lastmonth',"{% trans 'Last Month' %}"]);
+		condselectoritems.push(['lastyear',"{% trans 'Last Year' %}"]);
+		break;
+
+    }
+
+    condselectoritems.push(['null',"{% trans 'NULL Not Specified' %}"]);
+    //replaceChildNodes('condition-selector', condselectoritems);
+	$('#condition-selector').empty();
+	for (var i=0;i<condselectoritems.length;i++) {
+		$('#condition-selector').append(jQuery('<option></option>').attr('value', condselectoritems[i][0]).text(condselectoritems[i][1]));
+	}
+}
+</script>
+
+<div id="search-form">
+  <fieldset>
+    <legend>{% trans 'Add new filter (search)' %}</legend>
+
+  <div id="current-rules">
+    <form id="filters" method="get">
+    <input type="hidden" id="saveas-field" name="saveas" value="">
+    <input type="hidden" id="action-field-id" name="action" value="start_search" />
+      {% for g in table.getvars_list %}
+      <input type="hidden" name="{{ g.0 }}" value="{{ g.1 }}">
+      {% endfor %}
+      <p id="no-rules">
+	{% trans 'There are no filters defined' %}.
+      </p>
+      <ol id="current-filters"></ol>
+    </form>
+  </div>
+
+
+  <form id="addfilterform" onsubmit="return false;">
+    <select id="field-selector" name="fieldname">
+      <option value="undefined">{% trans 'Add new filter on column' %} ...</option>
+      {% for field in table.searchable_fields %}
+      <option value="{{ field.name }}:{{ field.db_type }}">{{ field.verbose_name }}</option>
+      {% endfor %}
+    </select>
+	<select id="condition-selector" name="condition" style="display:none;">
+      <option value="undefined">{% trans 'Choose condition' %}</option>
+    </select>
+    <div id="value-input"></div>
+    <input type="submit" id="add-filter-submit" name="addfilter" value="{% trans 'Add filter line' %}">
+
+    <br><br>
+    <input type="submit" id="start-search-submit" name="startsearch" value="{% trans 'Start search' %}">
+    <input type="submit" id="reset-all-filters" name="resetfilters" value="{% trans 'Reset all filters' %}">
+    <input type="button" id="save" name="save" value="{% trans 'Save filter as' %} ...">
+    <input value="Back" type="button" onclick="document.location.href='?{{ table.getvars }}';">
+  </form>
+    <br>
+
+
+
+<div class="help">
+  <ul><h4>{% trans 'Help on setting filters' %}</h4>
+    <li>{% trans 'For date field "since" can be specified as "-X" days. For example, to get data for last week, you can specify it as "-7". For last year: "-365"' %}</li>
+    <li>{% trans 'For date field you can use "d", "w", "h" modifiers which mean days, weeks, hours and special "midnight" modifier. "-" is optional.' %}</li>
+    <li>{% trans 'Use %s to specify template (you will be asked to provide value on call to this search)' %}.</li>
+  </ul>
+
+
+</div>
+
+  </fieldset>
+</div>
+
+<div id="configured-filters">
+
+  <fieldset>
+    <legend>{% trans 'Configured filters' %}</legend>
+
+    <table class="table">
+      <tr>
+		<th>{% trans 'Filter name' %}</th>
+		<th>{% trans 'Access' %}</th>
+		<th colspan="3">{% trans 'Action' %}</th>
+      </tr>
+      {% for filter in table.configured_filters %}
+      <tr id="filter-{{ filter.id }}">
+		<td onclick="document.location.href='?restore={{ filter.name }}';">{{ filter.name }}</td>
+		<td>{% if filter.is_public %}{% trans 'Public' %}{% else %}{% trans 'Private' %}{% endif %}</td>
+		<td><a href="?restore={{ filter.name }}-{{ filter.user.username }}">{% trans 'Run' %}</a></td>
+		<td><a href="?{{ table.getvars }}&restore={{ filter.name }}&action=editfilter">{% trans 'Edit' %}</a></td>
+		<td id="delete-filter-{{ filter.id }}"><a href="#">{% trans 'Delete' %}</a></td>
+      </tr>
+      {% endfor %}
+    </table>
+
+  </fieldset>
+</div>
+
+
+{% endblock %}
+

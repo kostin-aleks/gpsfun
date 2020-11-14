@@ -1,0 +1,4 @@
+== Django Halogen D.G. utilities ==
+
+We try to follow Don't-Repeat-Yourself principle. All the small
+tricks which are used between different projects are put here.

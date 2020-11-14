@@ -1,0 +1,153 @@
+{% load i18n %}
+{% load args %}
+{% comment %}
+table - > instanse of BaseTableView,
+          see __iter__ method
+
+row  -> instanse of BoundRow
+cell -> instanse of BoundCell
+
+{% endcomment %}
+<script>
+function show_save_dialog(obj, table_id, order_by) {
+    args = {'action': 'save_state'};
+    if (order_by) {
+        args['sort_by'] = order_by;
+    }
+
+    df = doSimpleXMLHttpRequest('', args);
+    df.addCallback(function(result) { 
+        alert("State has been saved success");
+        location.href="?profile=default";
+    });
+    return false;
+}
+
+function show_save_as_dialog(obj, table_id, order_by) {
+    save_as = prompt("Enter name for save state");
+
+    if (save_as) {
+        args = {'action': 'save_state_as',
+                'name': save_as};
+
+        if (order_by) {
+            args['sort_by'] = order_by;
+        }
+            
+        df =  loadJSONDoc('', args);
+        df.addCallback(function(result) { 
+            if (result.status == 'OK') {
+                alert("State has been saved success");
+                location.href="?profile="+result.id;
+            } else {
+                alert("Unexpected error occured while saving profile");
+            }
+        });
+    }
+    return false;
+}
+
+function remove_profile(profile_id) {
+    if (!confirm("Do you want to remove profile?")) {
+        return false;
+    }
+    args = {
+        'action': 'remove_profile',
+        'value': profile_id
+        };
+    df = doSimpleXMLHttpRequest('', args);
+    df.addCallback(function(result) { 
+        alert("Profile has been removed");
+        location.href = location.href;
+    });
+    return false;
+}
+
+</script>
+{% if controller.profile %}
+{% if not controller.profile.is_default %}
+    <h2>{% trans 'Profile' %}: {{ controller.profile.label }}
+    <a href="" onclick="return remove_profile('{{ controller.profile.id }}');"><img src="/s/img/16x16/editdelete.png"></a></h2>
+{% endif %}
+{% endif %}
+<div id="toolbar">
+{% if table.search %}
+  <form id="changelist-search" action="" method="get">
+    <div><!-- DIV needed for valid HTML -->
+      <label for="searchbar"><img src="/media/img/admin/icon_searchbox.png" alt="{% trans 'Search' %}" /></label>
+      <input type="text" size="40" name="search" value="{{ controller.search_value|default_if_none:"" }}" id="searchbar" /><input type="submit" value="{% trans 'Search' %}" />
+    </div>
+  </form>
+<script type="text/javascript">document.getElementById("searchbar").focus();</script>
+{% endif %}
+<a href="" onclick="Layer.toggle_display('setup_dialog_{{ table.id }}', this); return false;">{% trans 'Columns' %}</a> | 
+<a href="" onclick="Layer.toggle_display('filter_dialog_{{ table.id }}', this); return false;">{% trans 'Filter' %}</a> |
+<a href="" onclick="return show_save_dialog(this, '{{ table.id }}', '{{ request.GET.sort_by }}');">{% trans 'Remember as default state' %}</a> | 
+<a href="" onclick="return show_save_as_dialog(this, '{{ table.id }}', '{{ request.GET.sort_by }}');">{% trans 'Remember state as' %}</a>
+</div>
+{% if controller.paginator %}
+  {% with controller.paginator as paginator %}
+    {% include "paginator.html" %}
+  {% endwith %}
+{% endif %}
+<table>
+    {% include "table_head.html" %}
+    <tbody>
+        {% for row in controller.get_paginated_rows %}
+        <tr id="{{ row.get_id }}" class="{% cycle row1,row2 %} {{ row.get_row_class }}">
+            {% for cell in row %}
+                <TD {{ cell.html_cell_attr }} {% if cell.get_cell_class %}class="{{ cell.get_cell_class }}"{% endif %} {% if cell.get_cell_style %}style="{{ cell.get_cell_style }}"{% endif %}>{{ cell.as_html }}</TD>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% if controller.paginator %}
+  {% with controller.paginator as paginator %}
+    {% include "paginator.html" %}
+  {% endwith %}
+{% endif %}
+<div class="tableview-saved-search">
+<h4>{% trans 'Saved profiles' %}:</h4>
+<ul>
+    {% if controller.profile.is_default %}
+        <LI><a href="?profile=default"><b>{% trans 'default' %}</b></a></LI> 
+    {% else %}
+        <LI><a href="?profile=default">{% trans 'default' %}</a></LI> 
+    {% endif %}
+    &#124;
+    {% for item in controller.get_saved_state %}
+        {% ifequal item controller.profile %}
+            <li><a href="?profile={{ item.id }}"><b>{{ item.label }}</b></a></li>
+        {% else %}
+            <li><a href="?profile={{ item.id }}">{{ item.label }}</a></li>
+        {% endifequal %}
+        &#124;
+    {% endfor %}
+</ul>
+</div>
+
+<div id="setup_dialog_{{ table.id }}" class="table_setup_layer">
+    <form action="" method="POST">
+    <ul>
+        {% for key,cell in controller.iter_all_title %}
+            {% if cell.is_permanent %}
+                <li><input type="checkbox" name="setup_{{ table.id }}_column_{{ key }}" value="{{ key }}" checked="true" disabled="true">{{ cell.column.html_title }}</li>
+            {% else %}
+                <li><input type="checkbox" name="setup_{{ table.id }}_column_{{ key }}" value="{{ key }}" {% if cell.is_visible %}checked="True"{% endif %}>{{ cell.column.html_title }}</li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+    <input type="submit" name="_save_column_setup" value="{% trans 'Save' %}">
+    </form>
+</div>
+
+<div id="filter_dialog_{{ table.id }}" class="table_setup_layer" style="width: 500px;">
+    <h1>{% trans 'Filter form' %}</h1>
+    <form action="?{% args request.GET 'profile' 'custom' %" method="POST">
+        <table>
+        {{ filter_form }}
+        </table>
+        <input type="submit" name="form_filter" value="{% trans 'Apply' %}">
+    </form>
+</div>

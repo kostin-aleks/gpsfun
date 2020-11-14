@@ -1,0 +1,27 @@
+from django import template
+from BeautifulSoup import BeautifulSoup, Comment
+import re
+
+register = template.Library()
+
+def sanitize_html(value,
+                  valid_tags='a b i img strong em code br p ul li ol span',
+                  valid_attrs = 'href src title style'):
+    valid_tags = valid_tags.split()
+    valid_attrs = valid_attrs.split()
+    soup = BeautifulSoup(value)
+    for comment in soup.findAll(
+        text=lambda text: isinstance(text, Comment)):
+        comment.extract()
+    for tag in soup.findAll(True):
+        if tag.name not in valid_tags:
+            tag.hidden = True
+        else:
+            for attr, val in tag.attrs:
+                if re.match('javascript:', val, re.I) is not None:
+                    tag.hidden = True
+            tag.attrs = [(attr, val) for attr, val in tag.attrs if attr in valid_attrs]
+    #print value
+    #print '-'*40
+    #print soup.renderContents().decode('utf8')
+    return soup.renderContents().decode('utf8')

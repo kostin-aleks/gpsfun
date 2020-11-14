@@ -1,0 +1,202 @@
+{% extends "Geocaching_su/base_personal_statistics.html" %}
+{% load i18n %}
+
+{% block active-personal %} class="active"{% endblock %}
+
+{% block statistics_table %}
+
+<br/>
+
+<h2>{% trans "Personal Statistics" %}</h2>
+
+<div class="container col-md-12">
+<h3>{% trans "Profile" %}: {{ geocacher.nickname }}</h3>
+<form class="navbar-form pull-left" method="POST" action="">
+
+  <div class="form-group">
+  <label for="login_as">{% trans "See statistics for " %} &nbsp;</label>
+    <input type="text" class="form-control" name="login_as" id="login_as" placeholder="{% trans "nickname" %}">
+  </div>
+  <button type="submit" class="btn btn-success" name="ok">{% trans "OK" %}</button>
+</form><br/>
+{% if geocacher %}
+<table class="table table-striped table-bordered table-hover table-condensed">
+  <tr>
+    <td>{% trans "Registered since" %}</td>
+    <th>{{ geocacher.register_date|date }}</th>
+  </tr>
+  <tr>
+    <td>{% trans "Country" %}</td>
+    <th>{% trans geocacher.cacher_country.name|default_if_none:"" %}</th>
+  </tr>
+  <tr>
+    <td>{% trans "Admin subject" %}</td>
+    <th>{% trans geocacher.cacher_region.name|default_if_none:"" %}</th>
+  </tr>
+  <tr>
+    <td>{% trans "Town" %}</td>
+    <th>{{ geocacher.town|default_if_none:"" }}</th>
+  </tr>
+  <tr>
+    <td>{% trans "Caching months" %}</td>
+    <th>{{ geocacher.caching_months|default_if_none:0 }} {% trans "from" %} {{ geocacher.total_months|default_if_none:0 }}</th>
+  </tr>
+</table>
+</div>
+{% if geocacher.statistics %}
+{% with stat=geocacher.statistics %}
+  <div class="container col-md-12">
+    <div class="col-md-5">
+      <h3>{% trans "Statistics of founded caches" %}</h3>
+      <table class="table table-striped table-bordered table-hover table-condensed">
+        <tr>
+          <th></th>
+          <th>{% trans "all years" %}</th>
+          <th>{{ curr_year }}</th>
+          <th>{{ curr_year|add:-1 }}</th>
+        </tr>
+        <tr>
+          <td>{% trans "Total number" %}</td>
+          <th>{{ stat.found_count|default_if_none:0 }}</th>
+          <th>{{ stat.curr_found_count|default_if_none:0 }}</th>
+          <th>{{ stat.last_found_count|default_if_none:0 }}</th>
+        </tr>
+        <tr>
+          <td>{% trans "Traditional" %}</td>
+          <th>{{ stat.tr_found_count|default_if_none:0 }}</th>
+          <th>{{ stat.tr_curr_found_count|default_if_none:0 }}</th>
+          <th>{{ stat.tr_last_found_count|default_if_none:0 }}</th>
+        </tr>
+        <tr>
+          <td>{% trans "Virtual" %}</td>
+          <th>{{ stat.vi_found_count|default_if_none:0 }}</th>
+          <th>{{ stat.vi_curr_found_count|default_if_none:0 }}</th>
+          <th>{{ stat.vi_last_found_count|default_if_none:0 }}</th>
+        </tr>
+      </table>
+
+      <table class="table table-striped table-bordered table-hover table-condensed">
+        <tr>
+          <td>{% trans "Average grade" %}</td>
+          <th>{{ stat.av_grade|floatformat:1|default_if_none:"" }}</th>
+        </tr>
+        <tr>
+          <td>{% trans "Recommendations" %}</td>
+          <th>{{ geocacher.recommendation_count|default_if_none:"" }}</th>
+        </tr>
+        <tr>
+          <td>{% trans "Average number of caches found in one month" %}</td>
+          <th>{{ geocacher.avg_caches_per_month|floatformat:1|default_if_none:0 }}</th>
+        </tr>
+        <tr>
+          <td>{% trans "Largest number of caches found in one month" %}</td>
+          <th>{{ geocacher.most_found_one_month|default_if_none:0 }}</th>
+        </tr>
+        <tr>
+          <td>{% trans "Last found cache" %}</td>
+          {% with latest=geocacher.latest_found_cache %}
+          <th><a href="{{ latest.cache.url }}" target="_blank">{{ latest.cache.code }}</a> ({{ latest.date|date }})</th>
+          {% endwith %}
+        </tr>
+      </table>
+      <br/>
+      {% if geocacher.seek_milestones %}
+      <h4>{% trans "Milestones" %}</h4>
+      <table class="table table-striped table-bordered table-hover table-condensed">
+        <tr>
+          <th>N</th>
+          <th>{% trans "Date" %}</th>
+          <th>{% trans "Geocache" %}</a></th>
+        </tr>
+        {% for milestone in geocacher.seek_milestones %}
+        <tr>
+          <td>{{ milestone.idx }}</td>
+          <td>{{ milestone.item.found_date|date }}</td>
+          <td><a href="{{ milestone.item.cache.url }}" target="_blank">{{ milestone.item.cache.code }}</a></td>
+        </tr>
+        {% endfor %}
+      </table>
+      {% endif %}
+    </div>
+    <div class="col-md-5">
+      <h3>{% trans "Statistics of created caches" %}</h3>
+      <table class="table table-striped table-bordered table-hover table-condensed">
+        <tr>
+          <th></th>
+          <th>{% trans "all years" %}</th>
+          <th>{{ curr_year }}</th>
+          <th>{{ curr_year|add:-1 }}</th>
+        </tr>
+        <tr>
+          <td>{% trans "Total number" %}</td>
+          <th>{{ stat.created_count|default_if_none:0 }}</th>
+          <th>{{ stat.curr_created_count|default_if_none:0 }}</th>
+          <th>{{ stat.last_created_count|default_if_none:0 }}</th>
+        </tr>
+        <tr>
+          <td>{% trans "Traditional" %}</td>
+          <th>{{ stat.tr_created_count|default_if_none:0 }}</th>
+          <th>{{ stat.tr_curr_created_count|default_if_none:0 }}</th>
+          <th>{{ stat.tr_last_created_count|default_if_none:0 }}</th>
+        </tr>
+        <tr>
+          <td>{% trans "Virtual" %}</td>
+          <th>{{ stat.vi_created_count|default_if_none:0 }}</th>
+          <th>{{ stat.vi_curr_created_count|default_if_none:0 }}</th>
+          <th>{{ stat.vi_last_created_count|default_if_none:0 }}</th>
+        </tr>
+      </table>
+
+      <table class="table table-striped table-bordered table-hover table-condensed">
+        <tr>
+          <td>{% trans "Average grade" %}</td>
+          <th>{{ stat.av_his_cach_grade|floatformat:1|default_if_none:"" }}</th>
+        </tr>
+        <tr>
+          <td>{% trans "Recommendations" %}</td>
+          <th>{{ geocacher.caches_recommendation_count|default_if_none:"" }} {% trans "for" %} {{ geocacher.recommended_caches_count|default_if_none:"" }}</th>
+        </tr>
+
+        <tr>
+          <td>{% trans "Average number of caches created in one month" %}</td>
+          <th>{{ geocacher.avg_created_caches_per_month|floatformat:1|default_if_none:0 }}</th>
+        </tr>
+        <tr>
+          <td>{% trans "Largest number of caches created in one month" %}</td>
+          <th>{{ geocacher.most_created_one_month|default_if_none:0 }}</th>
+        </tr>
+        <tr>
+          <td>{% trans "Last created cache" %}</td>
+          {% with latest=geocacher.latest_created_cache %}
+          <th><a href="{{ latest.cache.url }}" target="_blank">{{ latest.cache.code }}</a> ({{ latest.date|date }})</th>
+          {% endwith %}
+        </tr>
+        <tr>
+          <td>{% trans "Ratio recommended caches to all caches" %}</td>
+          <th>{{ geocacher.ratio_recommended_caches|floatformat:0|default_if_none:"" }}%</th>
+        </tr>
+      </table>
+      {% if geocacher.hide_milestones %}
+      <h4>{% trans "Milestones" %}</h4>
+      <table class="table table-striped table-bordered table-hover table-condensed">
+        <tr>
+          <th>N</th>
+          <th>{% trans "Date" %}</th>
+          <th>{% trans "Geocache" %}</a></th>
+        </tr>
+        {% for milestone in geocacher.hide_milestones %}
+        <tr>
+          <td>{{ milestone.idx }}</td>
+          <td>{{ milestone.item.created_date|date }}</td>
+          <td><a href="{{ milestone.item.cache.url }}" target="_blank">{{ milestone.item.cache.code }}</a></td>
+        </tr>
+        {% endfor %}
+      </table>
+      {% endif %}
+    </div>
+  </div>
+{% endwith %}
+{% endif %}
+{% endif %}
+{% endblock %}
+

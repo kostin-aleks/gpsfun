@@ -1,0 +1,142 @@
+{% extends "Map/geocaching_map_base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block menu_item_map %}active{% endblock %}
+{% block in_head %}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{% static 'js/leaflet/leaflet.css' %}" />
+    <script src="{% static 'js/leaflet/leaflet.js' %}"></script>
+    <!--meta name="viewport" content="initial-scale=1.0, user-scalable=no" /-->
+    <script src="{% static 'jsi18n/' %}" type="text/javascript"></script>
+    <!--script src="/r{{ CSSVERSION }}/js/infobubble.js" type="text/javascript"></script-->
+    <script src="{% static 'js/browser_kind.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/map.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/leaflet/plugins/Leaflet.MousePosition-master/src/L.Control.MousePosition.js' %}" type="text/javascript"></script>
+    <link rel="stylesheet" href="{% static 'js/leaflet/plugins/Leaflet.MousePosition-master/src/L.Control.MousePosition.css' %}" />
+    <script src="{% static 'js/leaflet/plugins/L.GeoSearch-develop/src/js/l.control.geosearch.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'js/leaflet/plugins/L.GeoSearch-develop/src/css/l.geosearch.css' %}" />
+    <script src="{% static 'js/leaflet/plugins/L.GeoSearch-develop/src/js/l.geosearch.provider.openstreetmap.js' %}"></script>
+    <script src="{% static 'js/leaflet/plugins/leaflet-providers-master/leaflet-providers.js"' %}></script>
+    <!--script src="/r{{ CSSVERSION }}/js/leaflet/plugins/PruneCluster-master/dist/PruneCluster.js"></script>
+    <link rel="stylesheet" href="/r{{ CSSVERSION }}/js/leaflet/plugins/PruneCluster-master/dist/LeafletStyleSheet.css" /-->
+    <!--link rel="stylesheet" href="/r{{ CSSVERSION }}/js/leaflet/plugins/Leaflet.ExtraMarkers-master/dist/css/leaflet.extra-markers.min.css" /-->
+    <link rel="stylesheet" href="{% static 'js/leaflet/plugins/BeautifyMarker-master/leaflet-beautify-marker-icon.css' %}" />
+    <script src="{% static 'js/leaflet/plugins/BeautifyMarker-master/leaflet-beautify-marker-icon.js' %}"></script>
+    <script src="{% static 'js/leaflet/plugins/BeautifyMarker-master/leaflet-beautify-marker.js' %}"></script>
+
+
+
+    <script type="text/javascript">
+    function initURLs() {
+      CachesMap.cache_info_url = '{% url 'map-cache-info' %}';
+      CachesMap.get_things_url = '{% url 'map-get-things' %}';
+      CachesMap.show_cache_types_url = '{% url 'map-show-types' %}';
+    }
+    </script>
+
+    <style>
+      a.skiplink {
+        position: absolute;
+        clip: rect(1px, 1px, 1px, 1px);
+        padding: 0;
+        border: 0;
+        height: 1px;
+        width: 1px;
+        overflow: hidden;
+      }
+      a.skiplink:focus {
+        clip: auto;
+        height: auto;
+        width: auto;
+        background-color: #fff;
+        padding: 0.3em;
+      }
+      #map:focus {
+        outline: #4A74A8 solid 0.15em;
+      }
+    </style>
+    <script>
+        //ACCESS_TOKEN = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpandmbXliNDBjZWd2M2x6bDk3c2ZtOTkifQ._QA7i5Mpkd_m30IGElHziw';
+        //MB_ATTR = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+        //    '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+        //    'Imagery © <a href="http://mapbox.com">Mapbox</a>';
+        //MB_URL = 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=' + ACCESS_TOKEN;
+        //OSM_URL = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+        //OSM_ATTRIB = '&copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+    </script>
+{% endblock %}
+
+{% block body_onload %}{% endblock %}
+
+{% block main-content %}
+<a class="skiplink" href="#map">Go to map</a>
+<div class="container">
+<div id="map" class="map map-home" style="height: 450px; margin-top: 50px"></div>
+</div>
+
+    <script>
+        initURLs();
+        CachesMap.init([{{ map_center.lat }}, {{ map_center.lon }}], {{ map_zoom }});
+    </script>
+
+<div class="panel panel-default">
+  <div class="panel-body">
+
+      <!-- Button trigger modal -->
+      <a data-toggle="modal" href="#myModal" class="btn btn-default">{% trans "Filter" %}</a>
+      <!--div class="" id="id_current_location"></div-->
+
+    <form id="form_1" class="form-inline pull-right" action="">
+      <span class="" id="id_count">{% if caches_count %}{% trans "found" %}: {{ caches_count|default_if_none:""}}{% endif %}</span>
+
+      <span class="" id="import_data" style="display:{% if caches.count %}inline{% else %}none{% endif %}">
+    <!--a class="btn btn-default" href="{% url 'map-import-caches-wpt' %}">WPT</a>
+    <a class="btn btn-default" href="{% url 'map-import-caches-wpt-translit' %}">WPT translit</a-->
+      </span>
+    </form>
+    <span id="map_spinner" style="display:none"><img src="{% static 'img/spinner-bar.gif' %}" /></span>
+  </div>
+  <div >
+  <table>
+    <tr><td id="toomanycaches_txt"></td></tr>
+  </table>
+</div>
+</div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">Show caches</h4>
+        </div>
+        <div class="modal-body">
+          <div class="checkbox">
+          <form class="form-horizontal" role="form" action="" id="id_form_types">
+          {% for type in cache_types %}
+            <div class="checkbox">
+            <label>
+              <input type="checkbox" name="hidden_caches[]" value="{{ type.code }}"
+                  {% if type.code in user_types %}checked{% endif %}
+                  onChange="CachesMap.showCacheTypes(this);" />
+                  {{ type.name }}
+            </label>
+            </div>
+          {% endfor %}
+          </form>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+
+{% endblock %}
+
+
+

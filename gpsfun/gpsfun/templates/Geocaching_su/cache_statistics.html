@@ -1,0 +1,29 @@
+{% extends "base_bootstrap.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block menu_item_gssu %}active{% endblock %}
+
+{% block content_span12 %}
+{% block in_head %}
+{{ block.super }}
+    <script type="text/javascript" src="{% static 'js/gcsu.js' %}"></script>
+{% endblock %}
+
+{% block statistics_buttons %}
+<div class="navbar">
+<ul class="nav nav-tabs">
+    <li{% block active-integrated %}{% endblock %}><a href="{% url 'cach-rate-by-index' %}" title="{% trans "Rating caches on the integrated index" %}">{% trans "Rating by the integrated index" %}</a></li>
+    <li{% block active-entries %}{% endblock %}><a href="{% url 'cach-rate-by-found' %}" title="{% trans "Rating caches on the number of entries in a logbook" %}">{% trans "Rating by logs" %}</a></li>
+    <li{% block active-recommendations %}{% endblock %}><a href="{% url 'cach-rate-by-recommend' %}" title="{% trans "Rating caches on the number of recommendations" %}">{% trans "Rating by recommendations" %}</a></li>
+    <li{% block active-statistics %}{% endblock %}><a href="{% url 'geocaching-su-cach-stat' %}" title="{% trans "Statistics" %}">{% trans "Statistics" %}</a></li>
+</ul>
+</div>
+{% endblock %}
+
+{% block statistics_table %}
+
+{% endblock %}
+
+{% endblock %}
+

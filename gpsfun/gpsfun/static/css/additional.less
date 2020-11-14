@@ -1,0 +1,40 @@
+@import "/static/bootstrap/less/variables.less";
+@minPadding:	  10px;
+@bodyMinHeight:	  95%;
+@footerHeight:	  150px;
+
+body {
+        padding-top: @minPadding * 2;
+        padding-bottom: @minPadding * 2;
+      }
+
+      /* Custom container */
+      .container-narrow {
+        margin: 0 auto;
+        max-width: 700px;
+      }
+      .container-narrow > hr {
+        margin: @minPadding*3 0;
+      }
+	  
+	  html, body {
+		height: @bodyMinHeight;
+	  }
+	  
+	  #wrap {
+		min-height: @bodyMinHeight;	  
+	  }
+	  
+	  #main {
+		overflow: auto;
+		padding-bottom: @footerHeight;
+	  }
+	  
+	  .footer {
+		position: relative;
+		margin-top: -@footerHeight;
+		height: @footerHeight;
+		clear: both;
+		padding-top: @minPadding * 2;
+		color: @greenLight;
+	  }

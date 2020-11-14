@@ -1,0 +1,30 @@
+{% extends "base_bootstrap.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block body_onload %}{% endblock %}
+
+{% block menu_item_gssu %}active{% endblock %}
+
+{% block in_head %}
+{{ block.super }}
+    <script type="text/javascript" src="{% static 'js/gcsu.js' %}"></script>
+{% endblock %}
+
+{% block content_span12 %}
+
+{% block statistics_buttons %}
+<div class="navbar">
+<ul class="nav nav-tabs">
+    <li{% block active-activity %}{% endblock %}><a href="{% url 'geocacher-activity' %}" title="{% trans "Geocachers Activity" %}">{% trans "Geocachers Activity" %}</a></li>
+    <li{% block active-rate %}{% endblock %}><a href="{% url 'geocacher-rate' %}" title="{% trans "Geocachers Detail Statistics" %}">{% trans "Geocachers Detail Statistics" %}</a></li>
+    <li{% block active-by-countries %}{% endblock %}><a href="{% url 'geocaching-su-geocacher-stat-countries' %}" title="{% trans "Statistics by Countries" %}">{% trans "Statistics by Countries" %}</a></li>
+</ul>
+</div>
+{% endblock %}
+
+{% block statistics_table %}
+
+{% endblock %}
+
+{% endblock %}

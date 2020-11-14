@@ -1,0 +1,34 @@
+{% load i18n %}
+
+{% block main-content %}
+<div id="map_canvas" style="width:400px; height:300px;"></div>
+<br>
+
+
+<div id="id_latitude_block" class="control-group">
+ <div class="input-group">
+  <input type="hidden" name="lat_sign" value="N" id="id_lat_sign">
+  <button class="btn btn-default" type="button" id="btn_lat_sign">N</button>
+  <input class="input-midi" id="id_latitude" type="text" name="latitude" value="" style="font-size:18px;" />
+ </div>
+</div>
+
+<div id="id_longitude_block" class="control-group">
+ <div class="input-group warning">
+  <input type="hidden" name="lon_sign" value="E" id="id_lon_sign">
+  <button class="btn btn-default" type="button" id="btn_lon_sign">E</button>
+  <input class="input-midi" id="id_longitude" type="text" name="longitude" value=""  style="font-size:18px;"/>
+ </div>
+ </div>
+
+<script>
+var panel= $("#id_latitude_block");
+panel.find("input:text").blur(function(){SetPosition.validate(this);});
+panel.find("button").click(function(){SetPosition.toggleSign(this);});
+
+var panel= $("#id_longitude_block");
+panel.find("input:text").blur(function(){SetPosition.validate(this);});
+panel.find("button").click(function(){SetPosition.toggleSign(this);});
+
+</script>
+{% endblock %}

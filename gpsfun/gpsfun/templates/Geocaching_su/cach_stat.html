@@ -1,0 +1,101 @@
+{% extends "Geocaching_su/cache_statistics.html" %}
+{% load i18n %}
+
+{% block in_head %}
+<script type="text/javascript">
+ google.load('visualization', '1', {packages:['corechart']});
+</script>
+{% endblock %}
+
+{% block active-statistics %}class="active"{% endblock %}
+
+{% block statistics_table %}
+
+<script type='text/javascript'>
+  function drawChart() {
+    var data = new google.visualization.DataTable();
+    data.addColumn('string', '{% trans "Year" %}');
+    {% for type_, v in cache_per_year.0.types.iteritems %}
+    data.addColumn('number', '{% trans type_ %}');
+    {% endfor %}
+    {% for row in cache_per_year %}
+    var row_data = ['{{ row.year }}'];
+      {% for type_, v in row.types.iteritems %}
+      row_data[row_data.length] = {{ v }};
+      {% endfor %}
+    data.addRow(row_data);
+    {% endfor %}
+
+    var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+    chart.draw(data, {width: 800,
+              height: 500,
+              title: '{% trans "Count of created caches per years per type" %}',
+              colors: ['blue', 'green', 'lightblue', 'lightgreen', 'orange', 'brown']});
+  }
+</script>
+
+<br/>
+<h3>{% trans "Caches Statistics" %}</h3>
+
+<div>
+  <div>
+    <h4>{% trans "Active caches" %} {{ cach_count }}</h4>
+  </div>
+
+  <div>
+    <table border="0" style="width:50%;">
+    {% for row in cach_table %}
+      <tr>
+        <td>{{ row.type }}</td>
+    <td>{{ row.description }}</td>
+    <td align="right">{{ row.count }}</td>
+    <td align="right">{{ row.percent|floatformat:1 }}%</td>
+  </tr>
+    {% endfor %}
+    </table>
+  </div>
+  <div>
+    <img src="{% url 'geocaching-su-cach-stat-pie' %}" alt="{% trans 'Caches statistics' %}" />
+  </div>
+</div>
+
+<div>
+  <div>
+      <h4>{% trans "Count of caches over the years" %}</h4>
+      <img src="{% url 'geocaching-su-cach-stat-chart' %}" alt="{% trans 'Trend' %}" />
+  </div>
+</div>
+
+<div>
+  <div>
+    <h4>{% trans "Creating of caches per years" %}</h4>
+  </div>
+  <div>
+      <table border="0" style="width:50%;">
+      <td align="right">{% trans "Year" %}</td>
+      {% for type_, v in cache_per_year.0.types.iteritems %}
+      <td align="right">{% trans type_ %}</td>
+      {% endfor %}
+      {% for row in cache_per_year %}
+        <tr>
+          <td align="right">{{ row.year }}</td>
+      {% for type_, v in row.types.iteritems %}
+      <td align="right">{{ v }}</td>
+      {% endfor %}
+    </tr>
+      {% endfor %}
+      </table>
+  </div>
+</div>
+
+<div>
+  <div>
+      <h4>{% trans "Count of caches per years per type" %}</h4>
+      <img src="{% url 'geocaching-su-cach-pertype-stat-chart' %}" alt="{% trans 'Chart' %}" />
+  </div>
+</div>
+<div id="chart_div"></div>
+
+<script type='text/javascript'>drawChart();</script>
+{% endblock %}
+

@@ -1,0 +1,166 @@
+{% extends "Map/geocaching_map_base.html" %}
+{% load i18n %}
+{% block menu_item_map %}active{% endblock %}
+{% block in_head %}
+    <link rel="stylesheet" href="http://openlayers.org/en/v3.18.2/css/ol.css" type="text/css">
+    <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
+    <script src="http://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
+    <script src="http://openlayers.org/en/v3.18.2/build/ol.js"></script>
+<!--meta name="viewport" content="initial-scale=1.0, user-scalable=no" /-->
+<script src="/jsi18n/" type="text/javascript"></script>
+<script src="/r{{ CSSVERSION }}/js/infobubble.js" type="text/javascript"></script>
+<script src="/r{{ CSSVERSION }}/js/browser_kind.js" type="text/javascript"></script>
+<script src="/r{{ CSSVERSION }}/js/map.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+
+function addMarkers() {
+    var marker;
+    {% if map_rect %}
+    //{'top': 50.5, 'left': 36.2, 'right': 36.6, 'bottom': 49.5}
+    var p1 = new OpenLayers.Geometry.Point({{ map_rect.left }}, {{ map_rect.top }});
+    var p2 = new OpenLayers.Geometry.Point({{ map_rect.right }}, {{ map_rect.top }});
+    var p3 = new OpenLayers.Geometry.Point({{ map_rect.right }}, {{ map_rect.bottom }});
+    var p4 = new OpenLayers.Geometry.Point({{ map_rect.left }}, {{ map_rect.bottom }});
+
+    var pnt= [];
+    pnt.push(p1,p2,p3,p4);
+    var ring = new OpenLayers.Geometry.LinearRing(pnt);
+    var polygon = new OpenLayers.Geometry.Polygon([ring]);
+    view.fit(polygon, size, {padding: [170, 50, 30, 150]});
+    CachesMap.centerMap({
+        'lat_min': {{ map_rect.bottom }},
+        'lat_max': {{ map_rect.top }},
+        'lng_min': {{ map_rect.left }},
+        'lng_max': {{ map_rect.right }}
+    });
+    {% endif %}
+
+    {% for cache in caches %}
+    marker = new google.maps.Marker({
+        position: new google.maps.LatLng({{ cache.latitude_degree }}, {{ cache.longitude_degree }}),
+        map: CachesMap.map,
+        title:"{{ cache.name }}",
+        pid: {{ cache.pid }},
+        site: '{{ cache.site }}',
+        site_code: '{{ cache.geosite.code }}',
+        icon: CachesMap.iconByType('{{ cache.geosite.code }}', '{{ cache.type_code }}'),
+        shadow:  CachesMap.shadowByType('{{ cache.geosite.code }}', '{{ cache.type_code }}')
+    });
+    google.maps.event.addListener(marker, 'click', function () {
+        CachesMap.map.setCenter(this.position);
+        CachesMap.setInformationWindow(this);
+
+
+    });
+    CachesMap.markers[CachesMap.markers.length] = marker;
+    {% endfor %}
+}
+
+function initURLs() {
+  CachesMap.cache_info_url = '{% url 'map-cache-info' %}';
+  CachesMap.get_things_url = '{% url 'map-get-things' %}';
+  CachesMap.show_cache_types_url = '{% url 'map-show-types' %}';
+}
+
+
+</script>
+
+    <style>
+      a.skiplink {
+        position: absolute;
+        clip: rect(1px, 1px, 1px, 1px);
+        padding: 0;
+        border: 0;
+        height: 1px;
+        width: 1px;
+        overflow: hidden;
+      }
+      a.skiplink:focus {
+        clip: auto;
+        height: auto;
+        width: auto;
+        background-color: #fff;
+        padding: 0.3em;
+      }
+      #map:focus {
+        outline: #4A74A8 solid 0.15em;
+      }
+    </style>
+{% endblock %}
+
+{% block body_onload %}{% endblock %}
+
+{% block main-content %}
+<a class="skiplink" href="#map">Go to map</a>
+    <div id="map" class="map" tabindex="0"></div>
+
+    <script>
+        initURLs();
+        CachesMap.init([{{ map_center.lon }}, {{ map_center.lat }}], {{ map_zoom }});
+    </script>
+
+<div class="panel panel-default">
+  <div class="panel-body">
+    <form class="form-inline pull-left" role="form" action=""  onsubmit="CachesMap.codeAddress(this.address.value); return false">
+      <input id="address" type="text" value="" />
+      <input type="submit" value="{% trans "Search" %}" class="btn btn-default"/>
+      <!-- Button trigger modal -->
+      <a data-toggle="modal" href="#myModal" class="btn btn-default">{% trans "Filter" %}</a>
+      <div class="" id="id_current_location"></div>
+    </form>
+    <form id="form_1" class="form-inline pull-right" action="">
+      <!--span class="" id="id_count">{% trans "found" %}: {{ caches.count|default_if_none:""}}</span-->
+
+      <span class="" id="import_data" style="display:{% if caches.count %}inline{% else %}none{% endif %}">
+        <!--a class="btn btn-default" href="{% url 'map-import-caches-wpt' %}">WPT</a>
+        <a class="btn btn-default" href="{% url 'map-import-caches-wpt-translit' %}">WPT translit</a-->
+      </span>
+    </form>
+    <span id="map_spinner" style="display:none"><img src="/img/spinner-bar.gif" /></span>
+  </div>
+  <div >
+  <table>
+    <tr><td id="toomanycaches_txt"></td></tr>
+  </table>
+</div>
+</div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">Show caches</h4>
+        </div>
+        <div class="modal-body">
+          <div class="checkbox">
+          <form class="form-horizontal" role="form" action="" id="id_form_types">
+          {% for type in cache_types %}
+            <div class="checkbox">
+            <label>
+              <input type="checkbox" name="hidden_caches[]" value="{{ type.code }}"
+                  {% if type.code in user_types %}checked{% endif %}
+                  onChange="CachesMap.showCacheTypes(this);" />
+              {{ type.name }}
+            </label>
+            </div>
+          {% endfor %}
+          </form>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+<div id="map_canvas" style="width:100%; height:600px;">
+  <div id="popup" style="padding-bottom: 45px;">================</div>
+</div>
+
+{% endblock %}
+
+
+

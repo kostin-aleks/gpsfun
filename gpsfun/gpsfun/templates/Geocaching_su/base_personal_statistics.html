@@ -1,0 +1,28 @@
+{% extends "base_bootstrap.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block menu_item_gssu %}active{% endblock %}
+
+{% block content_span12 %}
+{% block in_head %}
+{{ block.super }}
+    <script type="text/javascript" src="{% static 'js/gcsu.js' %}"></script>
+{% endblock %}
+
+{% block statistics_buttons %}
+<ul class="nav nav-tabs">
+    <li{% block active-personal %}{% endblock %}><a href="{% url 'geocaching-su-personal-stat' %}" title="{% trans "Personal statistics" %}">{% trans "Personal statistics" %}</a></li>
+    <li{% block active-charts %}{% endblock %}><a href="{% url 'geocaching-su-personal-charts' %}" title="{% trans "Rating caches on the number of entries in a logbook" %}">{% trans "Charts" %}</a></li>
+    <li{% block active-found-my-caches %}{% endblock %}><a href="{% url 'found-my-caches-stat' %}" title="{% trans "Geocachers found my caches" %}">{% trans "Who found my caches" %}</a></li>
+    <li{% block active-i-found %}{% endblock %}><a href="{% url 'i-found-caches-stat' %}" title="{% trans "Found by me" %}">{% trans "Found by me" %}</a></li>
+    <li{% block active-regions-found %}{% endblock %}><a href="{% url 'regions-found-caches-stat' %}" title="{% trans "Regions" %}">{% trans "Regions" %}</a></li>
+</ul>
+{% endblock %}
+
+{% block statistics_table %}
+
+{% endblock %}
+
+{% endblock %}
+

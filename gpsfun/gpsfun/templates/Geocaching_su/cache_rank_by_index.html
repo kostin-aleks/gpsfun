@@ -1,0 +1,15 @@
+{% extends "Geocaching_su/cache_statistics.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block active-integrated %} class="active"{% endblock %}
+{% block statistics_table %}
+<br/><h3>{% trans "Rating caches on the integrated index" %}</h3>
+<div>
+{% trans 'It is an attempt to calculate the index of "quality"of caches on the number of recommendations and number of entries in the logbook.' %}
+</div>
+<div><img src="{% static 'img/tops-formula.png' %}" border="0" alt="Formula" /></div>
+<p>
+{{ table.as_html }}
+</p>
+{% endblock %}

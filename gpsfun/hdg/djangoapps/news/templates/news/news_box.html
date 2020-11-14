@@ -1,0 +1,8 @@
+{% load i18n %}
+{% block content %}
+{% for article in articles %}
+<span class="news_date">{{ article.pub_date }}</span> <br />
+<span class="news_text">{{ article.title }}</span><br />
+<span class="news_more"><a href="{{ article.get_absolute_url }}">{% trans 'Read More' %}</a></span><br /><br />
+{% endfor %}
+{% endblock %}

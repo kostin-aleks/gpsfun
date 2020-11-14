@@ -1,0 +1,17 @@
+{% load i18n %}
+{% if not controller.search_value %}
+<table class="table table-condensed">
+{% for item in controller.filter_description %}
+<tr>
+<td>{{ item.title }}</td>
+<td>
+{% ifequal item.type "list" %}
+{{ item.value|join:"," }}
+{% else %}
+{{ item.value }}
+{% endifequal %}
+</td>
+</tr>
+{% endfor %}
+</table>
+{% endif %}

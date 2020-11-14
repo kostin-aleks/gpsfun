@@ -1,0 +1,7 @@
+<div class="{{ link_list.css_class }}">
+<ul>
+{% for link in link_list.links %}
+<li onclick="location.href='{{ link.url }}';" class="{% ifequal link.url selected %}selected {% endifequal %}{% if forloop.last %} last{% endif %}"><a href="{{ link.url }}">{{ link.title }}</a></li>
+{% endfor %}
+</ul>
+</div>

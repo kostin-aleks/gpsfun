@@ -1,0 +1,2 @@
+~/dev/www.GPS-FUN.INFO/gpsfun/bin/run.py ~/dev/www.GPS-FUN.INFO/gpsfun/scripts/update_geokrety_method_oc.py
+~/dev/www.GPS-FUN.INFO/gpsfun/bin/run.py ~/dev/www.GPS-FUN.INFO/gpsfun/scripts/set_geokret_location.py

@@ -1,0 +1,10 @@
+/var/www/htdocs/gpsfun/bin/run.py /var/www/htdocs/gpsfun/scripts/set_status_updating.py
+/var/www/htdocs/gpsfun/bin/run.py /var/www/htdocs/gpsfun/scripts/get_all_caches.py
+/var/www/htdocs/gpsfun/bin/run.py /var/www/htdocs/gpsfun/scripts/get_all_geocachers.py
+/var/www/htdocs/gpsfun/bin/run.py /var/www/htdocs/gpsfun/scripts/patch_all.py
+/var/www/htdocs/gpsfun/bin/run.py /var/www/htdocs/gpsfun/scripts/patch_nicknames.py
+/var/www/htdocs/gpsfun/bin/run.py /var/www/htdocs/gpsfun/scripts/set_cach_location.py
+/var/www/htdocs/gpsfun/bin/run.py /var/www/htdocs/gpsfun/scripts/get_all_cacher_logs.py
+/var/www/htdocs/gpsfun/bin/run.py /var/www/htdocs/gpsfun/scripts/calculate_cach_statistics.py
+/var/www/htdocs/gpsfun/bin/run.py /var/www/htdocs/gpsfun/scripts/calculate_geocacher_statistics.py
+/var/www/htdocs/gpsfun/bin/run.py /var/www/htdocs/gpsfun/scripts/set_status_updated.py

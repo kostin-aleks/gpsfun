@@ -1,0 +1,102 @@
+{% load i18n %}
+<script type="text/javascript">
+    // function display_quickfilter() {
+    // 	setStyle($('quick-filter'),{'display': 'none'});
+    // 	setStyle($('search_id'),{'display': 'inline'});
+	
+    // }
+
+function submitform() {
+    this.form.submit();
+}
+
+
+function myfunc() {
+    var form_id = Math.round(Math.random()*10000);
+    {% if table.configured_filters %}
+    var newform = FORM({'id': 'quickfilter-'+form_id, 'method': 'GET'},
+		       SELECT({'name': 'restore',
+			       'id': 'select-quickfilter-'+form_id},
+			      OPTION({'value':'Select filter to apply'},' {% trans 'Select filter to apply' %}'),
+			      {% for filter in table.configured_filters %}
+			      OPTION({'value':'{{ filter.name }}-{{ filter.user.username }}'},'{{ filter.name }}'){% if not forloop.last %},{% endif %}
+			      {% endfor %}));
+    swapDOM(this,newform);
+    connect('select-quickfilter-'+form_id,'onchange', submitform);
+    {% endif %}
+}
+
+function highlight_row() {
+    if (this.checked) {
+	addElementClass(this.parentNode.parentNode, 'selected');
+    } else {
+	removeElementClass(this.parentNode.parentNode, 'selected');
+    }
+}
+
+function runapplyactionform() {
+    var select_checkboxes = getElementsByTagAndClassName('input', 'select-checkbox');
+    for (var i=0; i<select_checkboxes.length; i++) {
+	if(select_checkboxes[i].checked) {
+	    var record_id =split(select_checkboxes[i].name,separator='id-row-')[1];
+	    appendChildNodes(this.parentNode, INPUT({'type': 'hidden', 'name':'record_id', 'value':record_id}));
+	}
+    }
+    this.form.submit();
+}
+
+
+function display_actions() {
+    var form_id = Math.round(Math.random()*10000);
+    {% if table.action_processors %}
+    var newform = FORM({'id': 'runaction-'+form_id, 'method':'post'},
+		       SELECT({'name': 'runaction',
+			       'id': 'select-runaction-'+form_id},
+			      OPTION({'value':'Select action to apply'},' Select action to apply'),
+			      {% for action in table.action_processors.keys %}
+			      OPTION({'value':'{{ action }}'},'{{ action }}'){% if not forloop.last %},{% endif %}
+			      {% endfor %}));
+    appendChildNodes(newform, INPUT({'type': 'hidden', 'name':'action', 'value':'runaction'}));
+    {% for f in table.getvars_list %}
+    appendChildNodes(newform, INPUT({'type': 'hidden', 'name':'{{ f.0 }}', 'value':'{{ f.1 }}'}));
+    {% endfor %}
+    swapDOM(this,newform);
+    connect('select-runaction-'+form_id,'onchange', runapplyactionform);
+    {% endif %}
+}
+
+window.onload = function () {
+    var quick_filter_buttons =  getElementsByTagAndClassName('a', 'quick-filter');
+    for (var i=0; i<quick_filter_buttons.length; i++) {
+	connect(quick_filter_buttons[i], 'onclick', myfunc);
+    }
+    var select_checkboxes = getElementsByTagAndClassName('input', 'select-checkbox');
+    for (var i=0; i<select_checkboxes.length; i++) {
+	connect(select_checkboxes[i], 'onclick', highlight_row);
+    }
+    var action_buttons = getElementsByTagAndClassName('a', 'run-action');
+    for (var i=0; i<action_buttons.length; i++) {
+	connect(action_buttons[i], 'onclick', display_actions);
+    }
+}
+
+
+</script>
+
+{% load admintable %}
+{% include 'AdminTable/controls.html' %}
+
+<table class="admintable">
+<tr>{% for column in table.shown_columns_metainfo %}
+  <th>{{ column.label }}</th>
+  {% endfor %}
+</tr>
+{% for row in table.rows %}
+<tr>{% for cell in row %}
+  <td{% if cell.css_class %} class="{{ cell.css_class }}"{% endif %}></td>{% endfor %}
+</tr>
+
+
+{% endfor %}</table>
+
+{% include 'AdminTable/controls.html' %}

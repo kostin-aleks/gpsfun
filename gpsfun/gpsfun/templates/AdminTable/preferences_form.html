@@ -1,0 +1,44 @@
+{% extends "gpsfun_admin/admin_base.html" %}
+{% load i18n %}
+{% block content %}
+<script>
+
+function submitform(name) {
+    for (var i=0; i<document.forms.length; i++) {
+    	var form = document.forms[i];
+    	if (form.id==name) {
+    	    form.submit();
+    	}
+    }
+}
+
+function saveas() {
+    var saveas = prompt("Save preferences as", 'default');
+    if (saveas != null) {
+    	$('#saveas-field').val(saveas);
+    	submitform("edit-preferences-form");
+    }
+    return false;
+}
+
+window.onload = function () {
+    $('#save-as-button').click(saveas);
+}
+</script>
+
+<div id="table_preferences">
+<form method="post" id="edit-preferences-form">
+  <input type="hidden" name="saveas" id="saveas-field" value="none" />
+  <table>
+    {{ form.as_table }}
+  </table>
+
+  <input type="submit" name="save" value="{% trans 'Set preferences for current session' %}">
+  <input type="button" name="saveaspressed" id="save-as-button" value="{% trans 'Save Preferences as' %} ...">
+  <input type="button" name="cancel" value="{% trans 'Cancel' %}" onclick="document.location.href='?{{ table.getvars }}';">
+
+</form>
+
+
+</div>
+{% endblock %}

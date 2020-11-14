@@ -1,0 +1,17 @@
+{% extends "admin_base.html" %}
+{% block content %}
+<div class="form_common">
+    {{ form.non_field_errors }}
+    <form method="post" name="{{ form.name }}">{% csrf_token %}
+      <table class="auto-form-table" border="0" cellpadding="0" cellspacing="0">
+      {{ form.as_template }}
+        <tr>
+          <td colspan="2" class="submit-buttons">
+            {% block buttons %}
+            <input name="submit" type="Submit" value="Submit">
+            {% endblock %}
+      </table>
+      {% block moreformfields %}{% endblock %}
+    </form>
+</div>
+{% endblock %}

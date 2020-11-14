@@ -1,0 +1,93 @@
+{% extends "base_bootstrap.html" %}
+{% load i18n %}
+{% load static %}
+{% block menu_item_home %}active{% endblock %}
+{% block content_span12 %}
+<div>
+{% trans "About" %}
+</div>
+<div>
+    {% blocktrans %}
+    On this site you will find information related to entertainment which is called
+    <a href="http://en.wikipedia.org/wiki/Geocaching" target="_blank">geocaching</a>.<br/>
+    I hope that the information presented here will complement the information
+    from sites devoted to geocaching.
+    {% endblocktrans %}
+    </td>
+</div>
+
+<br/>
+<h4>{% trans "Geocaching web sites" %}</h4>
+<table class="table table-striped  table-hover">
+  <tr>
+    <td width="200">
+      <a href="http://www.shukach.com"
+         style="width:176px;height:62px;border:none;text-decorstion:none;"
+         title="www.shukach.com" target="_blank">
+         <img src="http://www.shukach.com/sites/default/files/images/button-176х62.gif"
+           style="width:176px;height:62px;border:none;" title="www.shukach.com"
+           alt="www.shukach.com" class="img-responsive"/>
+      </a>
+    </td>
+    <td>{% blocktrans %}
+        Shukach Project is active interest in search and creation of caches and treasures.
+        Walking through and creation of quests.
+        Visiting of places of interest, local history and perception of the outside world.
+        Popularization of outside activities, healthy lifestyle and tourism.{% endblocktrans %}
+    </td>
+  <tr>
+  <tr>
+    <td>
+      <a href="http://www.geocaching.su"
+         title="www.geocaching.su" target="_blank">
+         <img src="{% static 'img/logo/logo_gcsu_200_58.gif' %}"
+           title="www.geocaching.su" class="img-responsive"
+           alt="www.geocaching.su" />
+      </a>
+    </td>
+    <td>
+      {% blocktrans %}Welcome to Russian Geocaching Official Site!<br/>
+
+        Vast territories, plenty of sights. rich and varied nature make geocahing in Russia
+        extremely interesting.<br/>
+        Play and travel throughout Russia to see its ancient monasteries and churches,
+        charming country estates and museums, high mountains and deep canyons
+        and locate a hidden cache there!{% endblocktrans %}
+    </td>
+  <tr>
+  <tr>
+    <td>
+      <a href="http://www.opencaching.com"
+         title="www.opencaching.com" target="_blank">
+         <img src="{% static 'img/logo/logo_opencaching_com.jpg' %}"
+           title="www.opencaching.com" height="102" width="123"
+           alt="www.opencaching.com" class="img-responsive"/>
+      </a>
+    </td>
+    <td>
+      {% blocktrans %}We’re a collection of hikers, bikers, techno geeks, treasure seekers,
+      scouts, families and just plain nature lovers who deserve to geocache the way we want.
+      <br/>
+
+      <br/>And that’s exactly why we created this site – to put the power back in the hands
+      of the community. And to finally give us all a voice in the way geocaching grows.
+      {% endblocktrans %}
+    </td>
+  <tr>
+  <tr>
+    <td>
+      <a href="http://www.opencaching.eu"
+         title="www.opencaching.eu" target="_blank">
+         <img src="{% static 'img/logo/logo_opencaching.jpg' %}"
+           title="www.opencaching.eu"  class="img-responsive"
+           alt="www.opencaching.eu" />
+      </a>
+    </td>
+    <td>
+      {% blocktrans %}OpenCaching.eu is a geocaching site providing a listing of all
+      national OpenCaching services{% endblocktrans %}
+    </td>
+  <tr>
+</table>
+{% endblock %}
+

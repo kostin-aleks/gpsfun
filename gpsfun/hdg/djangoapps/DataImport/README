@@ -1,0 +1,31 @@
+django application for import data.
+
+Currently imported data from csv files into models
+(using model.objects.create(...) with selected csv and model field matching.
+
+Currently realized: one csv can import only into one model.
+
+Currently expected csv structure:
+
+ field1 field2 field3...
+ value1 value2 value3
+ ... 
+ 
+
+Date fields filled using dateutil parsing of csv values.
+
+
+By default for import standart create method will be called:
+
+    model.objects.create(field=matched_csv_field, ...)
+
+To change behaviour just add special class method:
+
+    @classmethod
+    def _csvimport(cls, field1=matched_csv_field1...):
+        ....
+
+If _csvimport found in model then it will be used for import instead of
+create. 
+
+

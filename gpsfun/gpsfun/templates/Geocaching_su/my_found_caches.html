@@ -1,0 +1,49 @@
+{% extends "Geocaching_su/base_personal_statistics.html" %}
+{% load i18n %}
+
+{% block in_head %}
+<script type="text/javascript">
+ //google.load('visualization', '1', {packages:['corechart']});
+</script>
+{% endblock %}
+
+{% block active-i-found %} class="active"{% endblock %}
+
+{% block statistics_table %}
+
+<br/>
+<h3>{{ geocacher.nickname }}</h3>
+<h3>{% trans "Caches found by me" %}</h3>
+<div class="container col-md-12">
+<table class="table table-striped table-bordered table-hover table-condensed">
+  <tr>
+    <th width="40"></th>
+    <th>{% trans "Nickname" %}</th>
+    <th>{% trans "All" %}</th>
+    {% for cache_type in all_types %}
+    <th>{{ cache_type }}</th>
+    {% endfor %}
+    <th>{% trans "Last" %}</th>
+    <th><i class="glyphicon glyphicon-star" title="{% trans "Average grade" %}"></i></th>
+    <th><i class="glyphicon glyphicon-thumbs-up" title="{% trans "Recommendations" %}"></i></th>
+  </tr>
+  {% for uid, cacher in data.items %}
+  <tr>
+    <td>{{ forloop.counter }}</td>
+    <td><a target="_blank" href="http://www.geocaching.su/profile.php?uid={{ cacher.uid }}">{{ cacher.nick }}</a></td>
+    <td>{{ cacher.all }}</td>
+    {% for cnt in cacher.types %}
+    <td>{{ cnt }}</td>
+    {% endfor %}
+    <td>{{ cacher.last_found_date|date }}</td>
+    <td>{{ cacher.av_grade|floatformat:1 }}</td>
+    <td>{{ cacher.recommendations|default_if_none:"" }}</td>
+  </tr>
+  {% endfor %}
+
+</table>
+</div>
+
+
+{% endblock %}
+

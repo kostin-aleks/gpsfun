@@ -1,0 +1,11 @@
+{% load args %}
+<span style="float: right">
+{% if cell.is_sorted %}
+    {% if cell.is_asc %}
+        <a href="?{% args request.GET 'sort_by' '-' key %}"><img src="/s/img/16x16/sort_up.png"></a>
+    {% else %}
+        <a href="?{% args request.GET 'sort_by' key %}"><img src="/s/img/16x16/sort_down.png"></a>
+    {% endif %}
+{% else %}
+    <a href="?{% args request.GET 'sort_by' key %}"><img src="/s/img/16x16/sortable.png"></a>
+{% endif %}</span>

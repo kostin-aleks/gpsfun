@@ -1,0 +1,49 @@
+{% load i18n %}
+{% load args %}
+{% comment %}
+table - > instanse of BaseTableView,
+          see __iter__ method
+
+row  -> instanse of BoundRow
+cell -> instanse of BoundCell
+
+{% endcomment %}
+<script type="text/javascript">
+</script>
+
+{% include "table_toolbar.html" %}
+
+<form id="changelist-form" action="" method="post" enctype="multipart/form-data" class="scroll-table">
+  <div class="action"></div>
+  <table id="result_list" class="table table-striped table-bordered table-hover table-condensed">
+    {% include "table_head.html" %}
+    <tbody>
+      {% include "table_body_content.html" %}
+    </tbody>
+  </table>
+</form>
+
+{# include "table_toolbar.html" #}
+
+<div class="modal fade" id="modal_filter_form" tabindex="-1" role="dialog" aria-labelledby="modal_filter_formLabel" aria-hidden="true">
+  <div class="modal-dialog">
+  <div class="modal-content">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h4 id="modal_filter_formLabel" class="modal-title">{% trans 'Filter form' %}</h4>
+  </div>
+  <form action="?{% args request.GET 'profile' 'custom' %}" method="POST">
+  <div class="modal-body">
+        <table>
+        {{ filter_form }}
+        </table>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">{% trans 'Close' %}</button>
+    <button class="btn btn-default"  name="form_filter">{% trans 'Apply' %}</button>
+  </div>
+  </form>
+</div>
+</div>
+</div>
+

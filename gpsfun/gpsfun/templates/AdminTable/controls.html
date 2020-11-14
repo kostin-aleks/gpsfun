@@ -1,0 +1,39 @@
+{% load i18n %}
+<div class="navbar">
+
+    <div class="pull-right">
+      <div class="btn-group">
+        {% if table.settings.search_enabled %}<a class="btn btn-default" href="?table={{ table.name }}&action=search&{{ table.getvars }}">{% trans 'Filter' %}</a>{% endif %}
+        {% if table.settings.preferences_enabled %}<a class="btn btn-default" href="?table={{ table.name }}&action=preferences&{{ table.getvars }}">{% trans 'Preferences' %}</a>{% endif %}
+        {#% if table.settings.export_enabled %}<a class="btn btn-default" href="?table={{ table.name }}&action=export&{{ table.getvars }}">{% trans 'Export' %}</a>{% endif %#}
+        {% for button in table.custom_controls %}
+        <a class="btn btn-default" href="{{ button.url }}">{{ button.title }}</a>
+        {% endfor %}
+        {% if table.configured_filters %}
+        <a class="btn btn-default" href="#">{% trans 'Quick Filter' %}</a>
+        {% endif %}
+        {% if table.action_processors %}
+        <div>
+          <a class="btn btn-default" href="#">{% trans 'Action' %}</a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    <div>
+      <ul class="pagination">
+        {% if table.has_previous_page %}
+        <li><a href="?set_{{ table.name }}_page={{ table.previous_page_number }}&{{ table.getvars }}">&laquo;</a></li>
+        {% endif %}
+    
+        {% for pagenum in table.page_index %}
+        <li {% ifequal pagenum table.current_page %}class="active"{% else %}{% endifequal %}><a href="?set_{{ table.name }}_page={{ pagenum }}&{{ table.getvars }}">{{ pagenum }}</a></li>
+        {% endfor %}
+    
+        {% if table.has_next_page %}
+        <li><a href="?set_{{ table.name }}_page={{ table.next_page_number }}&{{ table.getvars }}">&raquo;</a></li>
+        {% endif %}
+      </ul>
+      <ul><li><a href="#">{% trans "Total:"%} {{ table.count }}</a></li></ul>
+    </div>
+
+</div>  

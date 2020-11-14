@@ -1,0 +1,95 @@
+import os
+from django.test import TestCase as DjangoTestCase
+from django.db import connections, DEFAULT_DB_ALIAS
+from django.core.management import call_command
+from BeautifulSoup import BeautifulSoup
+from django.test.client import Client, MULTIPART_CONTENT
+
+
+def chrome_debug(response):
+    tmpname = '/tmp/%d-debug.html' % os.getpid()
+    open(tmpname, 'w').write(response.content)
+    from DjHDGutils.shell_utils import startprocess
+    startprocess("chromium "+tmpname)
+
+
+class TestCase(DjangoTestCase):
+    """ This custom test case skips database cleanup before running """
+
+    def __init__(self, *args, **kwargs):
+        super(TestCase, self).__init__(*args, **kwargs)
+        self._client = Client()
+
+    # improved Django functions
+    def _fixture_setup(self):
+        if getattr(self, 'multi_db', False):
+            databases = connections
+        else:
+            databases = [DEFAULT_DB_ALIAS]
+
+
+    def _post_teardown(self):
+        """ Performs any post-test things. This includes:
+
+            * Putting back the original ROOT_URLCONF if it was changed.
+        """
+        self._urlconf_teardown()
+
+
+    def get(self, *args, **kwargs):
+        self._last_url = args[0]
+        self._response = self._client.get(*args, **kwargs)
+        self._soup = None
+
+
+    def post_url(self, path, data={}, content_type=MULTIPART_CONTENT,
+                 follow=False, **extra):
+        self._last_url = path
+        self._response = self._client.post(path, data,
+                                           content_type,
+                                           follow, **extra)
+        self._soup = None
+
+
+    def post(self, data={}, content_type=MULTIPART_CONTENT,
+             follow=False, **extra):
+        self.post_url(self.url, data, content_type,
+                      follow, **extra)
+
+
+    def assertContains(self, text, count=None, status_code=200,
+                       msg_prefix=''):
+        super(TestCase, self).assertContains(self._response, text, count,
+                                             status_code, msg_prefix)
+
+
+    # our own related function
+    @property
+    def soup(self):
+        if not self._soup:
+            self._soup = BeautifulSoup(self.text)
+        return self._soup
+
+    # twill related functions
+    @property
+    def url(self):
+        if hasattr(self._response, 'redirect_chain') \
+           and self._response.redirect_chain:
+            return self._response.redirect_chain[-1][0]
+        return self._last_url
+
+    @property
+    def text(self):
+        return self._response.content
+
+    def code(self, code):
+        if code:
+            self.assertEquals(code, self._response.status_code)
+        return self._response.status_code
+
+    def follow(self):
+        raise 'TODO: Implement'
+
+    def find(self, text):
+        self.assertContains(text)
+

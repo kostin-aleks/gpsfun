@@ -1,0 +1,58 @@
+{% extends "base_bootstrap.html" %}
+{% load i18n %}
+
+{% block in_head %}
+<!--script type='text/javascript' src='https://www.google.com/jsapi'></script-->
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type='text/javascript'>
+     google.charts.load('upcoming', {'packages': ['geochart']});
+     google.charts.setOnLoadCallback(drawRegionsMap);
+</script>
+{% endblock %}
+
+{% block menu_item_gssu %}active{% endblock %}
+
+{% block content_span12 %}
+<script type='text/javascript'>
+function drawRegionsMap() {
+    var data = new google.visualization.DataTable();
+    data.addColumn('string', '', '{% trans "Country" %}');
+    data.addColumn('number', '{% trans "Geocachers" %}', 'a');
+    data.addColumn('number', '{% trans "Caches" %}', 'b');
+    {% for country in countries %}
+    data.addRow(['{{ country.iso }}', {{ country.geocachers }}, {{ country.caches }}])
+    {% endfor %}
+
+    var chart = new google.visualization.GeoChart(document.getElementById('chart_div'));
+    chart.draw(data, {colors: ['#af7216','green'],
+          height: 400,
+          width: 600
+    });
+      }
+</script>
+
+<h3>
+    {% trans "GEOCACHING.SU. Statistics" %}
+</h3>
+<div>
+    {% blocktrans %}I place here some statistics for <a href="https://geocaching.su">geocaching.su</a>.<br/>
+The statistical information is obtained by direct collection through crawling of pages.<br/>
+That is done with the permission of the site administration.<br/>
+As a consequence, my database is updated with some frequency, probably a couple of times a month.<br/>
+The second consequence - it is impossible to guarantee completeness.<br/>
+I would be grateful for information about mistakes in the data.{% endblocktrans %}<br />
+{% trans "Last updated" %}: {{ update_date|date }}
+</div>
+<br/>
+<div id="chart_div"></div>
+<script type='text/javascript'>
+$(document).ready(function(){
+       timeout = setInterval(function () {
+          if (google.visualization != undefined) {
+             drawRegionsMap();
+             clearInterval(timeout);
+          }
+       }, 300);
+    });
+</script>
+{% endblock %}

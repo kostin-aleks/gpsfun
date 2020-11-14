@@ -1,0 +1,40 @@
+{% extends "base_bootstrap.html" %}
+{% load i18n %}
+
+{% block content_span12 %}
+<div class="col-md-6">
+
+
+    <form class="form-horizontal" id="registerHere" method='post' action=''>{% csrf_token %}
+      <fieldset>
+        <legend>{% trans 'Registration' %}</legend>
+        {% if form.non_field_errors %}
+        <div class="alert alert-error">
+            {{ form.non_field_errors }}
+        </div>
+        {% endif %}
+        {% for field in form %}
+          <div class="control-group">
+            <label class="control-label" for="input01">{{ field.label_tag }}</label>
+            <div class="controls">
+            {{ field }}
+            {% if field.errors %}<span class="help-block alert-error">{{ field.errors }}</span>{% endif %}
+            </div>
+        </div>
+        {% endfor %}
+
+
+        <div class="control-group">
+        <label class="control-label" for="input01"></label>
+          <div class="controls">
+           <button type="submit" class="btn btn-success" rel="tooltip" title="first tooltip">{% trans 'Create My Account' %}</button>
+          </div>
+        </div>
+      </fieldset>
+    </form>
+
+    <script type="text/javascript" src="http://jzaefferer.github.com/jquery-validation/jquery.validate.js"></script>
+    <script type="text/javascript" src="{% static 'js/registration.js' %}"></script>
+</div>
+{% endblock %}
+

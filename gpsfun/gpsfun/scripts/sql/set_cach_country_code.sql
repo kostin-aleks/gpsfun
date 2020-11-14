@@ -1,0 +1,47 @@
+UPDATE cach SET country_code='AZ', country_name='Azerbaijan' WHERE country='Азербайджан';
+UPDATE cach SET country_code='AM', country_name='Armenia' WHERE country='Армения';
+UPDATE cach SET country_code='BY', country_name='Belarus' WHERE country='Беларусь';
+UPDATE cach SET country_code='GE', country_name='Georgia' WHERE country='Грузия';
+UPDATE cach SET country_code='KZ', country_name='Kazakhstan' WHERE country='Казахстан';
+UPDATE cach SET country_code='KG', country_name='Kyrgyzstan' WHERE country='Киргизия';
+UPDATE cach SET country_code='LV', country_name='Latvia ' WHERE country='Латвия';
+UPDATE cach SET country_code='LT', country_name='Lithuania' WHERE country='Литва';
+UPDATE cach SET country_code='MD', country_name='Moldova' WHERE country='Молдова';
+UPDATE cach SET country_code='RU', country_name='Russia' WHERE country='Россия';
+UPDATE cach SET country_code='TJ', country_name='Tajikistan' WHERE country='Таджикистан';
+UPDATE cach SET country_code='UZ', country_name='Uzbekistan' WHERE country='Узбекистан';
+UPDATE cach SET country_code='UA', country_name='Ukraine' WHERE country='Украина';
+UPDATE cach SET country_code='EE', country_name='Estonia' WHERE country='Эстония';
+
+UPDATE cach SET country_code='GB', country_name='United Kingdom' WHERE country='Великобритания';
+UPDATE cach SET country_code='GR', country_name='Greece' WHERE country='Греция';
+UPDATE cach SET country_code='TR', country_name='Turkey' WHERE country='Турция';
+UPDATE cach SET country_code='VE', country_name='Venezuela' WHERE country='Венесуэла';
+UPDATE cach SET country_code='DE', country_name='Germany' WHERE country='Германия';
+UPDATE cach SET country_code='EG', country_name='Egypt' WHERE country='Египет';
+UPDATE cach SET country_code='IL', country_name='Israel' WHERE country='Израиль';
+UPDATE cach SET country_code='IR', country_name='Iran' WHERE country='Иран';
+UPDATE cach SET country_code='ES', country_name='Spain' WHERE country='Испания';
+UPDATE cach SET country_code='KE', country_name='Kenya' WHERE country='Кения';
+UPDATE cach SET country_code='MD', country_name='Moldova' WHERE country='Приднестровье';
+UPDATE cach SET country_code='TZ', country_name='Tanzania' WHERE country='Танзания';
+UPDATE cach SET country_code='FI', country_name='Finland' WHERE country='Финляндия';
+
+UPDATE cach SET country_code='EG', country_name='Egypt' WHERE pid=767;
+UPDATE cach SET country_code='ES', country_name='Spain', admin_code='60', oblast_name='Valencia' WHERE pid=2759;
+UPDATE cach SET country_code='GR', country_name='Greece' WHERE pid=4144;
+UPDATE cach SET country_code='ES', country_name='Spain', admin_code='60', oblast_name='Valencia' WHERE pid=5323;
+UPDATE cach SET country_code='ES', country_name='Spain', admin_code='60', oblast_name='Valencia' WHERE pid=4504;
+UPDATE cach SET country_code='GB', country_name='United Kingdom', admin_code='ENG', oblast_name='England' WHERE pid=6946;
+UPDATE cach SET country_code='GR', country_name='Greece' WHERE pid=6285;
+UPDATE cach SET country_code='FR', country_name='France', admin_code='B8', oblast_name='Provence-Alpes-Côte d\'Azur' WHERE pid=6746;
+UPDATE cach SET country_code='FR', country_name='France', admin_code='B3', oblast_name='Midi-Pyrénées' WHERE pid=7142;
+UPDATE cach SET country_code='FR', country_name='France', admin_code='A3', oblast_name='Centre' WHERE pid=7348;
+UPDATE cach SET country_code='GB', country_name='United Kingdom', admin_code='ENG', oblast_name='England' WHERE pid=7327;
+UPDATE cach SET country_code='TR', country_name='Turkey' WHERE pid=8239;
+UPDATE cach SET country_code='MV', country_name='Maldives' WHERE pid=8715;
+UPDATE cach SET country_code='RU', country_name='Russia', admin_code='47', oblast_name='Moskovskaya' WHERE pid=5170;
+UPDATE cach SET country_code='AZ', country_name='Azerbaijan', admin_code='777' WHERE country='Нагорно-Карабахская Респ.';
+UPDATE cach SET country_code='ME', country_name='Montenegro' WHERE country='Черногория' AND country_code IS NULL;
+UPDATE cach SET country_code='ME', country_name='Montenegro', admin_code='08', oblast_name='Opstina Herceg Novi' WHERE pid=11270;
+

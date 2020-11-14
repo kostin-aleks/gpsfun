@@ -1,0 +1,85 @@
+{% load i18n %}
+<script type="text/javascript">
+
+function submitform() {
+    this.form.submit();
+}
+
+
+function myfunc() {
+    var form_id = Math.round(Math.random()*10000);
+    {% if table.configured_filters %}
+    this.append($('<form></form>').attr("id", 'quickfilter-'+form_id).attr('method','GET'));
+    $('form#quickfilter-'+form_id).append($('<select></select>').attr('id','select-quickfilter-'+form_id).attr('name', 'restore'));
+    $('select#select-quickfilter-'+form_id).append($('<option></option>').attr('value','Select filter to apply').text(' {% trans 'Select filter to apply' %}'));
+    {% for filter in table.configured_filters %}
+    $('select#select-quickfilter-'+form_id).append($('<option></option>').attr('value','{{ filter.name }}-{{ filter.user.username }}').text('{{ filter.name }}'));
+    {% endfor %}));
+
+    $('#select-quickfilter-'+form_id).change(submitform);
+    {% endif %}
+}
+
+function highlight_row() {
+    if (this.checked) {
+        this.parentNode.parentNode.addClass('selected');
+    } else {
+        this.parentNode.parentNode.removeClass('selected');
+    }
+}
+
+function runapplyactionform() {
+    var select_checkboxes = $('#input.select-checkbox');
+    for (var i=0; i<select_checkboxes.length; i++) {
+        if(select_checkboxes[i].checked) {
+            var record_id =split(select_checkboxes[i].name,separator='id-row-')[1];
+            this.parentNode.append($('<input/>').attr('type','hidden').attr('name','record_id').attr('value',record_id));
+        }
+    }
+    this.form.submit();
+}
+
+
+function display_actions() {
+    var form_id = Math.round(Math.random()*10000);
+    {% if table.action_processors %}
+    this.append($('<form></form>').attr("id", 'runaction-'+form_id).attr('method','POST'));
+    $('form#runaction-'+form_id).append($('<select></select>').attr('id','select-runaction-'+form_id).attr('name', 'runaction'));
+    $('select#select-runaction-'+form_id).append($('<option></option>').attr('value','Select action to apply').text(' {% trans 'Select action to apply' %}'));
+    {% for action in table.action_processors.keys %}
+    $('select#select-runaction-'+form_id).append($('<option></option>').attr('value','{{ action }}').text('{{ action }}'));
+    {% endfor %}));
+
+    {% for f in table.getvars_list %}
+    $('form#runaction-'+form_id).append($('<input/>').attr('type','hidden').attr('name','{{ f.0 }}').attr('value', {{ f.1 }}))
+    {% endfor %}
+    $('#select-runaction-'+form_id).change(runapplyactionform);
+    {% endif %}
+}
+
+window.onload = function () {
+    $('a.quick-filter').click(myfunc);
+    $('input.select-checkbox').click(highlight_row);
+    $('a.run-action').click(display_actions);
+}
+
+
+</script>
+
+{% load admintable %}
+{% include 'AdminTable/controls.html' %}
+
+<table class="table table-stripe table-bordered table-hover table-condensed">
+<tr>{% for column in table.shown_columns_metainfo %}
+  <th>{{ column.label }}</th>
+  {% endfor %}
+</tr>
+{% for row in table.rows %}
+<tr class="{% cycle 'odd' 'even' %}">{% for cell in row %}
+  <td{% if cell.css_class %} class="{{ cell.css_class }}"{% endif %}>{% cell_format cell.data %}</td>{% endfor %}
+</tr>
+
+
+{% endfor %}</table>
+
+{% include 'AdminTable/controls.html' %}

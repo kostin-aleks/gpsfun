@@ -1,0 +1,7 @@
+mysqldump -ucacher -pshukach geocaching > ./geocaching.sql
+
+scp ./geocaching.sql  kostin1@cp.hosting.halogen.kharkov.ua:geocaching.sql
+
+mysql -h mysql -u cacher -pshukach geocaching < ./geocaching.sql 
+
+zip geocaching.zip geocaching.sql

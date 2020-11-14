@@ -1,0 +1,17 @@
+{% load i18n %}
+{% if filter %}
+  <h5>{% trans "Filter by:" %}=================</h5>
+
+  <table class="table">
+  {% for item in filter %}
+  <tr><td width="100">{{ item.title }}</td>
+      <td align="left"><b>
+      {% ifequal item.type 'list' %}
+        {% for one in item.value %}{{ one }} {% endfor %}
+      {% else %}
+      {{ item.value }}
+      {% endifequal %}</b></td>
+  </tr> 
+  {% endfor %}
+  </table>
+{% endif %}

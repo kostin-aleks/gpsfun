@@ -1,0 +1,29 @@
+{% extends "base_two_columns.html" %}
+{% load i18n %}
+
+
+       {% block leftcolumn_content %}
+
+        <div class="c2">
+          <div class="space">
+            <div class="width">
+              <div class="module_menu">
+            <div>
+              <div>
+                <div class="box_indent">
+                  <div class="width">
+                  <ul class="menu">
+                    <li id="current" class="active item1"><a href="{% url 'geocaching-su-cache-statistics' %}"><span><em>{% trans "Caches" %}</em></span></a></li>
+                    <li class="active item1"><a href="{% url 'geocaching-su-geocacher-stat' %}"><span><em>{% trans "Geocachers" %}</em></span></a></li>
+                  </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+              </div>
+            </div>
+          </div>
+        </div>
+       {% endblock %}
+
+

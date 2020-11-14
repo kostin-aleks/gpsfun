@@ -1,0 +1,141 @@
+{% extends "Geocaching_su/base_personal_statistics.html" %}
+{% load i18n %}
+
+{% block in_head %}
+<script type="text/javascript">
+ google.load('visualization', '1', {packages:['corechart']});
+</script>
+{% endblock %}
+
+{% block active-charts %} class="active"{% endblock %}
+
+{% block statistics_table %}
+    <script type="text/javascript">
+    // found_current_year
+    var found_current_year = [['{% trans 'month' %}', '{% trans 'count' %}']];
+    {% for m in found_current_year %}
+    found_current_year[found_current_year.length] = ['{{ m.month }}', {{ m.count }}];
+    {% endfor %}
+    // found_last_year
+    var found_last_year = [['{% trans 'month' %}', '{% trans 'count' %}']];
+    {% for m in found_last_year %}
+    found_last_year[found_last_year.length] = ['{{ m.month }}', {{ m.count }}];
+    {% endfor %}
+    // found_all_years
+    var found_years = [['{% trans 'year' %}', '{% trans 'count' %}']];
+    {% for m in found_years %}
+    found_years[found_years.length] = ['{{ m.year }}', {{ m.count }}];
+    {% endfor %}
+    // created_current_year
+    var created_current_year = [['{% trans 'month' %}', '{% trans 'count' %}']];
+    {% for m in created_current_year %}
+    created_current_year[created_current_year.length] = ['{{ m.month }}', {{ m.count }}];
+    {% endfor %}
+    // created_last_year
+    var created_last_year = [['{% trans 'month' %}', '{% trans 'count' %}']];
+    {% for m in created_last_year %}
+    created_last_year[created_last_year.length] = ['{{ m.month }}', {{ m.count }}];
+    {% endfor %}
+    // created_all_years
+    var created_years = [['{% trans 'year' %}', '{% trans 'count' %}']];
+    {% for m in created_years %}
+    created_years[created_years.length] = ['{{ m.year }}', {{ m.count }}];
+    {% endfor %}
+    </script>
+    <!--script type="text/javascript" src="https://www.google.com/jsapi"></script-->
+    <script type="text/javascript">
+      function drawChart(title, points, div_id) {
+        var data = google.visualization.arrayToDataTable(points);
+
+        var options = {
+          hAxis: {title: title, titleTextStyle: {color: '#6A7C6A'}},
+          vAxis: {gridlines: {color: '#CCCCCC'}},
+          colors: ['#9AAC9A'],
+          legend: {position: 'none'},
+          width: 400,
+          height: 200
+        };
+
+        var chart = new google.visualization.ColumnChart(document.getElementById(div_id));
+        chart.draw(data, options);
+      }
+
+      function drawCharts() {
+        {% if current_count %}
+        drawChart('{{ current_year }}', found_current_year, 'current_found_chart_div');
+        {% endif %}
+        {% if last_count %}
+        drawChart('{{ last_year }}', found_last_year, 'last_found_chart_div');
+        {% endif %}
+        {% if all_count %}
+        drawChart('', found_years, 'found_chart_div');
+        {% endif %}
+        {% if current_created_count %}
+        drawChart('{{ current_year }}', created_current_year, 'current_created_chart_div');
+        {% endif %}
+        {% if last_created_count %}
+        drawChart('{{ last_year }}', created_last_year, 'last_created_chart_div');
+        {% endif %}
+        {% if all_created_count %}
+        drawChart('', created_years, 'created_chart_div');
+        {% endif %}
+      }
+    </script>
+<br/>
+<h3>{% trans "Personal Statistics Charts" %}: {{ geocacher.nickname }}</h3>
+{% if geocacher.statistics %}
+{% with stat=geocacher.statistics %}
+  <table class="table">
+    <tr>
+      <td>
+        <h4>{% trans "Statistics of founded caches" %}</h4>
+        <table class="table table-striped table-bordered table-hover table-condensed">
+          {% for row in cache_table %}
+          <tr>
+            <td>{{ row.type }}</td>
+            <td>{{ row.description }}</td>
+            <td align="right">{{ row.count }}</td>
+            <td align="right">{{ row.percent|floatformat:1 }}%</td>
+          </tr>
+          {% endfor %}
+        </table>
+      </td>
+      <td>
+        <h4>{% trans "Statistics of created caches" %}</h4>
+        <table class="table table-striped table-bordered table-hover table-condensed">
+        {% for row in created_table %}
+          <tr>
+            <td>{{ row.type }}</td>
+            <td>{{ row.description }}</td>
+            <td align="right">{{ row.count }}</td>
+            <td align="right">{{ row.percent|floatformat:1 }}%</td>
+          </tr>
+        {% endfor %}
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td><img src="{% url 'gcsu-personal-found-cache-pie' geocacher.uid %}" alt="{% trans 'Found caches statistics' %}" /></td>
+      <td><img src="{% url 'gcsu-personal-created-cache-pie' geocacher.uid %}" alt="{% trans 'Created caches statistics' %}" /></td>
+    </tr>
+    <tr>
+      <td>
+        <div id="current_found_chart_div"></div>
+        <div id="last_found_chart_div"></div>
+        <div id="found_chart_div"></div>
+      </td>
+      <td>
+        <div id="current_created_chart_div"></div>
+        <div id="last_created_chart_div"></div>
+        <div id="created_chart_div"></div>
+      </td>
+    </tr>
+  </table>
+
+{% endwith %}
+{% endif %}
+<script type="text/javascript">
+  google.setOnLoadCallback(drawCharts);
+</script>
+{% endblock %}
+

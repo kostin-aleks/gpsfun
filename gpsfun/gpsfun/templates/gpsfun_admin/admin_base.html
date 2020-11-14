@@ -1,0 +1,29 @@
+{% load i18n %}
+{% load static %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <title>Admin - {% block title %}{{ title }}{% endblock %}</title>
+    <link href="{% static '/bootstrap/dist/css/bootstrap.css' %}" rel="stylesheet" media="screen">
+
+    {% block extreahead %}{% endblock extreahead %}
+  </head>
+
+  <body id="{% block pageid %}defaultpage{% endblock %}">
+  <script src="http://code.jquery.com/jquery.js"></script>
+  <script src="{% static '/bootstrap/dist/js/bootstrap.js' %}"></script>
+  {% if user.is_authenticated %}{% include "gpsfun_admin/admin_menu.html" %}{% endif %}
+    <div id="ypcontent">
+    {% block ypcontent %}
+        <h1 id="iepara">{% block title2 %}{{ title }}{% endblock %}</h1>
+        <div id="content">
+            {% block content %}
+            Empty page
+            {% endblock %}
+        {% block aftermaincontent %}{% endblock %}
+        </div>
+    {% endblock %}
+    </div>
+  </body>
+</html>

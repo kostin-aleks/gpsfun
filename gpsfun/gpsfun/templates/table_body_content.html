@@ -1,0 +1,11 @@
+
+        {% for row in controller.get_paginated_rows %}
+        <tr id="{{ row.get_id }}" class="">
+            <td>{{ forloop.counter|add:base_count }}</td>
+            {% for cell in row %}
+                <td {{ cell.html_cell_attr }} {% if cell.get_cell_class %}class="{{ cell.get_cell_class }}"{% endif %} {% if cell.get_cell_style %}style="{{ cell.get_cell_style }}"{% endif %}>
+          {{ cell.as_html }}
+        </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}

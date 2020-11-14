@@ -1,0 +1,7 @@
+{% for field in bound_fields %}
+    {% if field.field.custom_render %}
+        {{ field.field }}
+    {% else %}
+        {% include "forms/field.html" %}
+    {% endif %}
+{% endfor %}

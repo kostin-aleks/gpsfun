@@ -1,0 +1,12 @@
+{% load i18n %}
+<style>
+.cach-info-div {
+    padding: 5px;
+}
+</style>
+<div class="cach-info-div">
+<div><a href="{{ cache.geosite.url }}" target="_blank"><img src="/static/img/{{ cache.geosite.logo }}" alt="{{ cache.site }}" /></a></div>
+<b><a href="{{ cache.url }}" target="_blank">{{ cache.code }}</a></b><br/>
+<b><a href="{{ cache.url }}" target="_blank">{{ cache.name }}</a></b><br/>
+{% trans 'created' %} {{ cache.created_date|date }} {% trans 'by' %} <b>{{ cache.author }}</b> 
+</div>

@@ -1,0 +1,39 @@
+{% load args %}
+{% load static %}
+    <thead >
+      <tr class = "table-head">
+        <th> </th>
+        {% for key, cell in controller.iter_title % }
+        { % if cell.is_sortable % }
+        { % if cell.is_sorted % }
+        { % if cell.is_asc % }
+        <th id="column_{{ key }}" class="sorted ascending" {{ cell.html_title_attr }} {% if cell.column.width %}width = "{{ cell.column.width }}"{% endif %}>
+          {{cell.column.html_title}}
+          <a href="?{% args request.GET 'sort_by' '-' key %}">
+            <img src="{% static 'img/sorted-field-asc.gif' %}" />
+          </a>
+        </th>
+        {% else %}
+        <th id="column_{{ key }}" class="sorted descending" {{ cell.html_title_attr }} {% if cell.column.width %}width="{{ cell.column.width }}"{% endif %}>
+          {{ cell.column.html_title }}
+          <a href="?{% args request.GET 'sort_by' key %}">
+            <img src="{% static 'img/sorted-field-desc.gif' %}" />
+          </a>
+        </th>
+        {% endif %}
+        {% else %}
+        <th id="column_{{ key }}" {{ cell.html_title_attr }} {% if cell.column.width %}width="{{ cell.column.width }}"{% endif %}>
+          {{ cell.column.html_title }}
+          <a href="?{% args request.GET 'sort_by' key %}">
+            <img src="{% static 'img/sorted-field.gif' %}" />
+          </a>
+        {% endif %}
+        </th>
+        {% else %}
+        <th id="column_{{ key }}" {{ cell.html_title_attr }} {% if cell.column.width %}width="{{ cell.column.width }}"{% endif %}>
+          {{ cell.column.html_title }}
+        </th>
+        {% endif %}
+        {% endfor %}
+      </tr>
+    </thead>

@@ -1,0 +1,47 @@
+<div class="navbar">
+      <div class="navbar-inner">
+	  <div class="container pull-right">
+	    {% if user.is_authenticated %}
+		<a class="btn btn-mini" href="/accounts/logout/">{% trans "Log out" %}</a>
+		{% else %}
+		<a class="btn btn-mini" href="{% url login %}">{% trans "Sign in" %}</a> 
+		{% endif %}
+		<a class="btn btn-mini" href="{% url registration_register %}">{% trans "Sign up" %}</a>
+		</div>
+        <div class="container">
+          <a class="brand" href="#">GPS-FUN</a>
+          <div class="nav-collapse">
+          <ul class="nav">
+            <li class="{% block menu_item_home %}{% endblock %}"><a href="{% url index %}">{% trans "Home" %}</a></li>
+            <li class="dropdown {% block menu_item_gssu %}{% endblock %}">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">geocaching.su<b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a data-toggle="modal" href="{% url geocaching-su %}">{% trans "geocaching.su" %}</a></li>
+              <li><a data-toggle="modal" href="{% url geocaching-su-cache-statistics %}">{% trans "Caches" %}</a></li>
+              <li><a data-toggle="modal" href="{% url geocaching-su-geocacher-stat %}">{% trans "Geocachers" %}</a></li>
+            </ul>
+            </li>
+            <li class="{% block menu_item_map %}{% endblock %}"><a href="{% url caches-map %}">{% trans "Caches Map" %}</a></li>
+            <li class="{% block menu_item_geokrety %}{% endblock %}"><a href="{% url geokrety-map %}">{% trans "GeoKrety" %}</a></li> 
+			{% if user.is_authenticated %}
+			<li class="dropdown ">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ user.username }}<b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a data-toggle="modal" href="{% url user-profile %}">{% trans "Profile" %}</a></li>
+            </ul>
+            </li>
+			{% endif %}
+          </ul>
+		  <form id="form_language" class="navbar-form pull-right" action="/i18n/setlang/" method="POST">
+				<input name="next" type="hidden" value="" />
+				<input id="language" name="language" type="hidden" value="en" />
+				<div class="btn-group">
+				  <a href="" title="{% trans "English" %}" class="btn btn-mini" onClick="submit_language('en'); return false;"><img class="" width="20" height="14" src="/r{{ CSSVERSION }}/img/flag/en.gif" alt="EN" /></a>
+						    <!--a href="lang.php?lang=pl_PL.UTF-8" title="Polski"><img class="flag-pl" src="/_.gif" alt="PL" /></a--> 
+				  <a href="" title="{% trans "Russian" %}" class="btn btn-mini" onClick="submit_language('ru'); return false;"><img class="" width="20" height="14" src="/r{{ CSSVERSION }}/img/flag/ru.gif" alt="RU" /></a>
+				</div>
+			  </form>
+        </div>
+      </div>
+    </div>
+	</div>

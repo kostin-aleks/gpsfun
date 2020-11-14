@@ -1,0 +1,9 @@
+from subprocess import Popen
+
+def shellcmd(cmd):
+    # print cmd
+    try:
+        p = Popen(cmd, shell=True)
+        sts = os.waitpid(p.pid, 0)
+    except OSError as e:
+        print(sys.stderr, "Execution of command [%s] failed:" % cmd, e)

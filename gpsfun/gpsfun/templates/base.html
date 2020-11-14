@@ -1,0 +1,122 @@
+{% load i18n %}
+{% load static %}
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html dir="ltr" xml:lang="ru-ru" xmlns="http://www.w3.org/1999/xhtml" lang="ru-ru"><head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="robots" content="index, follow">
+  <meta name="keywords" content="">
+  <meta name="description" content="{% block meta_description %}{{ meta_description }}{% endblock meta_description %}">
+  <title>{% block head_title %}GPS Fun {{ title }}{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/template.css' %}" type="text/css">
+  <link rel="stylesheet" href="{% static 'css/constant.css' %}" type="text/css">
+  <link rel="stylesheet" href="{% static 'css/tableview.css' %}" type="text/css">
+  <link rel="stylesheet" href="{% static 'css/main.css' %}" type="text/css">
+  <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+  <link rel="shortcut icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+  <script type="text/javascript" src="{% static 'hdgstatic/js/MochiKit.js' %}"></script>
+  <script type="text/javascript" src="{% static 'hdgstatic/js/common.js' %}"></script>
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-22650766-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+  function submit_language(l) {
+    $('#language')[0].get(l);
+    $('#form_language')[0].submit();
+  }
+</script>
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+
+  {% block script_include %}{% endblock %}
+
+  {% block in_head %}{% endblock %}
+</head>
+<body onLoad="{% block body_onload %}{% endblock %}">
+  <div class="main">
+    <div id="top">
+    <h1>GPS Fun</h1>
+    </div>
+    <div id="content">
+    <table width="90%">
+    <tbody>
+      <tr>
+        <td class="width">
+        <div class="c_t">
+          <div class="c_l">
+            <div class="c_r">
+              <div class="c_b">
+            <div class="c_tl">
+              <div class="c_tr">
+                <div class="c_bl">
+                  <div class="c_br">
+                <div class="width">
+                {% block menu %}
+                  <div id="topmenu">
+                    <div class="tl">
+                      <div class="tr">
+                        <ul class="menu-nav">
+                                <li class="item28"><a href="/"><span><em>{% trans "Home" %}</em></span></a></li>
+                            <li class="item28"><a href="{% url 'geocaching-su' %}"><span><em>geocaching.su</em></span></a></li>
+                            <li class="item28"><a href="{% url 'caches-map' %}"><span><em>{% trans "Caches Map" %}</em></span></a></li>
+                            <li class="item28"><a href="{% url 'geokrety-map' %}"><span><em>{% trans "GeoKrety" %}</em></span></a></li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                {% endblock %}
+                  <div class="locales">
+                          <form id="form_language" action="/i18n/setlang/" method="POST">
+                          <input name="next" type="hidden" value="" />
+                          <input id="language" name="language" type="hidden" value="en" />
+                          <ul class="">
+                            <li class="item28">
+                            <a href="" title="{% trans "English" %}" onClick="submit_language('en'); return false;"><img class="" width="20" height="14" src="/static/img/flag/en.gif" alt="EN" /></a>
+                            <!--a href="lang.php?lang=pl_PL.UTF-8" title="Polski"><img class="flag-pl" src="/_.gif" alt="PL" /></a-->
+                            <a href="" title="{% trans "Russian" %}" onClick="submit_language('ru'); return false;"><img class="" width="20" height="14" src="/static/img/flag/ru.gif" alt="RU" /></a>
+                            </li>
+                          </ul>
+                        </form>
+                  </div>
+                  <div id="id_space" class="space">
+                    <div id="id_width" class="width">
+
+<!-- ------------------------- Content --------------------------------- -->
+{% block content %}
+<table class="">
+  <tr>
+      {% block leftcolumn %}<td></td>{% endblock %}
+      <td>{% block rightcolumn %}{% endblock %}</td>
+  </tr>
+</table>
+{% endblock %}
+<!-- ------------------------- /Content --------------------------------- -->                                                                                    <span class="breadcrumbs pathway">
+                      </div>
+                    </div>
+                  </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+                </div>
+              </div>
+            </div>
+          </div>
+            </td>
+          </tr>
+        </tbody>
+        </table>
+      </div>
+        </div>
+      <div id="footer">
+    <div class="main"><div class="space">
+      </div>
+    </div>
+  </div>
+</body>
+</html>

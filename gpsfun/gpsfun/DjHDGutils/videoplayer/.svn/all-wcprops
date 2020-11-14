@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/repos/!svn/ver/1313/DjHDGutils/trunk/videoplayer
+END
+views.py
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/repos/!svn/ver/1153/DjHDGutils/trunk/videoplayer/views.py
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/repos/!svn/ver/1153/DjHDGutils/trunk/videoplayer/__init__.py
+END
+utils.py
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/repos/!svn/ver/1153/DjHDGutils/trunk/videoplayer/utils.py
+END
+models.py
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/repos/!svn/ver/1153/DjHDGutils/trunk/videoplayer/models.py
+END

@@ -1,0 +1,65 @@
+from django.utils.http import urlquote
+from django.urls import reverse
+from django.utils.translation import ugettext_lazy as _
+import re
+
+
+class CONTENT_TYPE:
+
+    TEXT_PLAIN = 'text/plain'
+    TEXT_HTML = 'text/html'
+
+    choices = (('text/plain', _('plain text')),
+               ('text/html', _('HTML')))
+
+    subtype_choices = (('plain', _('plain text')),
+                       ('html', _('HTML')))
+
+    types = ['text/plain', 'text/html']
+
+    subtypes = ['plain', 'html']
+
+
+class CONTENT_SUBTYPE:
+    PLAIN = 'plain'
+    HTML = 'html'
+
+
+
+def format_url_params(**kwargs):
+    """ return http param string.
+
+    example:
+      format_url_params(a=1, b=2) return 'a=1&b=2'
+
+    """
+
+    return '&'.join(['%s=%s' % (urlquote(k), urlquote(v))
+                     for k, v in kwargs.items()])
+
+def format_url(url, **params):
+    """ format url with params.
+
+        Example:
+          format_url('http://yandex.ru/yandsearch', text=abc)
+          will returl 'http://yandex.ru/yandsearch?text=abc'
+    """
+    return url + '?' + format_url_params(**params)
+
+
+def format_url_full(site_url, reverse_name, reverse_kwargs={}, GET_kwargs={}):
+    """ format full url with reverse and passing GET-params """
+
+    local_url = reverse(reverse_name, kwargs=reverse_kwargs)
+    return format_url("http://%s%s" % (site_url, local_url), **GET_kwargs)
+
+
+
+URL_RE1 = r"(\b(http|https)://([-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]))"
+URL_RE2 = r"((^|\b)www\.([-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]))"
+
+def link_urls(text):
+    return re.sub(URL_RE2,r'<a rel="nofollow" target="_blank" href="http://\1">\1</a>',
+                  re.sub(URL_RE1,r'<a rel="nofollow" target="_blank" href="\1">\1</a>',
+                         text))
+

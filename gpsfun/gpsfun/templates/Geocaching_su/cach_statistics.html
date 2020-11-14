@@ -1,0 +1,23 @@
+{% extends "base_bootstrap.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block content_col-md-12 %}
+
+{% block statistics_buttons %}
+<ul class="nav nav-pills">
+    <li{% block active-integrated %}{% endblock %}><a href="{% url 'cach-rate-by-index' %}">{% trans "Rating caches on the integrated index" %}</a></li>
+    <li{% block active-entries %}{% endblock %}><a href="{% url 'cach-rate-by-found' %}">{% trans "Rating caches on the number of entries in a logbook" %}</a></li>
+    <li{% block active-recommendations %}{% endblock %}><a href="{% url 'cach-rate-by-recommend' %}">{% trans "Rating caches on the number of recommendations" %}</a></li>
+    <li{% block active-statistics %}{% endblock %}><a href="{% url 'geocaching-su-cach-stat' %}">{% trans "Statistics" %}</a></li>
+</ul>
+<script src="/jsi18n/" type="text/javascript"></script>
+<script type="text/javascript" src="{% static 'js/gcsu.js' %}"></script>
+{% endblock %}
+
+{% block statistics_table %}
+
+{% endblock %}
+
+{% endblock %}
+

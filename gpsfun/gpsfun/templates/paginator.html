@@ -1,0 +1,31 @@
+{% if paginator.is_paginate %}
+  <ul class="pagination pull-left">
+    {% if paginator.get_prev_page %}
+    <li><a href="{{ paginator.get_start_url }}page={{ paginator.get_prev_page }}">&laquo;</a></li>
+    {% endif %}
+
+    {% if paginator.get_prev_page_group %}
+    <li>
+        <a href="{{ paginator.get_start_url }}page={{ paginator.get_prev_page_group }}">...</a>
+    </li>
+    {% endif %}
+
+    {% for page in paginator.get_bar %}
+    <li{% ifequal page paginator.page %} class="disabled active"{% endifequal %}><a href="{{ paginator.get_start_url }}page={{ page }}">{{ page }}</a></li>
+    {% endfor %}
+
+    {% if paginator.get_next_page_group %}
+    <li>
+      <a href="{{ paginator.get_start_url }}page={{ paginator.get_next_page_group }}">...</a>
+    </li>
+    {% endif %}
+
+    {% if paginator.get_next_page %}
+    <li>
+      <a href="{{ paginator.get_start_url }}page={{ paginator.get_next_page }}">&raquo;</a>
+    </li>
+    {% endif %}
+  </ul>
+
+{% endif %}
+

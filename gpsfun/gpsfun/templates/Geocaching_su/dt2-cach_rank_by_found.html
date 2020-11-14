@@ -1,0 +1,11 @@
+{% extends "Geocaching_su/cache_statistics.html" %}
+{% load i18n %}
+{% load render_table from django_tables2 %}
+
+{% block active-entries %} class="active"{% endblock %}
+{% block statistics_table %}
+<br/><h3>{% trans "Rating caches on the number of entries in a logbook" %}</h3></h3>
+<p>
+{% render_table table %}
+</p>
+{% endblock %}

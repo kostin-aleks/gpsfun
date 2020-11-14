@@ -1,0 +1,28 @@
+{% extends "Geocaching_su/geocaching_su_base.html" %}
+{% load i18n %}
+{% load render_table from django_tables2 %}
+{% load static %}
+
+{% block rightcolumn %}
+<div>
+<center>
+<table style="padding-left:32px; padding-bottom:32px; line-heigh: 1.6em; font-size: 12px;">
+  <tr>
+    <td align="center" style="font-size: 16px;">
+      <b>{% trans "Rating caches on the integrated index" %}</b><br />
+    </td>
+  </tr>
+  <tr>
+    <td>{% trans 'It is an attempt to calculate the index of "quality"of caches on the number of recommendations and number of entries in the logbook.' %}
+    </td>
+  </tr>
+  <tr>
+    <td align="center"><img src="{% static 'img/tops-formula.png' %}" border="0" alt="Formula" />
+    </td>
+  </tr>
+</table>
+</center>
+</div>
+<br /><br />
+{% render_table table %}
+{% endblock %}

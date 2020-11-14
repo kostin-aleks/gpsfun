@@ -1,0 +1,7 @@
+    <thead>
+        <tr>
+        {% for key,cell in controller.iter_title %}
+            <TH id="column_{{ key }}" {{ cell.html_title_attr }} {% if cell.column.width %}width="{{ cell.column.width }}"{% endif %}>{% if cell.is_sortable %}{% include "table_column_sort.html" %}{% endif %}{{ cell.column.html_title }}</TH>
+        {% endfor %}
+        </tr>
+    </thead>

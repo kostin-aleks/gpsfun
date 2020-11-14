@@ -1,0 +1,58 @@
+{% extends "Geocaching_su/geocacher_stat.html" %}
+{% load i18n %}
+
+{% block active-activity %} class="active"{% endblock %}
+
+{% block statistics_table %}
+<br/><h3>{% trans "Geocachers activity" %}</h3>
+
+<table class="contentpaneopen">
+<tbody>
+  <tr>
+    <td>
+      <br/>
+      <div><h5>{% trans "Number of acts of creation" %} {{ all_created }}</h5></div>
+      <div><h5>{% trans "Number of Visits" %} {{ all_found }}</h5></div>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <br />
+      <div>
+      <h5>{% trans "Activities of geocachers by the years, light color for visits and dark color for creating" %}</h5><br/>
+      <img src="{% url 'geocaching-su-geocacher-activity-chart' %}" alt="{% trans 'Trend' %}" class="img-responsive" />
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <br />
+      <div>
+      <h5>{% trans "Creating of caches by the years, light color for traditional (TR, MS, LT), dark color for virtual caches (VI, MV, LV, CT, EV)" %}</h5><br/>
+      <img src="{% url 'geocaching-su-geocacher-activity-creating-chart' %}" alt="{% trans 'Trend' %}" class="img-responsive" />
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+    <br/>
+      <table class="table table-bordered table-condensed table-striped" style="width:400px;">
+        <tr>
+          <th><span class="pull-right">{% trans "Year" %}</span></th>
+          <th><span class="pull-right">{% trans "Month" %}</span></th>
+          <th align="right"><span class="pull-right">{% trans "Visits" %}</span></th>
+          <th align="right"><span class="pull-right">{% trans "Creating" %}</span></th>
+        </tr>
+      {% for row in data_table %}
+        <tr>
+          <td><span class="pull-right">{{ row.year }}</span></td>
+          <td><span class="pull-right">{{ row.month }}</span></td>
+          <td><span class="pull-right">{{ row.found }}</span></td>
+          <td><span class="pull-right">{{ row.created }}</span></td>
+        </tr>
+      {% endfor %}
+      </table>
+    </td>
+  </tr>
+</tbody></table>
+{% endblock %}

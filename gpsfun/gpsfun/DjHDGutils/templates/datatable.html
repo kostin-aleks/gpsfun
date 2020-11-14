@@ -1,0 +1,39 @@
+{% load datatable %}
+
+{% include "base_paginator.html" %}
+<br>
+<table cellspacing="0" class="main-table">
+    <tr>{% for col in controller.iter_columns %}
+            <th {% if col.width %}width="{{col.width}}"{% endif %}>{% if col.is_sortable %}
+                    <a href="{{ controller.get_start_url}}order_by={% column_order col controller %}">
+                        {{ col.print_head }}
+                    </a>
+                    {% if col.is_ordered_asc %}
+                        (a-z)
+                    {% endif %}
+                    {% if col.is_ordered_desc %}
+                        (z-a)
+                    {% endif %}
+                {% else %}
+                    {{ col.print_head }}
+                {% endif %}
+            </th>
+        {% endfor %}
+    </tr>
+    {% for row in paginator.get_items %}
+    <tr>
+        {% for col in controller.iter_columns %}
+            <td align="{{ col.align }}">
+                {% if col.is_href %}
+                    <a {% print_href col row controller %}>
+                    {% print_column col row controller %}
+                    </a>
+                {% else %}
+                    {% print_column col row controller %}
+                {% endif %}                
+            </td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+</table>
+{% include "base_paginator.html" %}

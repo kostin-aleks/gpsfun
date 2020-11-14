@@ -1,0 +1,39 @@
+{% extends "Geocaching_su/base_personal_statistics.html" %}
+{% load i18n %}
+
+{% block in_head %}
+<script type="text/javascript">
+ //google.load('visualization', '1', {packages:['corechart']});
+</script>
+{% endblock %}
+
+{% block active-regions-found %} class="active"{% endblock %}
+
+{% block statistics_table %}
+
+<br/>
+<h3>{{ geocacher.nickname }}</h3>
+<h3>{% trans "Regions where I found my caches" %}</h3>
+<div class="container col-md-9">
+{% for country in countries %}
+{% if country.count %}
+<h4>{% trans country.country %} ({{ country.regions_count }} {% trans "from" %} {{ country.all_regions }})</h4>
+<table class="table table-striped table-bordered table-hover table-condensed">
+  <tr>
+    <th>{% trans "Region" %}</th>
+    <th>{% trans "Count" %}</th>
+  </tr>
+  {% for region in country.regions %}
+  <tr {% if region.count %}class="success"{% endif %}>
+    <td>{% trans region.name %}</td>
+    <td>{{ region.count }}</td>
+  </tr>
+  {% endfor %}
+
+</table>
+{% endif %}
+{% endfor %}
+</div>
+
+{% endblock %}
+

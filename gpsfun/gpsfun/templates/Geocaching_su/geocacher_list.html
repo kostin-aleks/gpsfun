@@ -1,0 +1,14 @@
+{% extends "Geocaching_su/geocacher_stat.html" %}
+{% load i18n %}
+
+{% block active-rate %} class="active"{% endblock %}
+
+{% block statistics_table %}
+{% include "Geocaching_su/geocacher_list_menu.html" %}
+<br />
+<h4>{{ title }}</h4>
+
+<p>
+{{ table.as_html }}
+</p>
+{% endblock %}

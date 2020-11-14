@@ -1,0 +1,18 @@
+{% extends "base_bootstrap.html" %}
+{% load i18n %}
+
+{% block content_span12 %}
+<h3>{% trans 'Page not found.' %} <span>(404)</span></h3>
+<div class="">
+<strong>{% trans "You requested" %} {{ request.get_full_path }}</strong><br />
+{% trans 'The page you are looking for can no longer be found in the database.' %}<br />
+{% trans 'It is possible the data has been deleted.' %}<br />
+<br />
+<ul class="nav nav-list">
+  <li><a href="javascript:history.back()">{% trans 'Go back' %}</a></li>
+  <li><a href="/">{% trans 'Go to homepage' %}</a></li>
+  <li><a href="mailto:galdor@ukr.net">{% trans 'Contact administrator' %}</a></li>
+</ul>
+</div>
+
+{% endblock %}

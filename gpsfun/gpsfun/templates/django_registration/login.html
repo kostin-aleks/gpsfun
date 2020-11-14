@@ -1,0 +1,61 @@
+{% extends "base_bootstrap.html" %}
+{% load i18n %}
+
+{% block content_span12 %}
+<h3>{% trans "Sign in"%}</h3>
+
+{% if user.is_authenticated %}
+<div class="alert">
+{% blocktrans with username=user.username %}
+You are signed in as <strong>{{ username }}</strong>.
+Do you want <a href="/accounts/logout/">to log out</a>?
+{% endblocktrans %}
+</div>
+{% else %}
+
+{% if form.non_field_errors %}
+<div class="alert alert-error">
+{{ form.non_field_errors }}
+</div>
+{% endif %}
+
+<form class="form-horizontal" id="loginHere" method='post' action='' onSubmit="return strip_fields(this);">{% csrf_token %}
+{% for field in form %}
+    <div class="control-group">
+        <label class="control-label" for="input01">{{ field.label_tag }}</label>
+        <div class="controls">
+        {{ field }}
+        {% if field.errors %}<span class="help-block alert-error">{{ field.errors }}</span>{% endif %}
+        </div>
+    </div>
+{% endfor %}
+    <div class="control-group">
+        <label class="control-label" for="input01"></label>
+        <div class="controls">
+           <button type="submit" class="btn btn-success" rel="tooltip" title="first tooltip">{% trans 'sign in' %}</button>
+        </div>
+    </div>
+</form>
+
+<script type="text/javascript">
+    document.getElementById('id_username').focus()
+
+    function strip_fields(f) {
+        for(i=0;i<f.elements.length; i++) {
+            if (f.elements[i].type=='text') {
+                f.elements[i].value = f.elements[i].value.replace(/^\s+|\s+$/g,'');
+            }
+        }
+        return true;
+    }
+</script>
+
+ <br/><br/> <br/><br/> <br/><br/>
+ <div class="btn-group btn-group">
+
+    <a class="btn btn-success" href="{# url registration_register #}">{% trans "Sign up" %}</a>
+</div>
+{% endif %}
+
+{% endblock %}
+

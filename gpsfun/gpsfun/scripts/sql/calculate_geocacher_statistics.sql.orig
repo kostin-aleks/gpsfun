@@ -1,0 +1,209 @@
+DELETE FROM geocacher_stat;
+
+INSERT INTO geocacher_stat
+(geocacher_id, pid, created_count, found_count, av_grade, av_his_cach_grade, country, region)
+SELECT geocacher.id, geocacher.pid,
+0, 0, 0, 0,
+gc.name,
+gcs.name
+FROM geocacher
+LEFT JOIN geo_country gc ON geocacher.country_iso3=gc.iso3
+LEFT JOIN geo_country_subject gcs ON gc.iso=gcs.country_iso AND geocacher.admin_code=gcs.code;
+
+
+
+UPDATE geocacher_stat gstat
+LEFT JOIN (
+    SELECT logcrt.author_pid as author_pid, COUNT(logcrt.id) as cnt
+    FROM log_create_cach logcrt
+    GROUP BY logcrt.author_pid
+) as tt ON gstat.pid = tt.author_pid
+SET gstat.created_count=tt.cnt;
+
+UPDATE geocacher_stat gstat
+LEFT JOIN (
+    SELECT log_.cacher_pid as pid, COUNT(log_.id) as cnt
+    FROM log_seek_cach log_
+    GROUP BY log_.cacher_pid
+) as tt ON gstat.pid = tt.pid
+SET gstat.found_count=tt.cnt;
+
+
+
+
+UPDATE geocacher_stat gstat
+LEFT JOIN (
+    SELECT log_.author_pid as author_pid, COUNT(log_.id) as cnt
+    FROM log_create_cach log_
+    LEFT JOIN cach ON log_.cach_pid=cach.pid
+    WHERE cach.type_code IN ('VI', 'CT', 'EV')
+    GROUP BY log_.author_pid
+) as tt ON gstat.pid = tt.author_pid
+SET gstat.vi_created_count=tt.cnt;
+
+UPDATE geocacher_stat gstat
+LEFT JOIN (
+    SELECT log_.cacher_pid as pid, COUNT(log_.id) as cnt
+    FROM log_seek_cach log_
+    LEFT JOIN cach ON log_.cach_pid=cach.pid
+    WHERE cach.type_code IN ('VI', 'CT', 'EV')
+    GROUP BY log_.cacher_pid
+) as tt ON gstat.pid = tt.pid
+SET gstat.vi_found_count=tt.cnt;
+
+UPDATE geocacher_stat gstat
+LEFT JOIN (
+    SELECT log_.author_pid as author_pid, COUNT(log_.id) as cnt
+    FROM log_create_cach log_
+    WHERE YEAR(created_date) = YEAR(NOW())
+    GROUP BY log_.author_pid
+) as tt ON gstat.pid = tt.author_pid
+SET gstat.curr_created_count=tt.cnt;
+
+UPDATE geocacher_stat gstat
+LEFT JOIN (
+    SELECT log_.cacher_pid as pid, COUNT(log_.id) as cnt
+    FROM log_seek_cach log_
+    WHERE YEAR(found_date) = YEAR(NOW())
+    GROUP BY log_.cacher_pid
+) as tt ON gstat.pid = tt.pid
+SET gstat.curr_found_count=tt.cnt;
+
+UPDATE geocacher_stat gstat
+LEFT JOIN (
+    SELECT log_.author_pid as author_pid, COUNT(log_.id) as cnt
+    FROM log_create_cach log_
+    LEFT JOIN cach ON log_.cach_pid=cach.pid
+    WHERE YEAR(log_.created_date) = YEAR(NOW()) AND  cach.type_code IN ('VI', 'CT', 'EV')
+    GROUP BY log_.author_pid
+) as tt ON gstat.pid = tt.author_pid
+SET gstat.vi_curr_created_count=tt.cnt;
+
+UPDATE geocacher_stat gstat
+LEFT JOIN (
+    SELECT log_.cacher_pid as pid, COUNT(log_.id) as cnt
+    FROM log_seek_cach log_
+    LEFT JOIN cach ON log_.cach_pid=cach.pid
+    WHERE YEAR(found_date) = YEAR(NOW()) AND  cach.type_code IN ('VI', 'CT', 'EV')
+    GROUP BY log_.cacher_pid
+) as tt ON gstat.pid = tt.pid
+SET gstat.vi_curr_found_count=tt.cnt;
+
+UPDATE geocacher_stat gstat
+LEFT JOIN (
+    SELECT log_.author_pid as author_pid, COUNT(log_.id) as cnt
+    FROM log_create_cach log_
+    LEFT JOIN cach ON log_.cach_pid=cach.pid
+    WHERE NOT cach.type_code IN ('VI', 'CT', 'EV')
+    GROUP BY log_.author_pid
+) as tt ON gstat.pid = tt.author_pid
+SET gstat.tr_created_count=tt.cnt;
+
+UPDATE geocacher_stat gstat
+LEFT JOIN (
+    SELECT log_.cacher_pid as pid, COUNT(log_.id) as cnt
+    FROM log_seek_cach log_
+    LEFT JOIN cach ON log_.cach_pid=cach.pid
+    WHERE NOT cach.type_code IN ('VI', 'CT', 'EV')
+    GROUP BY log_.cacher_pid
+) as tt ON gstat.pid = tt.pid
+SET gstat.tr_found_count=tt.cnt;
+
+UPDATE geocacher_stat gstat
+LEFT JOIN (
+    SELECT log_.author_pid as author_pid, COUNT(log_.id) as cnt
+    FROM log_create_cach log_
+    LEFT JOIN cach ON log_.cach_pid=cach.pid
+    WHERE YEAR(log_.created_date) = YEAR(NOW()) AND  NOT cach.type_code IN ('VI', 'CT', 'EV')
+    GROUP BY log_.author_pid
+) as tt ON gstat.pid = tt.author_pid
+SET gstat.tr_curr_created_count=tt.cnt;
+
+UPDATE geocacher_stat gstat
+LEFT JOIN (
+    SELECT log_.cacher_pid as pid, COUNT(log_.id) as cnt
+    FROM log_seek_cach log_
+    LEFT JOIN cach ON log_.cach_pid=cach.pid
+    WHERE YEAR(found_date) = YEAR(NOW()) AND  NOT cach.type_code IN ('VI', 'CT', 'EV')
+    GROUP BY log_.cacher_pid
+) as tt ON gstat.pid = tt.pid
+SET gstat.tr_curr_found_count=tt.cnt;
+
+UPDATE geocacher_stat gstat
+LEFT JOIN (
+    SELECT log_.author_pid as author_pid, COUNT(log_.id) as cnt
+    FROM log_create_cach log_
+    WHERE YEAR(created_date) = YEAR(NOW())-1
+    GROUP BY log_.author_pid
+) as tt ON gstat.pid = tt.author_pid
+SET gstat.last_created_count=tt.cnt;
+
+UPDATE geocacher_stat gstat
+LEFT JOIN (
+    SELECT log_.cacher_pid as pid, COUNT(log_.id) as cnt
+    FROM log_seek_cach log_
+    WHERE YEAR(found_date) = YEAR(NOW())-1
+    GROUP BY log_.cacher_pid
+) as tt ON gstat.pid = tt.pid
+SET gstat.last_found_count=tt.cnt;
+
+UPDATE geocacher_stat gstat
+LEFT JOIN (
+    SELECT log_.author_pid as author_pid, COUNT(log_.id) as cnt
+    FROM log_create_cach log_
+    LEFT JOIN cach ON log_.cach_pid=cach.pid
+    WHERE (YEAR(log_.created_date) = YEAR(NOW())-1) AND  cach.type_code IN ('VI', 'CT', 'EV')
+    GROUP BY log_.author_pid
+) as tt ON gstat.pid = tt.author_pid
+SET gstat.vi_last_created_count=tt.cnt;
+
+UPDATE geocacher_stat gstat
+LEFT JOIN (
+    SELECT log_.cacher_pid as pid, COUNT(log_.id) as cnt
+    FROM log_seek_cach log_
+    LEFT JOIN cach ON log_.cach_pid=cach.pid
+    WHERE (YEAR(found_date) = YEAR(NOW())-1) AND  cach.type_code IN ('VI', 'CT', 'EV')
+    GROUP BY log_.cacher_pid
+) as tt ON gstat.pid = tt.pid
+SET gstat.vi_last_found_count=tt.cnt;
+
+UPDATE geocacher_stat gstat
+LEFT JOIN (
+    SELECT log_.author_pid as author_pid, COUNT(log_.id) as cnt
+    FROM log_create_cach log_
+    LEFT JOIN cach ON log_.cach_pid=cach.pid
+    WHERE (YEAR(log_.created_date) = YEAR(NOW())-1) AND  NOT cach.type_code IN ('VI', 'CT', 'EV')
+    GROUP BY log_.author_pid
+) as tt ON gstat.pid = tt.author_pid
+SET gstat.tr_last_created_count=tt.cnt;
+
+UPDATE geocacher_stat gstat
+LEFT JOIN (
+    SELECT log_.cacher_pid as pid, COUNT(log_.id) as cnt
+    FROM log_seek_cach log_
+    LEFT JOIN cach ON log_.cach_pid=cach.pid
+    WHERE (YEAR(found_date) = YEAR(NOW())-1) AND  NOT cach.type_code IN ('VI', 'CT', 'EV')
+    GROUP BY log_.cacher_pid
+) as tt ON gstat.pid = tt.pid
+SET gstat.tr_last_found_count=tt.cnt;
+
+DELETE FROM geocacher_stat
+WHERE found_count IS NULL OR found_count < 1;
+
+UPDATE geocacher_stat gstat
+LEFT JOIN (
+    SELECT log_.cacher_pid as pid, AVG(log_.grade) as grade1
+    FROM log_seek_cach log_
+    GROUP BY log_.cacher_pid
+) as tt ON gstat.pid = tt.pid
+SET gstat.av_grade=IFNULL(tt.grade1, 0);
+
+
+UPDATE geocacher_stat gstat
+LEFT JOIN (
+    SELECT cach.created_by_pid as pid, AVG(log_.grade) as grade
+    FROM log_seek_cach log_
+    LEFT JOIN cach ON log_.cach_pid=cach.pid
+    GROUP BY cach.created_by_pid
+) as tt ON gstat.pid = tt.pid
+SET gstat.av_his_cach_grade=tt.grade;

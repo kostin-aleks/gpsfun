@@ -1,0 +1,18 @@
+{% extends "base_bootstrap.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="alert alert-success">
+{% blocktrans %}
+<h3>You are logged out</h3>
+Thanks for being with us. We are waiting for you again.
+{% endblocktrans %}
+</div>
+{% endblock %}
+
+<div class="alert">
+{% blocktrans with username=user.username %}
+You are signed in as <strong>{{ username }}</strong>.  
+Do you want <a href="/accounts/logout/">to log out</a>?
+{% endblocktrans %}
+</div>

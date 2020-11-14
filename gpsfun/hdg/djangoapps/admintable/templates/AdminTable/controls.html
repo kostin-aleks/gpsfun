@@ -1,0 +1,34 @@
+{% load i18n %}
+<div class="pagination">
+  <span class="controls">
+
+    {% if table.settings.search_enabled %}<a class="search" href="?table={{ table.name }}&action=search&{{ table.getvars }}">{% trans 'Filter' %}</a>{% endif %}
+    {% if table.settings.preferences_enabled %}<a class="preferences" href="?table={{ table.name }}&action=preferences&{{ table.getvars }}">{% trans 'Preferences' %}</a>{% endif %}
+    {#% if table.settings.export_enabled %}<a class="export" href="?table={{ table.name }}&action=export&{{ table.getvars }}">{% trans 'Export' %}</a>{% endif %#}
+    {% for button in table.custom_controls %}
+    <a class="preferences" href="{{ button.url }}">{{ button.title }}</a>
+    {% endfor %}
+    {% if table.configured_filters %}
+    <a class="quick-filter" href="#">{% trans 'Quick Filter' %}</a>
+    {% endif %}
+    {% if table.action_processors %}
+    <div class="action-processors">
+      <a class="run-action" href="#">{% trans 'Action' %}</a>
+    </div>
+    {% endif %}
+  </span>
+  <span class="step-links">
+    <div class="total">Total: {{ table.count }}</div>
+    {% if table.has_previous_page %}
+    <a class="prev" href="?set_{{ table.name }}_page={{ table.previous_page_number }}&{{ table.getvars }}">&lt;</a>
+    {% endif %}
+
+    {% for pagenum in table.page_index %}
+    <a {% ifequal pagenum table.current_page %}class="current-page"{% else %}class="page"{% endifequal %} href="?set_{{ table.name }}_page={{ pagenum }}&{{ table.getvars }}">{{ pagenum }}</a>
+    {% endfor %}
+
+    {% if table.has_next_page %}
+    <a class="next" href="?set_{{ table.name }}_page={{ table.next_page_number }}&{{ table.getvars }}">&gt;</a>
+    {% endif %}
+  </span>
+</div>

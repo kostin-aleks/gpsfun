@@ -1,0 +1,30 @@
+{% extends "base_bootstrap.html" %}
+{% load i18n %}
+{% load static %}
+
+ {% block in_head %}
+ <script type="text/javascript" src="{% static 'js/coordinate_converter.js' %}"></script>
+{% endblock %}
+
+{% block body_onload %}CoordinateConverter.init('coordinate_in', 'GGMMmmm', 'GGgggggg', 'GGMMSS', '{% url ajax-converter %}');{% endblock %}
+
+{% block content_span12 %}
+<br/><h3>{% trans "GPS Сoordinate Converter online" %}</h3>
+
+<div class="row">
+  <div class="col-md-4">
+    <div class="">
+    <form onSubmit="return false;">
+      <input class="" type="text" id="coordinate_in" name="coordinate_in"
+             value="" size="20" onChange="CoordinateConverter.convert();"
+             onFocus="" />
+    </form>
+    </div>
+    <div class="converted">
+      <div class="alert  alert-success" id="GGMMmmm"></div>
+      <div class="alert  alert-success" id="GGMMSS"></div>
+      <div class="alert  alert-success" id="GGgggggg"></div>
+    </div>
+  </div>
+</div>
+{% endblock %}

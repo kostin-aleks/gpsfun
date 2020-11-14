@@ -1,0 +1,19 @@
+{% extends "base_bootstrap.html" %}
+{% load i18n %}
+{% block main_div_class %}
+    <div class="container-fluid">
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="col-md-12">
+          {% block main-content %}
+          {% endblock %}
+        </div>
+      </div>
+    </div>
+{% endblock %}
+
+{% block footer-class %}container{% endblock %}
+

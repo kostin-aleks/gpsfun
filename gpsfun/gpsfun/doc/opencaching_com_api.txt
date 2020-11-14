@@ -1,0 +1,18 @@
+Developer Key Request 						
+					 
+Aleksandr Kostin	
+I ask you for Developer Key. I want to use Opencaching.com API to show caches...
+7 ноя (1 день назад)
+Ответить
+geocaching geocaching@garmin.com кому: мне
+Показать детали 18:27 (16 ч. назад)
+Please use the developer key: D47WtT9HJydnSS3t to access the OpenCaching.com API.  Just include your developer key in the HTTP Authorization header or in an Authorization parameter in the query string.  For example: http://www.opencaching.com/api/geocache?center=38.642,94.754&limit=5&Authorization=D47WtT9HJydnSS3t.
+
+Let us know if you have any questions or issues.
+
+Thanks,
+Drew
+- Показать цитируемый текст -
+This e-mail and any attachments may contain confidential material for the sole use of the intended recipient. If you are not the intended recipient, please be aware that any disclosure, copying, distribution or use of this e-mail or any attachment is prohibited. If you have received this e-mail in error, please contact the sender and delete all copies.
+
+Thank you for your cooperation.

@@ -1,0 +1,53 @@
+{% extends "Geocaching_su/geocacher_stat.html" %}
+{% load i18n %}
+
+{% block active-by-countries %} class="active"{% endblock %}
+
+{% block statistics_table %}
+<br/><h3>{% trans "Statistics geocachers" %}</h3>
+
+<table>
+<tbody>
+  <tr>
+    <td>
+      <br/>
+      <div><h5>{% trans "Active geocachers (they found at least one cache)" %}
+               {{ active_count }}</h5>
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <td><img src="{% url 'geocaching-su-activegeocacher-stat-pie' 'active' %}" alt="{% trans 'Active geocachers statistics' %}" />
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <br/>
+      <div class="narrow50">
+      <table class="table table-bordered table-condensed table-striped" style="width:400px;">
+      {% for row in active_table %}
+        <tr class="{% cycle 'grey-bg' 'white-bg' %}">
+          <td>{% trans row.country %}</td>
+          <td><span class="pull-right">{{ row.count }}</span></td>
+          <td><span class="pull-right">{{ row.percent|floatformat:1 }}%</span></td>
+        </tr>
+      {% endfor %}
+      </table>
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <br />
+      <div>
+        <h5>
+          {% trans "Count of active geocachers over the years" %}
+        </h5>
+        <br/>
+        <img src="{% url 'geocaching-su-geocacher-stat-chart' %}"
+             alt="{% trans 'Trend' %}" />
+      </div>
+    </td>
+  </tr>
+</tbody></table>
+{% endblock %}

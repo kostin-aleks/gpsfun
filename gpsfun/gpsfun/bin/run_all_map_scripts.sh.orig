@@ -1,0 +1,6 @@
+/home/kostin1/www.GPS-FUN.INFO/gpsfun/bin/run.py /home/kostin1/www.GPS-FUN.INFO/gpsfun/scripts/map_update_su_caches_smart.py 
+/home/kostin1/www.GPS-FUN.INFO/gpsfun/bin/run.py /home/kostin1/www.GPS-FUN.INFO/gpsfun/scripts/map_update_ocpl_caches.py 
+/home/kostin1/www.GPS-FUN.INFO/gpsfun/bin/run.py /home/kostin1/www.GPS-FUN.INFO/gpsfun/scripts/map_update_occom_caches.py 
+/home/kostin1/www.GPS-FUN.INFO/gpsfun/bin/run.py /home/kostin1/www.GPS-FUN.INFO/gpsfun/scripts/map_update_shukach_caches.py
+/home/kostin1/www.GPS-FUN.INFO/gpsfun/bin/run.py /home/kostin1/www.GPS-FUN.INFO/gpsfun/scripts/set_geothing_location.py 
+/home/kostin1/www.GPS-FUN.INFO/gpsfun/bin/run.py /home/kostin1/www.GPS-FUN.INFO/gpsfun/scripts/set_map_status_updated.py

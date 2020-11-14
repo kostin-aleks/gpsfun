@@ -1,0 +1,6 @@
+OziExplorer Waypoint File Version 1.1
+WGS 84
+gps-fun.info
+
+{% for cache in caches %}-1,{{ cache.code }}-{{ cache.name }},{{ cache.latitude_degree }},{{ cache.longitude_degree }},,117,1,4,0,16776960,{{ cache.code }},0,0,0,-777,8,0,17,0,10.0,2,,,
+{% endfor %}

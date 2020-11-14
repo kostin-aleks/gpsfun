@@ -1,0 +1,14 @@
+<div class="horizontalcssmenu">
+<ul id="cssmenu1">
+{% for item in menu %}
+<li><a {% if forloop.first %}style="border-left: 0px solid #202020;" {% endif %}href="{% if item.url %}{{ item.url }}{% else %}#{% endif %}">{{ item.title }}</a>{% if item.submenu %}
+  <ul>
+    {% for subitem in item.submenu %}
+    {% if subitem.url %}<li><a href="{% if subitem.url %}{{ subitem.url }}{% else %}#{% endif %}">{{ subitem.title }}</a></li>{% else %}<li class="menuitemtitle">{{ subitem.title }}</li>{% endif %}
+    {% endfor %}
+  </ul>
+</li>{% endif %}
+{% endfor %}
+</ul>
+<br style="clear: left;" />
+</div>

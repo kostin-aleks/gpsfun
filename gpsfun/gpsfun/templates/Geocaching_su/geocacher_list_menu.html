@@ -1,0 +1,43 @@
+{% load i18n %}
+<br/><h3>{% trans "Geocachers activity" %}</h3>
+<table class="table">
+<tbody>
+  <tr>
+    <td>
+    <div class="btn-toolbar">
+      <div class="btn-group btn-group-vertical">
+      <a class="btn btn-default" href="{% url 'geocacher-rate-all' %}">{% trans "By all caches" %}</a>
+      <a class="btn btn-default" href="{% url 'geocacher-rate-vi' %}">{% trans "By virtual caches" %}</a>
+      <a class="btn btn-default" href="{% url 'geocacher-rate-tr' %}">{% trans "By traditional caches" %}</a>
+      </div>
+    </div>
+    </td>
+    <td>
+    <div class="btn-toolbar">
+      <div class="btn-group btn-group-vertical">
+      <a class="btn btn-default" href="{% url 'geocacher-rate-all-curr' %}">{{ curr_year }}. {% trans "By all caches" %}</a>
+      <a class="btn btn-default" href="{% url 'geocacher-rate-vi-curr' %}">{{ curr_year }}. {% trans "By virtual caches" %}</a>
+      <a class="btn btn-default" href="{% url 'geocacher-rate-tr-curr' %}">{{ curr_year }}. {% trans "By traditional caches" %}</a>
+      </div>
+    </div>
+    </td>
+    <td>
+    <div class="btn-toolbar">
+      <div class="btn-group btn-group-vertical">
+      <a class="btn btn-default" href="{% url 'geocacher-rate-all-last' %}">{{ last_year }}. {% trans "By all caches" %}</a>
+      <a class="btn btn-default" href="{% url 'geocacher-rate-vi-last' %}">{{ last_year }}. {% trans "By virtual caches" %}</a>
+      <a class="btn btn-default" href="{% url 'geocacher-rate-tr-last' %}">{{ last_year }}. {% trans "By traditional caches" %}</a>
+      </div>
+    </div>
+    </td>
+    <td>
+    <div class="btn-toolbar">
+      <div class="btn-group btn-group-vertical">
+      <a class="btn btn-default" href="{% url 'geocacher-search-rating' %}">{% trans "Search Rating. All years" %}</a>
+      <a class="btn btn-default" href="{% url 'geocacher-search-rating-current' %}">{% trans "Search Rating." %} {{ curr_year }}</a>
+      </div>
+    </div>
+    </td>
+  </tr>
+</tbody></table>
+

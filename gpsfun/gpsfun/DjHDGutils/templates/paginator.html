@@ -1,0 +1,17 @@
+{% if page.has_other_pages %}
+<div class="paginator">
+    {% if page.has_previous %}
+	<a href="?page={{ page.previous_page_number }}{{ page.args }}" class="page prev">&laquo;</a>
+    {% endif %}
+	{% for page_number in page.paginator.page_range %}
+	{% ifequal page_number page.number %}
+	<a class="page current" href="?page={{ page_number }}{{ page.args }}">{{ page_number }}</a>
+	{% else %}
+	<a href="?page={{ page_number }}{{ page.args }}">{{ page_number }}</a>
+	{% endifequal %}
+	{% endfor %}
+    {% if page.has_next %}
+	<a href="?page={{ page.next_page_number }}{{ page.args }}" class="page next">&raquo;</a>
+    {% endif %}
+</div>
+{% endif %}

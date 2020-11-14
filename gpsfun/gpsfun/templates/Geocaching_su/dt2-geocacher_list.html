@@ -1,0 +1,15 @@
+{% extends "Geocaching_su/geocacher_stat.html" %}
+{% load i18n %}
+{% load render_table from django_tables2 %}
+
+{% block active-rate %} class="active"{% endblock %}
+
+{% block statistics_table %}
+{% include "Geocaching_su/geocacher_list_menu.html" %}
+<br />
+<h4>{{ title }}</h4>
+
+<p>
+{% render_table table %}
+</p>
+{% endblock %}

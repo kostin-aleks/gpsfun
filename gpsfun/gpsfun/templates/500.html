@@ -1,0 +1,14 @@
+{% extends "base_bootstrap.html" %}
+{% load i18n %}
+
+{% block content_span12 %}
+<h3>{% trans 'Internal server error.' %} <span>(500)</span></h3>
+<div class="">
+<ul class="nav nav-list">
+  <li><a href="javascript:history.back()">{% trans 'Go back' %}</a></li>
+  <li><a href="/">{% trans 'Go to homepage' %}</a></li>
+  <li><a href="mailto:galdor@ukr.net">{% trans 'Contact administrator' %}</a></li>
+</ul>
+</div>
+
+{% endblock %}

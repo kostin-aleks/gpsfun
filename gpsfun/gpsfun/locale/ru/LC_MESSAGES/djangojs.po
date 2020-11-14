@@ -1,0 +1,1607 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-04-05 22:29+0100\n"
+"PO-Revision-Date: 2012-12-02 22:57\n"
+"Last-Translator:   <kostin@ua2web.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+"X-Translated-Using: django-rosetta 0.6.8\n"
+
+#: htdocs/js/map.js:486
+msgid "There are "
+msgstr "Найдено "
+
+#: htdocs/js/map.js:486
+msgid ""
+"  geocaches on the map. <br/>Please magnify the view to display the "
+"geocaches."
+msgstr " тайников на карте. <br/>Увеличьте масштаб чтобы увидеть тайники."
+
+#: htdocs/js/regions.js:3
+msgid "Ukraine"
+msgstr "Украина"
+
+#: htdocs/js/regions.js:6
+msgid "Armenia"
+msgstr "Армения"
+
+#: htdocs/js/regions.js:9
+msgid "Azerbaijan"
+msgstr "Азербайджан"
+
+#: htdocs/js/regions.js:12
+msgid "Belarus"
+msgstr "Белоруссия"
+
+#: htdocs/js/regions.js:15
+msgid "Estonia"
+msgstr "Эстония"
+
+#: htdocs/js/regions.js:18
+msgid "Georgia"
+msgstr "Грузия"
+
+#: htdocs/js/regions.js:21
+msgid "Kazakhstan"
+msgstr "Казахстан"
+
+#: htdocs/js/regions.js:24
+msgid "Kyrgyzstan"
+msgstr "Киргизия"
+
+#: htdocs/js/regions.js:27
+msgid "Latvia"
+msgstr "Латвия"
+
+#: htdocs/js/regions.js:30
+msgid "Lithuania"
+msgstr "Литва"
+
+#: htdocs/js/regions.js:33
+msgid "Moldova"
+msgstr "Молдавия"
+
+#: htdocs/js/regions.js:36
+msgid "Tajikistan"
+msgstr "Таджикистан"
+
+#: htdocs/js/regions.js:39
+msgid "Turkmenistan"
+msgstr "Туркмения"
+
+#: htdocs/js/regions.js:42
+msgid "Uzbekistan"
+msgstr "Узбекистан"
+
+#: htdocs/js/regions.js:47
+msgid "Zhytomyrs'ka Oblast'"
+msgstr "Житомирская обл."
+
+#: htdocs/js/regions.js:50
+msgid "Zaporiz'ka Oblast'"
+msgstr "Запорожская обл."
+
+#: htdocs/js/regions.js:53
+msgid "Zakarpats'ka Oblast'"
+msgstr "Закарпатская обл."
+
+#: htdocs/js/regions.js:56
+msgid "Volyns'ka Oblast'"
+msgstr "Волынская обл."
+
+#: htdocs/js/regions.js:59
+msgid "Vinnyts'ka Oblast'"
+msgstr "Винницкая обл."
+
+#: htdocs/js/regions.js:62
+msgid "Ternopil's'ka Oblast'"
+msgstr "Тернопольская обл."
+
+#: htdocs/js/regions.js:65
+msgid "Sumy"
+msgstr "Сумская обл."
+
+#: htdocs/js/regions.js:68
+msgid "Misto Sevastopol'"
+msgstr "Севастополь"
+
+#: htdocs/js/regions.js:71
+msgid "Rivnens'ka Oblast'"
+msgstr "Ровненская обл."
+
+#: htdocs/js/regions.js:74
+msgid "Poltava"
+msgstr "Полтавская обл."
+
+#: htdocs/js/regions.js:77
+msgid "Odessa"
+msgstr "Одесская обл."
+
+#: htdocs/js/regions.js:80
+msgid "Mykolayivs'ka Oblast'"
+msgstr "Николаевская обл."
+
+#: htdocs/js/regions.js:83
+msgid "L'vivs'ka Oblast'"
+msgstr "Львовская обл."
+
+#: htdocs/js/regions.js:86
+msgid "Luhans'ka Oblast'"
+msgstr "Луганская обл."
+
+#: htdocs/js/regions.js:89
+msgid "Kiev"
+msgstr "Киевская обл."
+
+#: htdocs/js/regions.js:92
+msgid "Misto Kyyiv"
+msgstr "Киев"
+
+#: htdocs/js/regions.js:95
+msgid "Respublika Krym"
+msgstr "Республика Крым"
+
+#: htdocs/js/regions.js:98
+msgid "Kirovohrads'ka Oblast'"
+msgstr "Кировоградская обл."
+
+#: htdocs/js/regions.js:101
+msgid "Khmel'nyts'ka Oblast'"
+msgstr "Хмельницкая обл."
+
+#: htdocs/js/regions.js:104
+msgid "Kherson"
+msgstr "Херсонская обл."
+
+#: htdocs/js/regions.js:107
+msgid "Kharkivs'ka Oblast'"
+msgstr "Харьковская обл."
+
+#: htdocs/js/regions.js:110
+msgid "Ivano-Frankivs'ka Oblast'"
+msgstr "Ивано-Франковская обл."
+
+#: htdocs/js/regions.js:113
+msgid "Donets'ka Oblast'"
+msgstr "Донецкая обл."
+
+#: htdocs/js/regions.js:116
+msgid "Dnipropetrovska Oblast'"
+msgstr "Днепропетровская обл."
+
+#: htdocs/js/regions.js:119
+msgid "Chernivets'ka Oblast'"
+msgstr "Черновецкая обл."
+
+#: htdocs/js/regions.js:122
+msgid "Chernihivs'ka Oblast'"
+msgstr "Черниговская обл."
+
+#: htdocs/js/regions.js:125
+msgid "Cherkas'ka Oblast'"
+msgstr "Черкасская обл."
+
+#: htdocs/js/regions.js:128
+msgid "Yaroslavskaya Oblast'"
+msgstr "Ярославская обл."
+
+#: htdocs/js/regions.js:131
+msgid "Voronezhskaya Oblast'"
+msgstr "Воронежская обл."
+
+#: htdocs/js/regions.js:134
+msgid "Vologodskaya Oblast'"
+msgstr "Вологодская обл."
+
+#: htdocs/js/regions.js:137
+msgid "Volgogradskaya Oblast'"
+msgstr "Волгоградская обл."
+
+#: htdocs/js/regions.js:140
+msgid "Ul'yanovskaya Oblast'"
+msgstr "Ульяновская обл."
+
+#: htdocs/js/regions.js:143
+msgid "Udmurtskaya Respublika"
+msgstr "Удмуртcкая республика"
+
+#: htdocs/js/regions.js:146
+msgid "Tverskaya Oblast'"
+msgstr "Тверская обл."
+
+#: htdocs/js/regions.js:149
+msgid "Tul'skaya Oblast'"
+msgstr "Тульская обл."
+
+#: htdocs/js/regions.js:152
+msgid "Respublika Tatarstan"
+msgstr "Республика Татарстан"
+
+#: htdocs/js/regions.js:155
+msgid "Tambovskaya Oblast'"
+msgstr "Тамбовская обл."
+
+#: htdocs/js/regions.js:158
+msgid "Stavropol'skiy Kray"
+msgstr "Ставропольский край"
+
+#: htdocs/js/regions.js:161
+msgid "Smolenskaya Oblast'"
+msgstr "Смоленская обл."
+
+#: htdocs/js/regions.js:164
+msgid "Saratovskaya Oblast'"
+msgstr "Саратовская обл."
+
+#: htdocs/js/regions.js:167
+msgid "Samarskaya Oblast'"
+msgstr "Самарская обл."
+
+#: htdocs/js/regions.js:170
+msgid "Ryazanskaya Oblast'"
+msgstr "Рязанская обл."
+
+#: htdocs/js/regions.js:173
+msgid "Rostovskaya Oblast'"
+msgstr "Ростовская обл."
+
+#: htdocs/js/regions.js:176
+msgid "Pskovskaya Oblast'"
+msgstr "Псковская обл."
+
+#: htdocs/js/regions.js:179
+msgid "Perm Krai"
+msgstr "Пермский край"
+
+#: htdocs/js/regions.js:182
+msgid "Penzenskaya Oblast'"
+msgstr "Пензенская обл."
+
+#: htdocs/js/regions.js:185
+msgid "Orlovskaya Oblast'"
+msgstr "Орловская обл."
+
+#: htdocs/js/regions.js:188
+msgid "Orenburgskaya Oblast'"
+msgstr "Оренбургская обл."
+
+#: htdocs/js/regions.js:191
+msgid "Novgorodskaya Oblast'"
+msgstr "Новгородская обл."
+
+#: htdocs/js/regions.js:194
+msgid "Respublika Severnaya Osetiya-Alaniya"
+msgstr "Республика Северная Осетия — Алания"
+
+#: htdocs/js/regions.js:197
+msgid "Nenetskiy Avtonomnyy Okrug"
+msgstr "Ненецкий автономный округ"
+
+#: htdocs/js/regions.js:200
+msgid "Murmansk"
+msgstr "Мурманская обл."
+
+#: htdocs/js/regions.js:203
+msgid "Moscow"
+msgstr "Москва"
+
+#: htdocs/js/regions.js:206
+msgid "Moskovskaya"
+msgstr "Московская обл."
+
+#: htdocs/js/regions.js:209
+msgid "Respublika Mordoviya"
+msgstr "Республика Мордовия"
+
+#: htdocs/js/regions.js:212
+msgid "Respublika Mariy-El"
+msgstr "Республика Марий Эл"
+
+#: htdocs/js/regions.js:215
+msgid "Lipetskaya Oblast'"
+msgstr "Липецкая обл."
+
+#: htdocs/js/regions.js:218
+msgid "Leningrad"
+msgstr "Ленинградская обл."
+
+#: htdocs/js/regions.js:221
+msgid "Sankt-Peterburg"
+msgstr "Санкт-Петербург"
+
+#: htdocs/js/regions.js:224
+msgid "Kurskaya Oblast'"
+msgstr "Курская обл."
+
+#: htdocs/js/regions.js:227
+msgid "Krasnodarskiy Kray"
+msgstr "Краснодарский край"
+
+#: htdocs/js/regions.js:230
+msgid "Kostromskaya Oblast'"
+msgstr "Костромская обл."
+
+#: htdocs/js/regions.js:233
+msgid "Respublika Komi"
+msgstr "Республика Коми"
+
+#: htdocs/js/regions.js:236
+msgid "Kirovskaya Oblast'"
+msgstr "Кировская обл."
+
+#: htdocs/js/regions.js:239
+msgid "Respublika Kareliya"
+msgstr "Республика Карелия"
+
+#: htdocs/js/regions.js:242
+msgid "Karachayevo-Cherkesskaya Respublika"
+msgstr "Карачаево-Черкесская республика"
+
+#: htdocs/js/regions.js:245
+msgid "Kaluzhskaya Oblast'"
+msgstr "Калужская обл."
+
+#: htdocs/js/regions.js:248
+msgid "Respublika Kalmykiya"
+msgstr "Республика Калмыкия"
+
+#: htdocs/js/regions.js:251
+msgid "Kaliningradskaya Oblast'"
+msgstr "Калининградская обл."
+
+#: htdocs/js/regions.js:254
+msgid "Kabardino-Balkarskaya Respublika"
+msgstr "Кабардино-Балкарская республика"
+
+#: htdocs/js/regions.js:257
+msgid "Ivanovskaya Oblast'"
+msgstr "Ивановская обл."
+
+#: htdocs/js/regions.js:260
+msgid "Respublika Ingushetiya"
+msgstr "Республика Ингушетия"
+
+#: htdocs/js/regions.js:263
+msgid "Nizhegorodskaya Oblast'"
+msgstr "Нижегородская обл."
+
+#: htdocs/js/regions.js:266
+msgid "Dagestan"
+msgstr "Республика Дагестан"
+
+#: htdocs/js/regions.js:269
+msgid "Chuvashia"
+msgstr "Чувашская республика"
+
+#: htdocs/js/regions.js:272
+msgid "Chechnya"
+msgstr "Чеченская республика"
+
+#: htdocs/js/regions.js:275
+msgid "Bryanskaya Oblast'"
+msgstr "Брянская обл."
+
+#: htdocs/js/regions.js:278
+msgid "Belgorodskaya Oblast'"
+msgstr "Белгородская обл."
+
+#: htdocs/js/regions.js:281
+msgid "Respublika Bashkortostan"
+msgstr "Республика Башкортостан"
+
+#: htdocs/js/regions.js:284
+msgid "Astrakhanskaya Oblast'"
+msgstr "Астраханская обл."
+
+#: htdocs/js/regions.js:287
+msgid "Arkhangelskaya"
+msgstr "Архангельская обл."
+
+#: htdocs/js/regions.js:290
+msgid "Respublika Adygeya"
+msgstr "Республика Адыгея"
+
+#: htdocs/js/regions.js:293
+msgid "Vladimirskaya Oblast'"
+msgstr "Владимирская обл."
+
+#: htdocs/js/regions.js:296
+msgid "Yamalo-Nenetskiy Avtonomnyy Okrug"
+msgstr "Ямало-Ненецкий автономный округ"
+
+#: htdocs/js/regions.js:299
+msgid "Tyumenskaya Oblast'"
+msgstr "Тюменская обл."
+
+#: htdocs/js/regions.js:302
+msgid "Respublika Tyva"
+msgstr "Республика Тыва"
+
+#: htdocs/js/regions.js:305
+msgid "Tomskaya Oblast'"
+msgstr "Томская обл."
+
+#: htdocs/js/regions.js:308
+msgid "Sverdlovskaya Oblast'"
+msgstr "Свердловская обл."
+
+#: htdocs/js/regions.js:311
+msgid "Omskaya Oblast'"
+msgstr "Омская обл."
+
+#: htdocs/js/regions.js:314
+msgid "Novosibirskaya Oblast'"
+msgstr "Новосибирская обл."
+
+#: htdocs/js/regions.js:317
+msgid "Kurganskaya Oblast'"
+msgstr "Курганская обл."
+
+#: htdocs/js/regions.js:320
+msgid "Krasnoyarskiy Kray"
+msgstr "Красноярский край"
+
+#: htdocs/js/regions.js:323
+msgid "Khanty-Mansiyskiy Avtonomnyy Okrug"
+msgstr "Ханты-Мансийский автономный округ - Югра"
+
+#: htdocs/js/regions.js:326
+msgid "Respublika Khakasiya"
+msgstr "Республика Хакасия"
+
+#: htdocs/js/regions.js:329
+msgid "Kemerovskaya Oblast'"
+msgstr "Кемеровская обл."
+
+#: htdocs/js/regions.js:332
+msgid "Respublika Altay"
+msgstr "Республика Алтай"
+
+#: htdocs/js/regions.js:335
+msgid "Chelyabinskaya Oblast'"
+msgstr "Челябинская обл."
+
+#: htdocs/js/regions.js:338
+msgid "Altayskiy Kray"
+msgstr "Алтайский край"
+
+#: htdocs/js/regions.js:341
+msgid "Respublika Sakha (Yakutiya)"
+msgstr "Республика Саха (Якутия)"
+
+#: htdocs/js/regions.js:344
+msgid "Primorskiy Kray"
+msgstr "Приморский край"
+
+#: htdocs/js/regions.js:347
+msgid "Khabarovsk Krai"
+msgstr "Хабаровский край"
+
+#: htdocs/js/regions.js:350
+msgid "Irkutskaya Oblast'"
+msgstr "Иркутская обл."
+
+#: htdocs/js/regions.js:353
+msgid "Zabaikalski Kray"
+msgstr "Забайкальский край"
+
+#: htdocs/js/regions.js:356
+msgid "Jewish Autonomous Oblast"
+msgstr "Еврейская автономная обл."
+
+#: htdocs/js/regions.js:359
+msgid "Amurskaya Oblast'"
+msgstr "Амурская обл."
+
+#: htdocs/js/regions.js:362
+msgid "Respublika Buryatiya"
+msgstr "Республика Бурятия"
+
+#: htdocs/js/regions.js:365
+msgid "Sakhalinskaya Oblast'"
+msgstr "Сахалинская обл."
+
+#: htdocs/js/regions.js:368
+msgid "Magadanskaya Oblast'"
+msgstr "Магаданская обл."
+
+#: htdocs/js/regions.js:371
+msgid "Kamtchatski Kray"
+msgstr "Камчатский край"
+
+#: htdocs/js/regions.js:374
+msgid "Chukotskiy Avtonomnyy Okrug"
+msgstr "Чукотский автономный округ"
+
+#: htdocs/js/regions.js:379
+msgid "Afghanistan"
+msgstr "Афганистан"
+
+#: htdocs/js/regions.js:382 htdocs/js/regions.js.c:1078
+msgid "Aland Islands"
+msgstr "Эландские Острова"
+
+#: htdocs/js/regions.js:385
+msgid "Albania"
+msgstr "Албания"
+
+#: htdocs/js/regions.js:388
+msgid "Algeria"
+msgstr "Алжир"
+
+#: htdocs/js/regions.js:391
+msgid "American Samoa"
+msgstr "Американское Самоа"
+
+#: htdocs/js/regions.js:394
+msgid "Andorra"
+msgstr "Андорра"
+
+#: htdocs/js/regions.js:397
+msgid "Angola"
+msgstr "Ангола"
+
+#: htdocs/js/regions.js:400
+msgid "Anguilla"
+msgstr "Ангилья"
+
+#: htdocs/js/regions.js:403
+msgid "Antarctica"
+msgstr "Антарктика"
+
+#: htdocs/js/regions.js:406
+msgid "Antigua and Barbuda"
+msgstr "Антигуа и Барбуда"
+
+#: htdocs/js/regions.js:409
+msgid "Argentina"
+msgstr "Аргентина"
+
+#: htdocs/js/regions.js:412
+msgid "Aruba"
+msgstr "Аруба"
+
+#: htdocs/js/regions.js:415
+msgid "Australia"
+msgstr "Австралия"
+
+#: htdocs/js/regions.js:418
+msgid "Austria"
+msgstr "Австрия"
+
+#: htdocs/js/regions.js:421
+msgid "Bahamas"
+msgstr "Багамы"
+
+#: htdocs/js/regions.js:424
+msgid "Bahrain"
+msgstr "Бахрейн"
+
+#: htdocs/js/regions.js:427
+msgid "Bangladesh"
+msgstr "Бангладеш"
+
+#: htdocs/js/regions.js:430
+msgid "Barbados"
+msgstr "Барбадос"
+
+#: htdocs/js/regions.js:433
+msgid "Belgium"
+msgstr "Бельгия"
+
+#: htdocs/js/regions.js:436
+msgid "Belize"
+msgstr "Белиз"
+
+#: htdocs/js/regions.js:439
+msgid "Benin"
+msgstr "Бенин"
+
+#: htdocs/js/regions.js:442
+msgid "Bermuda"
+msgstr "Бермуды"
+
+#: htdocs/js/regions.js:445
+msgid "Bhutan"
+msgstr "Бутан"
+
+#: htdocs/js/regions.js:448
+msgid "Bolivia"
+msgstr "Боливия"
+
+#: htdocs/js/regions.js:451
+msgid "Bosnia and Herzegovina"
+msgstr "Босния и Герцеговина"
+
+#: htdocs/js/regions.js:454
+msgid "Botswana"
+msgstr "Ботсвана"
+
+#: htdocs/js/regions.js:457
+msgid "Bouvet Island"
+msgstr "Остров Буве"
+
+#: htdocs/js/regions.js:460
+msgid "Brazil"
+msgstr "Бразилия"
+
+#: htdocs/js/regions.js:463
+msgid "British Indian Ocean Territory"
+msgstr "Британская территория в Индийском океане"
+
+#: htdocs/js/regions.js:466
+msgid "British Virgin Islands"
+msgstr "Британские Виргинские Острова"
+
+#: htdocs/js/regions.js:469
+msgid "Brunei"
+msgstr "Бруней"
+
+#: htdocs/js/regions.js:472
+msgid "Bulgaria"
+msgstr "Болгария"
+
+#: htdocs/js/regions.js:475
+msgid "Burkina Faso"
+msgstr "Буркина-Фасо"
+
+#: htdocs/js/regions.js:478
+msgid "Burundi"
+msgstr "Бурунди"
+
+#: htdocs/js/regions.js:481
+msgid "Cambodia"
+msgstr "Камбоджа"
+
+#: htdocs/js/regions.js:484
+msgid "Cameroon"
+msgstr "Камерун"
+
+#: htdocs/js/regions.js:487
+msgid "Canada"
+msgstr "Канада"
+
+#: htdocs/js/regions.js:490
+msgid "Cape Verde"
+msgstr "Кабо-Верде"
+
+#: htdocs/js/regions.js:493
+msgid "Cayman Islands"
+msgstr "Каймановы Острова"
+
+#: htdocs/js/regions.js:496
+msgid "Central African Republic"
+msgstr "Ценрально-Африканская Республика"
+
+#: htdocs/js/regions.js:499
+msgid "Chad"
+msgstr "Чад"
+
+#: htdocs/js/regions.js:502
+msgid "Chile"
+msgstr "Чили"
+
+#: htdocs/js/regions.js:505
+msgid "China"
+msgstr "Китай"
+
+#: htdocs/js/regions.js:508
+msgid "Christmas Island"
+msgstr "Остров Рождества"
+
+#: htdocs/js/regions.js:511
+msgid "Cocos Islands"
+msgstr "Кокосовые Острова"
+
+#: htdocs/js/regions.js:514
+msgid "Colombia"
+msgstr "Колумбия"
+
+#: htdocs/js/regions.js:517
+msgid "Comoros"
+msgstr "Коморы"
+
+#: htdocs/js/regions.js:520
+msgid "Cook Islands"
+msgstr "Острова Кука"
+
+#: htdocs/js/regions.js:523
+msgid "Costa Rica"
+msgstr "Коста-Рика"
+
+#: htdocs/js/regions.js:526
+msgid "Croatia"
+msgstr "Хорватия"
+
+#: htdocs/js/regions.js:529
+msgid "Cuba"
+msgstr "Куба"
+
+#: htdocs/js/regions.js:532
+msgid "Cyprus"
+msgstr "Кипр"
+
+#: htdocs/js/regions.js:535
+msgid "Czech Republic"
+msgstr "Чехия"
+
+#: htdocs/js/regions.js:538
+msgid "Democratic Republic of the Congo"
+msgstr "Демократическая Республика Конго"
+
+#: htdocs/js/regions.js:541
+msgid "Denmark"
+msgstr "Дания"
+
+#: htdocs/js/regions.js:544
+msgid "Dominica"
+msgstr "Доминика"
+
+#: htdocs/js/regions.js:547
+msgid "Dominican Republic"
+msgstr "Доминиканская Республика"
+
+#: htdocs/js/regions.js:550
+msgid "East Timor"
+msgstr "Восточный Тимор"
+
+#: htdocs/js/regions.js:553
+msgid "Ecuador"
+msgstr "Эквадор"
+
+#: htdocs/js/regions.js:556
+msgid "Egypt"
+msgstr "Египет"
+
+#: htdocs/js/regions.js:559
+msgid "El Salvador"
+msgstr "Салвадор"
+
+#: htdocs/js/regions.js:562
+msgid "Equatorial Guinea"
+msgstr "Экваториальная Гвинея"
+
+#: htdocs/js/regions.js:565
+msgid "Eritrea"
+msgstr "Эритрея"
+
+#: htdocs/js/regions.js:568
+msgid "Ethiopia"
+msgstr "Эфиопия"
+
+#: htdocs/js/regions.js:571
+msgid "Falkland Islands"
+msgstr "Фолклендские Острова"
+
+#: htdocs/js/regions.js:574
+msgid "Faroe Islands"
+msgstr "Фарерские Острова"
+
+#: htdocs/js/regions.js:577
+msgid "Fiji"
+msgstr "Фиджи"
+
+#: htdocs/js/regions.js:580
+msgid "Finland"
+msgstr "Финляндия"
+
+#: htdocs/js/regions.js:583
+msgid "France"
+msgstr "Франция"
+
+#: htdocs/js/regions.js:586
+msgid "French Guiana"
+msgstr "Французская Гвиана"
+
+#: htdocs/js/regions.js:589
+msgid "French Polynesia"
+msgstr "Французская Полинезия"
+
+#: htdocs/js/regions.js:592
+msgid "French Southern Territories"
+msgstr "Французские Южные Территории"
+
+#: htdocs/js/regions.js:595
+msgid "Gabon"
+msgstr "Габон"
+
+#: htdocs/js/regions.js:598
+msgid "Gambia"
+msgstr "Гамбия"
+
+#: htdocs/js/regions.js:601
+msgid "Germany"
+msgstr "Германия"
+
+#: htdocs/js/regions.js:604
+msgid "Ghana"
+msgstr "Гана"
+
+#: htdocs/js/regions.js:607
+msgid "Gibraltar"
+msgstr "Гибралтар"
+
+#: htdocs/js/regions.js:610
+msgid "Greece"
+msgstr "Греция"
+
+#: htdocs/js/regions.js:613
+msgid "Greenland"
+msgstr "Гренландия"
+
+#: htdocs/js/regions.js:616
+msgid "Grenada"
+msgstr "Гренада"
+
+#: htdocs/js/regions.js:619
+msgid "Guadeloupe"
+msgstr "Гваделупа"
+
+#: htdocs/js/regions.js:622
+msgid "Guam"
+msgstr "Гуам"
+
+#: htdocs/js/regions.js:625
+msgid "Guatemala"
+msgstr "Гватемала"
+
+#: htdocs/js/regions.js:628
+msgid "Guernsey"
+msgstr "Гернси"
+
+#: htdocs/js/regions.js:631
+msgid "Guinea"
+msgstr "Гвинея"
+
+#: htdocs/js/regions.js:634
+msgid "Guinea-Bissau"
+msgstr "Гвинея-Бисау"
+
+#: htdocs/js/regions.js:637
+msgid "Guyana"
+msgstr "Гайана"
+
+#: htdocs/js/regions.js:640
+msgid "Haiti"
+msgstr "Гаити"
+
+#: htdocs/js/regions.js:643
+msgid "Heard Island and McDonald Islands"
+msgstr "Остров Херд и Острова Мкдональд"
+
+#: htdocs/js/regions.js:646
+msgid "Honduras"
+msgstr "Гондурас"
+
+#: htdocs/js/regions.js:649
+msgid "Hong Kong"
+msgstr "Гонконг"
+
+#: htdocs/js/regions.js:652
+msgid "Hungary"
+msgstr "Венгрия"
+
+#: htdocs/js/regions.js:655
+msgid "Iceland"
+msgstr "Исландия"
+
+#: htdocs/js/regions.js:658
+msgid "India"
+msgstr "Индия"
+
+#: htdocs/js/regions.js:661
+msgid "Indonesia"
+msgstr "Индонезия"
+
+#: htdocs/js/regions.js:664
+msgid "Iran"
+msgstr "Иран"
+
+#: htdocs/js/regions.js:667
+msgid "Iraq"
+msgstr "Ирак"
+
+#: htdocs/js/regions.js:670
+msgid "Ireland"
+msgstr "Ирландия"
+
+#: htdocs/js/regions.js:673
+msgid "Isle of Man"
+msgstr "Остров Мэн"
+
+#: htdocs/js/regions.js:676
+msgid "Israel"
+msgstr "Израиль"
+
+#: htdocs/js/regions.js:679
+msgid "Italy"
+msgstr "Италия"
+
+#: htdocs/js/regions.js:682
+msgid "Ivory Coast"
+msgstr "Кот д'Ивуар"
+
+#: htdocs/js/regions.js:685
+msgid "Jamaica"
+msgstr "Ямайка"
+
+#: htdocs/js/regions.js:688
+msgid "Japan"
+msgstr "Япония"
+
+#: htdocs/js/regions.js:691
+msgid "Jersey"
+msgstr "Джерси"
+
+#: htdocs/js/regions.js:694
+msgid "Jordan"
+msgstr "Иордания"
+
+#: htdocs/js/regions.js:697
+msgid "Kenya"
+msgstr "Кения"
+
+#: htdocs/js/regions.js:700
+msgid "Kiribati"
+msgstr "Кирибати"
+
+#: htdocs/js/regions.js:703
+msgid "Kuwait"
+msgstr "Кувейт"
+
+#: htdocs/js/regions.js:706
+msgid "Laos"
+msgstr "Лаос"
+
+#: htdocs/js/regions.js:709
+msgid "Lebanon"
+msgstr "Ливан"
+
+#: htdocs/js/regions.js:712
+msgid "Lesotho"
+msgstr "Лесото"
+
+#: htdocs/js/regions.js:715
+msgid "Liberia"
+msgstr "Либерия"
+
+#: htdocs/js/regions.js:718
+msgid "Libya"
+msgstr "Ливия"
+
+#: htdocs/js/regions.js:721
+msgid "Liechtenstein"
+msgstr "Лихтенштейн"
+
+#: htdocs/js/regions.js:724
+msgid "Luxembourg"
+msgstr "Люксембург"
+
+#: htdocs/js/regions.js:727
+msgid "Macao"
+msgstr "Макао"
+
+#: htdocs/js/regions.js:730
+msgid "Macedonia"
+msgstr "Македония"
+
+#: htdocs/js/regions.js:733
+msgid "Madagascar"
+msgstr "Мадагаскар"
+
+#: htdocs/js/regions.js:736
+msgid "Malawi"
+msgstr "Малави"
+
+#: htdocs/js/regions.js:739
+msgid "Malaysia"
+msgstr "Малайзия"
+
+#: htdocs/js/regions.js:742
+msgid "Maldives"
+msgstr "Мальдивы"
+
+#: htdocs/js/regions.js:745
+msgid "Mali"
+msgstr "Мали"
+
+#: htdocs/js/regions.js:748
+msgid "Malta"
+msgstr "Малта"
+
+#: htdocs/js/regions.js:751
+msgid "Marshall Islands"
+msgstr "Маршалловы Острова"
+
+#: htdocs/js/regions.js:754
+msgid "Martinique"
+msgstr "Мартиника"
+
+#: htdocs/js/regions.js:757
+msgid "Mauritania"
+msgstr "Мавритания"
+
+#: htdocs/js/regions.js:760
+msgid "Mauritius"
+msgstr "Маврикий"
+
+#: htdocs/js/regions.js:763
+msgid "Mayotte"
+msgstr "Майотта"
+
+#: htdocs/js/regions.js:766
+msgid "Mexico"
+msgstr "Мексика"
+
+#: htdocs/js/regions.js:769
+msgid "Micronesia"
+msgstr "Микронезия"
+
+#: htdocs/js/regions.js:772
+msgid "Monaco"
+msgstr "Монако"
+
+#: htdocs/js/regions.js:775
+msgid "Mongolia"
+msgstr "Монголия"
+
+#: htdocs/js/regions.js:778
+msgid "Montenegro"
+msgstr "Черногория"
+
+#: htdocs/js/regions.js:781
+msgid "Montserrat"
+msgstr "Монтсеррат"
+
+#: htdocs/js/regions.js:784
+msgid "Morocco"
+msgstr "Марокко"
+
+#: htdocs/js/regions.js:787
+msgid "Mozambique"
+msgstr "Мозамбик"
+
+#: htdocs/js/regions.js:790
+msgid "Myanmar"
+msgstr "Мьянма"
+
+#: htdocs/js/regions.js:793
+msgid "Namibia"
+msgstr "Намибия"
+
+#: htdocs/js/regions.js:796
+msgid "Nauru"
+msgstr "Науру"
+
+#: htdocs/js/regions.js:799
+msgid "Nepal"
+msgstr "Непал"
+
+#: htdocs/js/regions.js:802
+msgid "Netherlands"
+msgstr "Нидерланды"
+
+#: htdocs/js/regions.js:805
+msgid "Netherlands Antilles"
+msgstr "Нидерландские Антилы"
+
+#: htdocs/js/regions.js:808
+msgid "New Caledonia"
+msgstr "Новая Каледония"
+
+#: htdocs/js/regions.js:811
+msgid "New Zealand"
+msgstr "Новая Зеландия"
+
+#: htdocs/js/regions.js:814
+msgid "Nicaragua"
+msgstr "Никарагуа"
+
+#: htdocs/js/regions.js:817
+msgid "Niger"
+msgstr "Нигер"
+
+#: htdocs/js/regions.js:820
+msgid "Nigeria"
+msgstr "Нигерия"
+
+#: htdocs/js/regions.js:823
+msgid "Niue"
+msgstr "Ниуэ"
+
+#: htdocs/js/regions.js:826
+msgid "Norfolk Island"
+msgstr "Остров Норфолк"
+
+#: htdocs/js/regions.js:829
+msgid "North Korea"
+msgstr "КНДР"
+
+#: htdocs/js/regions.js:832
+msgid "Northern Mariana Islands"
+msgstr "Северные Марианские Острова"
+
+#: htdocs/js/regions.js:835
+msgid "Norway"
+msgstr "Норвегия"
+
+#: htdocs/js/regions.js:838
+msgid "Oman"
+msgstr "Оман"
+
+#: htdocs/js/regions.js:841
+msgid "Pakistan"
+msgstr "Пакистан"
+
+#: htdocs/js/regions.js:844
+msgid "Palau"
+msgstr "Палау"
+
+#: htdocs/js/regions.js:847
+msgid "Palestinian Territory"
+msgstr "Палестина"
+
+#: htdocs/js/regions.js:850
+msgid "Panama"
+msgstr "Панама"
+
+#: htdocs/js/regions.js:853
+msgid "Papua New Guinea"
+msgstr "Папуа Новая Гвинея"
+
+#: htdocs/js/regions.js:856
+msgid "Paraguay"
+msgstr "Парагвай"
+
+#: htdocs/js/regions.js:859
+msgid "Peru"
+msgstr "Перу"
+
+#: htdocs/js/regions.js:862
+msgid "Philippines"
+msgstr "Филиппины"
+
+#: htdocs/js/regions.js:865
+msgid "Pitcairn"
+msgstr "Питкерн"
+
+#: htdocs/js/regions.js:868
+msgid "Poland"
+msgstr "Польша"
+
+#: htdocs/js/regions.js:871
+msgid "Portugal"
+msgstr "Португалия"
+
+#: htdocs/js/regions.js:874
+msgid "Puerto Rico"
+msgstr "Пуэрто-Рико"
+
+#: htdocs/js/regions.js:877
+msgid "Qatar"
+msgstr "Катар"
+
+#: htdocs/js/regions.js:880
+msgid "Republic of the Congo"
+msgstr "Республика Конго"
+
+#: htdocs/js/regions.js:883
+msgid "Reunion"
+msgstr "Реюньон"
+
+#: htdocs/js/regions.js:886
+msgid "Romania"
+msgstr "Румыния"
+
+#: htdocs/js/regions.js:889
+msgid "Rwanda"
+msgstr "Руанда"
+
+#: htdocs/js/regions.js:892
+msgid "Saint Barthelemy"
+msgstr "Сен-Бартелеми"
+
+#: htdocs/js/regions.js:895
+msgid "Saint Helena"
+msgstr "Святая Елена"
+
+#: htdocs/js/regions.js:898
+msgid "Saint Kitts and Nevis"
+msgstr "Сент-Китс и Гренадины"
+
+#: htdocs/js/regions.js:901
+msgid "Saint Lucia"
+msgstr "Сент-Люсия"
+
+#: htdocs/js/regions.js:904
+msgid "Saint Martin"
+msgstr "Сен-Мартин"
+
+#: htdocs/js/regions.js:907
+msgid "Saint Pierre and Miquelon"
+msgstr "Сент-Пьер и Микелон"
+
+#: htdocs/js/regions.js:910
+msgid "Saint Vincent and the Grenadines"
+msgstr "Сент-Винсент и Гренадины"
+
+#: htdocs/js/regions.js:913
+msgid "Samoa"
+msgstr "Самоа"
+
+#: htdocs/js/regions.js:916
+msgid "San Marino"
+msgstr "Сан-Марино"
+
+#: htdocs/js/regions.js:919
+msgid "Sao Tome and Principe"
+msgstr "Сан-Томе и Принсипи"
+
+#: htdocs/js/regions.js:922
+msgid "Saudi Arabia"
+msgstr "Саудовская Аравия"
+
+#: htdocs/js/regions.js:925
+msgid "Senegal"
+msgstr "Сенегал"
+
+#: htdocs/js/regions.js:928
+msgid "Serbia"
+msgstr "Сербия"
+
+#: htdocs/js/regions.js:931
+msgid "Serbia and Montenegro"
+msgstr "Сербия и Черногория"
+
+#: htdocs/js/regions.js:934
+msgid "Seychelles"
+msgstr "Сейшелы"
+
+#: htdocs/js/regions.js:937
+msgid "Sierra Leone"
+msgstr "Сьерра Леоне"
+
+#: htdocs/js/regions.js:940
+msgid "Singapore"
+msgstr "Сингапур"
+
+#: htdocs/js/regions.js:943
+msgid "Slovakia"
+msgstr "Словакия"
+
+#: htdocs/js/regions.js:946
+msgid "Slovenia"
+msgstr "Словения"
+
+#: htdocs/js/regions.js:949
+msgid "Solomon Islands"
+msgstr "Соломоновы Острова"
+
+#: htdocs/js/regions.js:952
+msgid "Somalia"
+msgstr "Сомали"
+
+#: htdocs/js/regions.js:955
+msgid "South Africa"
+msgstr "Южная Африка"
+
+#: htdocs/js/regions.js:958
+msgid "South Georgia and the South Sandwich Islands"
+msgstr "Южная Джорджия и Южные Сандвичевы Острова"
+
+#: htdocs/js/regions.js:961
+msgid "South Korea"
+msgstr "Корея"
+
+#: htdocs/js/regions.js:964
+msgid "Spain"
+msgstr "Испания"
+
+#: htdocs/js/regions.js:967
+msgid "Sri Lanka"
+msgstr "Шри-Ланка"
+
+#: htdocs/js/regions.js:970
+msgid "Sudan"
+msgstr "Судан"
+
+#: htdocs/js/regions.js:973
+msgid "Suriname"
+msgstr "Суринам"
+
+#: htdocs/js/regions.js:976
+msgid "Svalbard and Jan Mayen"
+msgstr "Шпицберген и Ян Майен"
+
+#: htdocs/js/regions.js:979
+msgid "Swaziland"
+msgstr "Свазиленд"
+
+#: htdocs/js/regions.js:982
+msgid "Sweden"
+msgstr "Швеция"
+
+#: htdocs/js/regions.js:985
+msgid "Switzerland"
+msgstr "Швейцария"
+
+#: htdocs/js/regions.js:988
+msgid "Syria"
+msgstr "Сирия"
+
+#: htdocs/js/regions.js:991
+msgid "Taiwan"
+msgstr "Тайвань"
+
+#: htdocs/js/regions.js:994
+msgid "Tanzania"
+msgstr "Танзания"
+
+#: htdocs/js/regions.js:997
+msgid "Thailand"
+msgstr "Таиланд"
+
+#: htdocs/js/regions.js:1000
+msgid "Togo"
+msgstr "Того"
+
+#: htdocs/js/regions.js:1003
+msgid "Tokelau"
+msgstr "Токелау"
+
+#: htdocs/js/regions.js:1006
+msgid "Tonga"
+msgstr "Тонга"
+
+#: htdocs/js/regions.js:1009
+msgid "Trinidad and Tobago"
+msgstr "Тринидад и Тобаго"
+
+#: htdocs/js/regions.js:1012
+msgid "Tunisia"
+msgstr "Тунис"
+
+#: htdocs/js/regions.js:1015
+msgid "Turkey"
+msgstr "Турция"
+
+#: htdocs/js/regions.js:1018
+msgid "Turks and Caicos Islands"
+msgstr "Острова Теркс и Кайкос"
+
+#: htdocs/js/regions.js:1021
+msgid "Tuvalu"
+msgstr "Тувалу"
+
+#: htdocs/js/regions.js:1024
+msgid "U.S. Virgin Islands"
+msgstr "Виргинские Острова США"
+
+#: htdocs/js/regions.js:1027
+msgid "Uganda"
+msgstr "Уганда"
+
+#: htdocs/js/regions.js:1030
+msgid "United Arab Emirates"
+msgstr "ОАЭ"
+
+#: htdocs/js/regions.js:1033
+msgid "United Kingdom"
+msgstr "Великобритания"
+
+#: htdocs/js/regions.js:1036
+msgid "United States"
+msgstr "США"
+
+#: htdocs/js/regions.js:1039
+msgid "United States Minor Outlying Islands"
+msgstr "Малые Тихоокеанские отдаленные острова США"
+
+#: htdocs/js/regions.js:1042
+msgid "Uruguay"
+msgstr "Уругвай"
+
+#: htdocs/js/regions.js:1045
+msgid "Vanuatu"
+msgstr "Вануату"
+
+#: htdocs/js/regions.js:1048
+msgid "Vatican"
+msgstr "Ватикан"
+
+#: htdocs/js/regions.js:1051
+msgid "Vatican City"
+msgstr "Ватикан"
+
+#: htdocs/js/regions.js:1054
+msgid "Venezuela"
+msgstr "Венесуэла"
+
+#: htdocs/js/regions.js:1057
+msgid "Vietnam"
+msgstr "Вьетнам"
+
+#: htdocs/js/regions.js:1060
+msgid "Wallis and Futuna"
+msgstr "Уоллис и Футуна"
+
+#: htdocs/js/regions.js:1063
+msgid "Western Sahara"
+msgstr "Западная Сахара"
+
+#: htdocs/js/regions.js:1066
+msgid "Yemen"
+msgstr "Йемен"
+
+#: htdocs/js/regions.js:1069
+msgid "Russia"
+msgstr "Россия"
+
+#: htdocs/js/regions.js:1072
+msgid "Zambia"
+msgstr "Замбия"
+
+#: htdocs/js/regions.js:1075
+msgid "Zimbabwe"
+msgstr "Зимбабве"
+
+#: htdocs/js/regions.js:1082
+msgid "Zapadno-Kazakhstanskaya Oblast'"
+msgstr "Западно-Казахстанская обл."
+
+#: htdocs/js/regions.js:1085
+msgid "Mangistauskaya Oblast'"
+msgstr "Мангистауская обл."
+
+#: htdocs/js/regions.js:1088
+msgid "Atyrau Oblysy"
+msgstr "Атырауская обл."
+
+#: htdocs/js/regions.js:1091
+msgid "Aktyubinskaya Oblast'"
+msgstr "Актюбинская обл."
+
+#: htdocs/js/regions.js:1094
+msgid "East Kazakhstan"
+msgstr "Восточно-Казахстанская обл."
+
+#: htdocs/js/regions.js:1097
+msgid "Akmolinskaya Oblast'"
+msgstr "Акмолинская обл."
+
+#: htdocs/js/regions.js:1100
+msgid "Severo-Kazakhstanskaya Oblast'"
+msgstr "Северо-Казахстанская обл."
+
+#: htdocs/js/regions.js:1103
+msgid "Pavlodarskaya Oblast'"
+msgstr "Павлодарская обл."
+
+#: htdocs/js/regions.js:1106
+msgid "Qyzylorda Oblysy"
+msgstr "Кызылординская обл."
+
+#: htdocs/js/regions.js:1109
+msgid "Qostanay Oblysy"
+msgstr "Костанайская обл."
+
+#: htdocs/js/regions.js:1112
+msgid "Karagandinskaya Oblast'"
+msgstr "Карагандинская обл."
+
+#: htdocs/js/regions.js:1115
+msgid "Zhambyl Oblysy"
+msgstr "Жамбылская обл."
+
+#: htdocs/js/regions.js:1118
+msgid "Yuzhno-Kazakhstanskaya Oblast'"
+msgstr "Южно-Казахстанская обл."
+
+#: htdocs/js/regions.js:1121
+msgid "Almaty Qalasy"
+msgstr "Алма-Ата"
+
+#: htdocs/js/regions.js:1124
+msgid "Almaty Oblysy"
+msgstr "Алматинская обл."
+
+#: htdocs/js/regions.js:1127
+msgid "Bayqongyr Qalasy"
+msgstr "Байконур"
+
+#: htdocs/js/regions.js:1130
+msgid "Astana Qalasy"
+msgstr "Астана"
+
+#: htdocs/js/regions.js:1133
+msgid "Vitsyebskaya Voblasts'"
+msgstr "Витебская обл."
+
+#: htdocs/js/regions.js:1136
+msgid "Mahilyowskaya Voblasts'"
+msgstr "Могилёвская обл."
+
+#: htdocs/js/regions.js:1139
+msgid "Minskaya Voblasts'"
+msgstr "Минская обл."
+
+#: htdocs/js/regions.js:1142
+msgid "Horad Minsk"
+msgstr "Минск"
+
+#: htdocs/js/regions.js:1145
+msgid "Hrodzyenskaya Voblasts'"
+msgstr "Гродненская обл."
+
+#: htdocs/js/regions.js:1148
+msgid "Homyel'skaya Voblasts'"
+msgstr "Гомельская обл."
+
+#: htdocs/js/regions.js:1151
+msgid "Brestskaya Voblasts'"
+msgstr "Брестская обл."
+
+#: htdocs/js/registration.js:19
+msgid "Enter your first and last name"
+msgstr "Введите имя и фамилию"
+
+#: htdocs/js/registration.js:21
+msgid "Enter your email address"
+msgstr "Введите email"
+
+#: htdocs/js/registration.js:22
+msgid "Enter valid email address"
+msgstr "Введите правильный email"
+
+#: htdocs/js/registration.js:25
+msgid "Enter your password"
+msgstr "Введите пароль"
+
+#: htdocs/js/registration.js:26
+msgid "Password must be minimum 6 characters"
+msgstr "Длина пароля должна быть не меньше, чем 6 символов"
+
+#: htdocs/js/registration.js:29
+msgid "Enter confirm password"
+msgstr "Повторите ввод пароля"
+
+#: htdocs/js/registration.js:30
+msgid "Password and Confirm Password must match"
+msgstr "Пароль и его повторение не совпадают"
+
+#: htdocs/js/select_city.js:116
+msgid "-- choose admin subject --"
+msgstr "-- выберите регион --"
+
+#: htdocs/js/select_city.js:120 htdocs/js/select_city.js.c:129
+msgid "-- choose city --"
+msgstr "-- выберите город --"
+
+#: htdocs/js/su_map.js:211
+msgid "found"
+msgstr "найдено"
+
+#~ msgid "all"
+#~ msgstr "все"
+
+#~ msgid "Regions"
+#~ msgstr "Регионы"
+
+#~ msgid "Åland Islands"
+#~ msgstr "Эландские Острова"
+
+#~ msgid "undefined subject"
+#~ msgstr "регион неизвестен"
