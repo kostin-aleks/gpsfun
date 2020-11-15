@@ -10,7 +10,16 @@
 {% trans 'It is an attempt to calculate the index of "quality"of caches on the number of recommendations and number of entries in the logbook.' %}
 </div>
 <div><img src="{% static '/img/tops-formula.png' %}" border="0" alt="Formula" /></div>
-<p>
+
+<div class="col-md-6">
+<form method="GET">
+  {{ filter.form.as_p }}
+  <button type="submit" class="btn btn-success">{% trans "Filter" %}</button>
+</form>
+</div>
+
+<div>
 {% render_table table %}
-</p>
+</div>
 {% endblock %}
+

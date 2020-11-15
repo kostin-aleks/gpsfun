@@ -117,9 +117,7 @@ def set_user_location(user, data):
             user.gpsfunuser.location.EW_degree = position.get('longitude')
             user.gpsfunuser.location.save()
             user_changed = True
-        print('user changed', user_changed)
-        print(user.gpsfunuser.location.NS_degree)
-        print(user.gpsfunuser.location.EW_degree)
+
     return user_changed
 
 

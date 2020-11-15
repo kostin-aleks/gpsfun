@@ -1,6 +1,7 @@
 # coding: utf-8
 import time
 import itertools
+import django_filters
 from datetime import datetime, date
 from lxml import etree
 from django.urls import reverse
@@ -28,10 +29,11 @@ from gpsfun.main.GeoCachSU.models import Cach, CachStat, Geocacher, \
      GEOCACHING_SU_CACH_TYPES, GEOCACHING_SU_REAL_TYPES, \
      GEOCACHING_SU_UNREAL_TYPES, LogSeekCach, LogCreateCach, \
      GeocacherStat, GEOCACHING_SU_ONMAP_TYPES, GeocacherSearchStat
-from gpsfun.main.GeoCachSU.utils import populate_cach_type, \
-     populate_country_iso3, populate_subjects, populate_countries_iso3
+from gpsfun.main.GeoCachSU.utils import (
+    populate_cach_type, populate_country_iso3, populate_subjects,
+    populate_countries_iso3, countries_iso, cache_types, countries_iso3)
 from gpsfun.main.GeoName.models import GeoCountry, GeoCountryAdminSubject, \
-     country_iso_by_iso3, geocountry_by_code
+    country_iso_by_iso3, geocountry_by_code
 from gpsfun.main.models import LogUpdate
 from gpsfun.main.db_utils import sql2list, sql2val
 from gpsfun.geocaching_su_stat.decorators import  it_isnt_updating, geocacher_su
@@ -582,12 +584,19 @@ def get_base_count(request):
 
 
 class CacheTable(tables.Table):
-    counter = tables.Column(verbose_name="#", empty_values=(), orderable=False)
-    pid = tables.Column(accessor='cach_pid')
-    cache = tables.Column(accessor='cach__name')
-    created = tables.Column(accessor='cach__created_date')
-    geocacher = tables.Column(accessor='geocacher__nickname')
-    grade = tables.Column(accessor='cach__grade')
+    counter = tables.Column(
+        verbose_name="#", empty_values=(), orderable=False)
+    pid = tables.Column(accessor='cach_pid', verbose_name=_("pid"))
+    type_code = tables.Column(
+        accessor='cach__type_code', verbose_name=_("Type"))
+    cache = tables.Column(accessor='cach__name', verbose_name=_("Name"))
+    country = tables.Column(
+        accessor='cach__country_code', verbose_name=_("Country"))
+    created = tables.Column(
+        accessor='cach__created_date', verbose_name=_("Created date"))
+    geocacher = tables.Column(
+        accessor='geocacher__nickname', verbose_name=_("Author"))
+    grade = tables.Column(accessor='cach__grade', verbose_name=_("Grade"))
 
     class Meta:
         attrs = {'class': 'table'}
@@ -603,6 +612,10 @@ class CacheTable(tables.Table):
     def render_grade(self, value):
         return '{0:.1f}'.format(value)
 
+    def render_country(self, value):
+        country = GeoCountry.objects.filter(iso=value).first()
+        return _(country.name) if country else None
+
     def render_pid(self, value):
         return format_html(
             '<a href="{}">{}</a>',
@@ -610,17 +623,17 @@ class CacheTable(tables.Table):
 
 
 class CacheRecommendsTable(CacheTable):
-    recommend_count = tables.Column()
+    recommend_count = tables.Column(verbose_name=_('Recommendations'))
 
 
 class CacheFoundTable(CacheTable):
-    found_count = tables.Column()
+    found_count = tables.Column(verbose_name=_('Found'))
 
 
 class CacheIndexTable(CacheTable):
-    found_count = tables.Column()
-    recommend_count = tables.Column()
-    rank = tables.Column()
+    found_count = tables.Column(verbose_name=_('Found'))
+    recommend_count = tables.Column(verbose_name=_('Recommendations'))
+    rank = tables.Column(verbose_name=_('Rating'))
 
     def render_rank(self, value):
         return '{0:.1f}'.format(value)
@@ -631,13 +644,32 @@ def cach_rate_by_recommend(request):
     order_by = '-recommend_count'
     qs = CachStat.objects.all().order_by(order_by)
 
-    table = CacheRecommendsTable(qs)
+    f = CacheStatFilter(request.GET, queryset=qs)
+
+    table = CacheRecommendsTable(f.qs)
     RequestConfig(
         request, paginate={"per_page": 100}).configure(table)
     return render(
         request,
         'Geocaching_su/dt2-cach_rank_by_recommend.html',
-        {'table': table})
+        {'table': table, 'filter': f})
+
+
+class CacheStatFilter(django_filters.FilterSet):
+    cach__country_code = django_filters.ChoiceFilter(
+        lookup_expr='iexact',
+        choices=countries_iso,
+        label=_('Country')
+    )
+    cach__type_code = django_filters.ChoiceFilter(
+        lookup_expr='iexact',
+        choices=cache_types,
+        label=_('Type')
+    )
+
+    class Meta:
+        model = CachStat
+        fields = ['cach__country_code', 'cach__type_code']
 
 
 @it_isnt_updating
@@ -645,13 +677,15 @@ def cach_rate_by_found(request):
     order_by = '-found_count'
     qs = CachStat.objects.all().order_by(order_by)
 
-    table = CacheFoundTable(qs)
+    f = CacheStatFilter(request.GET, queryset=qs)
+
+    table = CacheFoundTable(f.qs)
     RequestConfig(
         request, paginate={"per_page": 100}).configure(table)
     return render(
         request,
         'Geocaching_su/dt2-cach_rank_by_found.html',
-        {'table': table})
+        {'table': table, 'filter': f})
 
 
 @it_isnt_updating
@@ -659,13 +693,15 @@ def cach_rate_by_index(request):
     order_by = '-rank'
     qs = CachStat.objects.all().order_by(order_by)
 
-    table = CacheIndexTable(qs)
+    f = CacheStatFilter(request.GET, queryset=qs)
+
+    table = CacheIndexTable(f.qs)
     RequestConfig(
         request, paginate={"per_page": 100}).configure(table)
     return render(
         request,
         'Geocaching_su/dt2-cache_rank_by_index.html',
-        {'table': table})
+        {'table': table, 'filter': f})
 
 
 @it_isnt_updating
@@ -697,12 +733,26 @@ def activity_table(request, qs, TableClass, title, table_slug, additional_meta=T
          'last_year': datetime.now().year - 1})
 
 
+class GeocacherStatFilter(django_filters.FilterSet):
+    geocacher__country_iso3 = django_filters.ChoiceFilter(
+        lookup_expr='iexact',
+        choices=countries_iso3,
+        label=_('Country')
+    )
+
+    class Meta:
+        model = GeocacherStat
+        fields = ['geocacher__country_iso3', ]
+
+
 class GeocacherTable(tables.Table):
     counter = tables.Column(verbose_name="#", empty_values=(), orderable=False)
-    nickname = tables.Column(accessor='geocacher__nickname')
-    country = tables.Column(accessor='country')
-    region = tables.Column(accessor='region')
-    registered = tables.Column(accessor='geocacher__register_date')
+    nickname = tables.Column(verbose_name=_("Nickname"),
+                             accessor='geocacher__nickname')
+    country = tables.Column(verbose_name=_("Country"), accessor='country')
+    region = tables.Column(verbose_name=_("Region"), accessor='region')
+    registered = tables.Column(
+        verbose_name=_("Register date"), accessor='geocacher__register_date')
 
     def render_registered(self, value):
         return value.strftime('%Y')
@@ -728,11 +778,11 @@ class GeocacherTable(tables.Table):
 
 
 class GeocacherRateTable(GeocacherTable):
-    found_count = tables.Column()
-    created_count = tables.Column()
-    av_grade = tables.Column(verbose_name='Average grade')
+    found_count = tables.Column(verbose_name=_("Found"),)
+    created_count = tables.Column(verbose_name=_("Created"),)
+    av_grade = tables.Column(verbose_name=_('Average grade'))
     av_his_cach_grade = tables.Column(
-        verbose_name='Av. grade of his caches')
+        verbose_name=_('Av. grade of his caches'))
 
     def render_av_grade(self, value):
         return '%.1f' % (value or 0)
@@ -742,52 +792,54 @@ class GeocacherRateTable(GeocacherTable):
 
 
 class GeocacherRateCurrYearTable(GeocacherTable):
-    curr_found_count = tables.Column(verbose_name='Found')
-    curr_created_count = tables.Column(verbose_name='Created')
+    curr_found_count = tables.Column(verbose_name=_('Found'))
+    curr_created_count = tables.Column(verbose_name=_('Created'))
 
 
 class GeocacherRateLastYearTable(GeocacherTable):
-    last_found_count = tables.Column(verbose_name='Found')
-    last_created_count = tables.Column(verbose_name='Created')
+    last_found_count = tables.Column(verbose_name=_('Found'))
+    last_created_count = tables.Column(verbose_name=_('Created'))
 
 
 class GeocacherRateUnrealTable(GeocacherTable):
-    vi_found_count = tables.Column(verbose_name='Found')
-    vi_created_count = tables.Column(verbose_name='Created')
+    vi_found_count = tables.Column(verbose_name=_('Found'))
+    vi_created_count = tables.Column(verbose_name=_('Created'))
 
 
 class GeocacherRateUnrealCurrYearTable(GeocacherTable):
-    vi_curr_found_count = tables.Column(verbose_name='Found')
-    vi_curr_created_count = tables.Column(verbose_name='Created')
+    vi_curr_found_count = tables.Column(verbose_name=_('Found'))
+    vi_curr_created_count = tables.Column(verbose_name=_('Created'))
 
 
 class GeocacherRateUnrealLastYearTable(GeocacherTable):
-    vi_last_found_count = tables.Column(verbose_name='Found')
-    vi_last_created_count = tables.Column(verbose_name='Created')
+    vi_last_found_count = tables.Column(verbose_name=_('Found'))
+    vi_last_created_count = tables.Column(verbose_name=_('Created'))
 
 
 class GeocacherRateRealTable(GeocacherTable):
-    tr_found_count = tables.Column(verbose_name='Found')
-    tr_created_count = tables.Column(verbose_name='Created')
+    tr_found_count = tables.Column(verbose_name=_('Found'))
+    tr_created_count = tables.Column(verbose_name=_('Created'))
 
 
 class GeocacherRateRealCurrYearTable(GeocacherTable):
-    tr_curr_found_count = tables.Column(verbose_name='Found')
-    tr_curr_created_count = tables.Column(verbose_name='Created')
+    tr_curr_found_count = tables.Column(verbose_name=_('Found'))
+    tr_curr_created_count = tables.Column(verbose_name=_('Created'))
 
 
 class GeocacherRateRealLastYearTable(GeocacherTable):
-    tr_last_found_count = tables.Column(verbose_name='Found')
-    tr_last_created_count = tables.Column(verbose_name='Created')
+    tr_last_found_count = tables.Column(verbose_name=_('Found'))
+    tr_last_created_count = tables.Column(verbose_name=_('Created'))
 
 
 class GeocacherSearchTable(tables.Table):
     counter = tables.Column(verbose_name="#", empty_values=(), orderable=False)
-    nickname = tables.Column(accessor='geocacher__nickname')
-    country = tables.Column(accessor='country')
-    region = tables.Column(accessor='region')
-    registered = tables.Column(accessor='geocacher__register_date')
-    points = tables.Column(accessor='points')
+    nickname = tables.Column(verbose_name=_(
+        "Nickname"), accessor='geocacher__nickname')
+    country = tables.Column(verbose_name=_("Country"), accessor='country')
+    region = tables.Column(verbose_name=_("Region"), accessor='region')
+    registered = tables.Column(verbose_name=_(
+        "Registered"), accessor='geocacher__register_date')
+    points = tables.Column(verbose_name=_("Points"), accessor='points')
 
     def render_registered(self, value):
         return value.strftime('%Y')
@@ -808,24 +860,28 @@ class GeocacherSearchTable(tables.Table):
 
 
 class GeocacherSearchYearTable(GeocacherSearchTable):
-    points = tables.Column(verbose_name='Points', accessor='year_points')
+    points = tables.Column(verbose_name=_('Points'), accessor='year_points')
 
 
 @it_isnt_updating
 def geocacher_rate(request):
     qs = GeocacherStat.objects.all().order_by('-created_count', '-found_count')
 
-    table = GeocacherRateTable(qs)
+    f = GeocacherStatFilter(request.GET, queryset=qs)
+
+    table = GeocacherRateTable(f.qs)
     RequestConfig(
         request, paginate={"per_page": settings.ROW_PER_PAGE}).configure(table)
 
     return render(
         request,
         'Geocaching_su/dt2-geocacher_list.html',
-        {'table': table,
-        'title': _("All caches"),
-        'curr_year': datetime.now().year,
-        'last_year': datetime.now().year - 1})
+        {
+            'table': table,
+            'filter': f,
+            'title': _("All caches"),
+            'curr_year': datetime.now().year,
+            'last_year': datetime.now().year - 1})
 
 
 #@it_isnt_updating
@@ -844,16 +900,20 @@ def geocacher_rate_unreal(request):
         '-vi_created_count', '-vi_found_count')
     title = _("Unreal caches")
 
-    table = GeocacherRateUnrealTable(qs)
+    f = GeocacherStatFilter(request.GET, queryset=qs)
+
+    table = GeocacherRateUnrealTable(f.qs)
     RequestConfig(
         request, paginate={"per_page": settings.ROW_PER_PAGE}).configure(table)
 
     return render(request,
                   'Geocaching_su/dt2-geocacher_list.html',
-                  {'table': table,
-                   'title': title,
-                   'curr_year': datetime.now().year,
-                   'last_year': datetime.now().year - 1
+                  {
+                      'table': table,
+                      'filter': f,
+                      'title': title,
+                      'curr_year': datetime.now().year,
+                      'last_year': datetime.now().year - 1
                    })
 
 
@@ -872,16 +932,20 @@ def geocacher_rate_real(request):
         '-tr_created_count', '-tr_found_count')
     title = _("Real caches")
 
-    table = GeocacherRateRealTable(qs)
+    f = GeocacherStatFilter(request.GET, queryset=qs)
+
+    table = GeocacherRateRealTable(f.qs)
     RequestConfig(
         request, paginate={"per_page": settings.ROW_PER_PAGE}).configure(table)
 
     return render(request,
                   'Geocaching_su/dt2-geocacher_list.html',
-                  {'table': table,
-                   'title': title,
-                   'curr_year': datetime.now().year,
-                   'last_year': datetime.now().year - 1
+                  {
+                      'table': table,
+                      'filter': f,
+                      'title': title,
+                      'curr_year': datetime.now().year,
+                      'last_year': datetime.now().year - 1
                    })
 
 
@@ -901,16 +965,20 @@ def geocacher_rate_current(request):
         '-curr_created_count', '-curr_found_count')
     title = _("%s. All caches") % datetime.now().year
 
-    table = GeocacherRateCurrYearTable(qs)
+    f = GeocacherStatFilter(request.GET, queryset=qs)
+
+    table = GeocacherRateCurrYearTable(f.qs)
     RequestConfig(
         request, paginate={"per_page": settings.ROW_PER_PAGE}).configure(table)
 
     return render(request,
                   'Geocaching_su/dt2-geocacher_list.html',
-                  {'table': table,
-                   'title': title,
-                   'curr_year': datetime.now().year,
-                   'last_year': datetime.now().year - 1
+                  {
+                      'table': table,
+                      'filter': f,
+                      'title': title,
+                      'curr_year': datetime.now().year,
+                      'last_year': datetime.now().year - 1
                    })
 
 
@@ -920,16 +988,20 @@ def geocacher_rate_last(request):
         '-last_created_count', '-last_found_count')
     title = _("%s. All caches") % (datetime.now().year - 1)
 
-    table = GeocacherRateLastYearTable(qs)
+    f = GeocacherStatFilter(request.GET, queryset=qs)
+
+    table = GeocacherRateLastYearTable(f.qs)
     RequestConfig(
         request, paginate={"per_page": settings.ROW_PER_PAGE}).configure(table)
 
     return render(request,
                   'Geocaching_su/dt2-geocacher_list.html',
-                  {'table': table,
-                   'title': title,
-                   'curr_year': datetime.now().year,
-                   'last_year': datetime.now().year - 1
+                  {
+                      'table': table,
+                      'filter': f,
+                      'title': title,
+                      'curr_year': datetime.now().year,
+                      'last_year': datetime.now().year - 1
                    })
 
 
@@ -949,16 +1021,20 @@ def geocacher_rate_unreal_current(request):
         '-vi_curr_created_count', '-vi_curr_found_count')
     title = _("%s. Unreal caches") % datetime.now().year
 
-    table = GeocacherRateUnrealCurrYearTable(qs)
+    f = GeocacherStatFilter(request.GET, queryset=qs)
+
+    table = GeocacherRateUnrealCurrYearTable(f.qs)
     RequestConfig(
         request, paginate={"per_page": settings.ROW_PER_PAGE}).configure(table)
 
     return render(request,
                   'Geocaching_su/dt2-geocacher_list.html',
-                  {'table': table,
-                   'title': title,
-                   'curr_year': datetime.now().year,
-                   'last_year': datetime.now().year - 1
+                  {
+                      'table': table,
+                      'filter': f,
+                      'title': title,
+                      'curr_year': datetime.now().year,
+                      'last_year': datetime.now().year - 1
                    })
 
 
@@ -977,16 +1053,20 @@ def geocacher_rate_real_current(request):
         '-tr_curr_created_count', '-tr_curr_found_count')
     title = _("%s. Real caches") % datetime.now().year
 
-    table = GeocacherRateRealCurrYearTable(qs)
+    f = GeocacherStatFilter(request.GET, queryset=qs)
+
+    table = GeocacherRateRealCurrYearTable(f.qs)
     RequestConfig(
         request, paginate={"per_page": settings.ROW_PER_PAGE}).configure(table)
 
     return render(request,
                   'Geocaching_su/dt2-geocacher_list.html',
-                  {'table': table,
-                   'title': title,
-                   'curr_year': datetime.now().year,
-                   'last_year': datetime.now().year - 1
+                  {
+                      'table': table,
+                      'filter': f,
+                      'title': title,
+                      'curr_year': datetime.now().year,
+                      'last_year': datetime.now().year - 1
                    })
 
 
@@ -1014,16 +1094,20 @@ def geocacher_rate_unreal_last(request):
         '-vi_last_created_count', '-vi_last_found_count')
     title = _("%s. Unreal caches") % (datetime.now().year - 1)
 
-    table = GeocacherRateUnrealLastYearTable(qs)
+    f = GeocacherStatFilter(request.GET, queryset=qs)
+
+    table = GeocacherRateUnrealLastYearTable(f.qs)
     RequestConfig(
         request, paginate={"per_page": settings.ROW_PER_PAGE}).configure(table)
 
     return render(request,
                   'Geocaching_su/dt2-geocacher_list.html',
-                  {'table': table,
-                   'title': title,
-                   'curr_year': datetime.now().year,
-                   'last_year': datetime.now().year - 1
+                  {
+                      'table': table,
+                      'filter': f,
+                      'title': title,
+                      'curr_year': datetime.now().year,
+                      'last_year': datetime.now().year - 1
                    })
 
 
@@ -1042,16 +1126,20 @@ def geocacher_rate_real_last(request):
         '-tr_last_created_count', '-tr_last_found_count')
     title = _("%s. Real caches") % (datetime.now().year - 1)
 
-    table = GeocacherRateRealLastYearTable(qs)
+    f = GeocacherStatFilter(request.GET, queryset=qs)
+
+    table = GeocacherRateRealLastYearTable(f.qs)
     RequestConfig(
         request, paginate={"per_page": settings.ROW_PER_PAGE}).configure(table)
 
     return render(request,
                   'Geocaching_su/dt2-geocacher_list.html',
-                  {'table': table,
-                   'title': title,
-                   'curr_year': datetime.now().year,
-                   'last_year': datetime.now().year - 1
+                  {
+                      'table': table,
+                      'filter': f,
+                      'title': title,
+                      'curr_year': datetime.now().year,
+                      'last_year': datetime.now().year - 1
                    })
 
 
@@ -2292,7 +2380,9 @@ def geocacher_search_rating(request):
     qs = qs.select_related('geocacher').filter(points__gt=0)
     qs = qs.order_by('-points')
 
-    table = GeocacherSearchTable(qs)
+    f = GeocacherStatFilter(request.GET, queryset=qs)
+
+    table = GeocacherSearchTable(f.qs)
     RequestConfig(
         request, paginate={"per_page": settings.ROW_PER_PAGE}).configure(table)
 
@@ -2301,6 +2391,7 @@ def geocacher_search_rating(request):
         'Geocaching_su/dt2-geocacher_list.html',
         {
             'table': table,
+            'filter': f,
             'title': _("Search rating. All years"),
             'curr_year': datetime.now().year,
             'last_year': datetime.now().year - 1
@@ -2313,7 +2404,9 @@ def geocacher_search_rating_current(request):
     qs = qs.select_related('geocacher').filter(year_points__gt=0)
     qs = qs.order_by('-year_points')
 
-    table = GeocacherSearchYearTable(qs)
+    f = GeocacherStatFilter(request.GET, queryset=qs)
+
+    table = GeocacherSearchYearTable(f.qs)
     RequestConfig(
         request, paginate={"per_page": settings.ROW_PER_PAGE}).configure(table)
 
@@ -2322,6 +2415,7 @@ def geocacher_search_rating_current(request):
         'Geocaching_su/dt2-geocacher_list.html',
         {
             'table': table,
+            'filter': f,
             'title': _("Search rating. Current year %s") % datetime.now().year,
             'curr_year': datetime.now().year,
             'last_year': datetime.now().year - 1

@@ -5,7 +5,15 @@
 {% block active-entries %} class="active"{% endblock %}
 {% block statistics_table %}
 <br/><h3>{% trans "Rating caches on the number of entries in a logbook" %}</h3></h3>
-<p>
+
+<div class="col-md-6">
+<form method="GET">
+  {{ filter.form.as_p }}
+  <button type="submit" class="btn btn-success">{% trans "Filter" %}</button>
+</form>
+</div>
+
+<div>
 {% render_table table %}
-</p>
+</div>
 {% endblock %}

@@ -38,9 +38,22 @@ def populate_cach_type(field, *kargs, **kwargs):
     for item in iter_sql(sql):
         field.choices.append((item[0], GEOCACHING_SU_CACH_TYPES.get(item[0], '')))
 
+
+def cache_types():
+    choices = []
+    sql = """
+    SELECT DISTINCT type_code
+    FROM cach
+    """
+    for item in iter_sql(sql):
+        choices.append((item[0], GEOCACHING_SU_CACH_TYPES.get(item[0], '')))
+
+    return choices
+
+
 def populate_country(field, *kargs, **kwargs):
     field.choices = []
-    field.choices.append(('ALL',_('all')))
+    field.choices.append(('ALL', _('all')))
 
     qs = CachStat.objects.all()
     qs = qs.values_list('cach__country_code', 'cach__country_name')
@@ -50,6 +63,39 @@ def populate_country(field, *kargs, **kwargs):
         l.append((item[0], _(item[1])))
 
     field.choices = field.choices + sorted(l, key=lambda x: x[1])
+
+
+def countries_iso():
+    choices = []
+    # choices.append(('', _('all')))
+
+    qs = CachStat.objects.exclude(cach__country_code__isnull=True)
+    qs = qs.values_list('cach__country_code', 'cach__country_name')
+    qs = qs.distinct().order_by('cach__country_name')
+    l = []
+    for item in qs:
+        l.append((item[0], _(item[1])))
+
+    return choices + sorted(l, key=lambda x: x[1])
+
+
+def countries_iso3():
+    choices = []
+
+    sql = """
+    SELECT DISTINCT c.iso3, c.name
+    FROM geocacher gc
+    LEFT JOIN geo_country as c ON gc.country_iso3=c.iso3
+    WHERE gc.found_caches > 0
+    HAVING c.iso3 IS NOT NULL
+    ORDER BY c.name
+    """
+    l = []
+    for item in iter_sql(sql):
+        l.append((item[0], _(item[1])))
+
+    return choices + sorted(l, key=lambda x: x[1])
+
 
 def populate_country_iso3(field, *kargs, **kwargs):
     field.choices = []

@@ -21,7 +21,6 @@ from gpsfun.geocaching_su_stat.views import (
     geocaching_su_geocacher_activity_chart,
     geocaching_su_geocacher_activity_creating_chart,
     geocaching_su_geocacher_stat_pie,
-    # geocaching_su_geocacher_stat_pie,
     geocacher_activity, geocacher_rate, geocacher_rate,
     geocacher_rate_unreal, geocacher_rate_real,
     geocacher_rate_current, geocacher_rate_unreal_current,

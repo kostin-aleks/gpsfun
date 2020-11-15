@@ -22,6 +22,8 @@ django-geoposition
 django-olwidget
 django-social-auth
 django-tables2
+django-filter
+django-crispy-forms
 certifi
 quickchart.io
 

@@ -151,6 +151,8 @@ INSTALLED_APPS = (
     'django_registration',
     'profiles',
     'django_tables2',
+    'django_filters',
+    'crispy_forms',
 )
 
 
