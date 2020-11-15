@@ -1,6 +1,7 @@
 from django.db import models
 from gpsfun.DjHDGutils.dbutils import get_object_or_none
 from datetime import datetime
+from gpsfun.main.GeoCachSU.models import Geocacher, Cach
 
 
 class UPDATE_TYPE:
@@ -44,6 +45,7 @@ class UPDATE_TYPE:
     cache_statistics = 'cache_statistics'
     set_caches_authors = 'set_caches_authors'
     search_statistics = 'search_statistics'
+    gcsu_check_data = 'gcsu_check_data'
 
 
 class LogUpdate(models.Model):
@@ -112,5 +114,40 @@ def log(type_, message):
 def log_api(method, IP):
     l = LogAPI(method=method, IP=IP, update_date=datetime.now())
     l.save()
+
+
+class LogCheckData(models.Model):
+    geocacher_count = models.IntegerField(blank=True, null=True)
+    geocacher_wo_country_count = models.IntegerField(blank=True, null=True)
+    geocacher_wo_region_count = models.IntegerField(blank=True, null=True)
+    cache_count = models.IntegerField(blank=True, null=True)
+    cache_wo_country_count = models.IntegerField(blank=True, null=True)
+    cache_wo_region_count = models.IntegerField(blank=True, null=True)
+    cache_wo_author_count = models.IntegerField(blank=True, null=True)
+    checking_date = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        db_table = u'log_check_data'
+
+    def __str__(self):
+        return u'Cheked data %s at %s' % (self.method, self.checking_date)
+
+    @classmethod
+    def check_data(cls):
+        cls.objects.create(
+            geocacher_count=Geocacher.objects.all().count(),
+            geocacher_wo_country_count=Geocacher.objects.filter(
+                country_iso3__isnull=True).count(),
+            geocacher_wo_region_count=Geocacher.objects.filter(
+                admin_code__isnull=True).count(),
+            cache_count=Cach.objects.all().count(),
+            cache_wo_country_count=Cach.objects.filter(
+                country_code__isnull=True).count(),
+            cache_wo_region_count=Cach.objects.filter(
+                admin_code__isnull=True).count(),
+            cache_wo_author_count=Cach.objects.filter(
+                author__isnull=True).count(),
+            checking_date=datetime.now()
+        )
 
 

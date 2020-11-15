@@ -1,6 +1,7 @@
 # coding: utf-8
-from gpsfun.main.models import LogUpdate
+from gpsfun.main.models import LogUpdate, LogCheckData
 
+from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import render
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
@@ -75,3 +76,50 @@ def last_updates(request):
         request,
         'gpsfun_admin/last_update.html',
         dict(data=data, ))
+
+
+class CheckDataTable(tables.Table):
+    checking_date = tables.Column(verbose_name=_(
+        "Checked"), accessor='checking_date')
+    geocacher_count = tables.Column(verbose_name=_(
+        "Geocachers count"), accessor='geocacher_count')
+    geocacher_wo_country_count = tables.Column(
+        verbose_name=_("Geocachers from an unknown country"),
+        accessor='geocacher_wo_country_count')
+    geocacher_wo_region_count = tables.Column(
+        verbose_name=_("Geocachers from an unknown region"),
+        accessor='geocacher_wo_region_count')
+    cache_count = tables.Column(verbose_name=_(
+        "Caches count"), accessor='cache_count')
+    cache_wo_country_count = tables.Column(
+        verbose_name=_("Caches from an unknown country"),
+        accessor='cache_wo_country_count')
+    cache_wo_region_count = tables.Column(
+        verbose_name=_("Caches from an unknown region"),
+        accessor='cache_wo_region_count')
+    cache_wo_author_count = tables.Column(
+        verbose_name=_("Caches with an unknown author"),
+        accessor='cache_wo_author_count')
+
+
+    def render_update_date(self, value):
+        return value.strftime('%Y-%m-%d')
+
+    class Meta:
+        template_name = "django_tables2/bootstrap.html"
+
+
+@login_required
+def check_data(request):
+    qs = LogCheckData.objects.all().order_by('-checking_date')
+    table = CheckDataTable(qs)
+    RequestConfig(
+        request, paginate={"per_page": 100}).configure(table)
+
+    return render(
+        request,
+        'list.html',
+        {'table': table,
+         'title': "Check Data"})
+
+
