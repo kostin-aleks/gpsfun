@@ -55,7 +55,7 @@ def caches_map(request):
 
     return render(
         request,
-        'Map/geocaching_map.html',
+        'Map/geocaching_map.3.html',
         {
             'caches': rc.get('caches'),
             'caches_count': len(rc.get('caches')),

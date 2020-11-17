@@ -277,12 +277,24 @@ def waypoints_by_mask(waypoint):
     return get_krety_list(sql)
 
 
-def get_kret(kret):
-    return {'waypoint': kret.waypoint,
-            'name': kret.waypoint,
-            'distance': kret.distance or 0,
-            'latitude': kret.latitude,
-            'longitude': kret.longitude}
+def get_kret(kret_point):
+    krety = GeoKret.objects.filter(
+        waypoint=kret_point.waypoint, state__in=(0, 3)).exclude(
+            location__isnull=True)
+    waypoint_url = krety[0].waypoint_url if krety.count() else ''
+
+    return {
+        'waypoint': kret_point.waypoint,
+        'name': kret_point.waypoint,
+        'distance': kret_point.distance or 0,
+        'content': render_to_string(
+            'Map/geokret_info.html',
+            {
+                'kret_point': kret_point,
+                'krety': krety,
+                'waypoint_url': waypoint_url}),
+        'latitude': kret_point.latitude,
+        'longitude': kret_point.longitude}
 
 
 def get_kret_list(krety):
@@ -293,8 +305,8 @@ def get_rectangle_sql(mapbounds):
     return """
         select
            kret.waypoint,
-           l.NS_degree,
-           l.EW_degree,
+           l.NS_degree as latitude,
+           l.EW_degree as longitude,
            COUNT(kret.id) as cnt,
            MAX(kret.distance) as distance
         from geokret kret
@@ -307,8 +319,8 @@ def get_rectangle_sql(mapbounds):
             and l.EW_degree < {}
         group by kret.waypoint, l.NS_degree, l.EW_degree
         """.format(
-                mapbounds['bottom'], mapbounds['top'],
-                mapbounds['left'], mapbounds['right'])
+        mapbounds['bottom'], mapbounds['top'],
+        mapbounds['left'], mapbounds['right'])
 
 
 def all_krety_sql():

@@ -1,22 +1,22 @@
+{% load i18n %}
 <style>
-.infofont {
-  font-family:'Courier New';
+  .cach-info-div {
+    padding: 5px;
 }
 </style>
-{% load i18n %}
+
 <div class="geokret-info-div">
-<a href="{{ waypoint.url_to }}" target="_blank">
-  <span class="infofont">{% trans "Cache" %}: {{ waypoint.code }}</span>
-</a>
-<br/><br/>
-{% autoescape off %} 
-{% for geokret in geokrety %}
-<a href="{{ geokret.url }}" target="_blank">
-  <span class="infofont">{{ geokret.html_refnum }}</span>
-</a>
-<span class="infofont">{{ geokret.html_distance }}{% trans "km" %} </span> 
-<b>{{ geokret.name }}</b>
-<br/>
-{% endfor %}
-{% endautoescape %}
+  <div>
+    <a href="{{ waypoint_url }}" target="_blank">
+      <span class="infofont">{% trans "Cache" %}: {{ kret_point.waypoint }}</span>
+    </a>
+  </div>
+  <br/><br/>
+  {% for geokret in krety %}
+    <a href="{{ geokret.url }}" target="_blank">
+      <span class="infofont">{{ geokret.reference_number }}</span>
+    </a>
+    <span class="infofont">{{ geokret.distance }}{% trans "km" %} </span>
+    <b>{{ geokret.name }}</b>
+  {% endfor %}
 </div>

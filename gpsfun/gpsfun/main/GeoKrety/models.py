@@ -53,7 +53,7 @@ class GeoKret(models.Model):
 
     @property
     def site(self):
-        return 'geokretu.org'
+        return 'geokrety.org'
 
     @property
     def url(self):
@@ -81,5 +81,7 @@ class GeoKret(models.Model):
         t = re.compile('\w{1,2}[\dA-F]+')
         if not t.match(wp):
             wp = ''
-        return 'http://geokrety.org/go2geo/%s' % wp
+        if wp[:2] in ('TR', 'MS', 'MV', 'VI', 'LT', 'LV'):
+            wp = wp[:2] + '/' + wp[2:]
+        return 'http://geokrety.org/go2geo/index.php?wpt=%s' % wp
 
