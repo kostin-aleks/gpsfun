@@ -1,0 +1,22 @@
+{% extends "Routes/base_routes.html" %}
+{% load i18n %}
+{% load static %}
+
+    {% block content %}
+    <div>
+      <h2>{{ ridge.name }}</h2>
+      <div>{{ ridge.description }}</div>
+    </div>
+
+    {% if ridge.peaks %}
+      <table class="table table-striped">
+      {% for peak in ridge.peaks %}
+      <tr>
+        <td><a href="{% url "peak" peak.slug %}">{{ peak.slug }}</a></td>
+        <td>{{ peak.name }}</td>
+      </tr>
+      {% endfor %}
+      </table>
+    {% endif %}
+
+    {% endblock %}

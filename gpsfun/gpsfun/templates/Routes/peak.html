@@ -1,0 +1,22 @@
+{% extends "Routes/base_routes.html" %}
+{% load i18n %}
+{% load static %}
+
+    {% block content %}
+    <div>
+      <h2>{{ peak.name }}</h2>
+      <div>{{ peak.description }}</div>
+    </div>
+
+    {% if peak.routes %}
+      <table>
+      {% for route in peak.routes %}
+      <tr>
+        <td><a href="{% url "route" route.slug %}">{{ route.slug }}</a></td>
+        <td>{{ route.name }}</td>
+      </tr>
+      {% endfor %}
+      </table>
+    {% endif %}
+
+    {% endblock %}
