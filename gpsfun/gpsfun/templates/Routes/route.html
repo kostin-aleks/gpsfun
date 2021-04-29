@@ -1,0 +1,74 @@
+{% extends "Routes/base_routes.html" %}
+{% load i18n %}
+{% load static %}
+{% load geopoint %}
+
+{% block script_include %}
+  <script src="/static/js/zooming.min.js"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <h3>{{ route.peak.name }} {{ route.peak.height }}м</h3>
+        <h3>{{ route.number }} {{ route.name }}</h3>
+      </div>
+    </div>
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <div class="value-img thumbnail">
+            <img id="img-default" src="{{ route.photo.url }}"
+                 alt="{{ route.name }}" style="height: 400px;"
+                 data-action="zoom" data-original="{{ route.photo.url }}"/>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <div>{{ route.short_description|safe }}</div>
+      </div>
+    </div>
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <div>{{ route.description|safe }}</div>
+      </div>
+    </div>
+    <div class="panel panel-default">
+      <div class="panel-body">
+
+      </div>
+    </div>
+
+
+    {% if peak.routes %}
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <table>
+        {% for route in peak.routes %}
+        <tr>
+          <td><a href="{% url "route" route.slug %}">{{ route.slug }}</a></td>
+          <td>{{ route.name }}</td>
+        </tr>
+        {% endfor %}
+        </table>
+      </div>
+    </div>
+    {% endif %}
+
+
+    <script>
+      var mymap = L.map('mapid').setView(
+          [{{ peak.point.latitude }}, {{ peak.point.longitude }}], 15);
+      L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+        attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)',
+        tileSize: 512,
+        zoomOffset: -1
+        }).addTo(mymap);
+
+      L.marker([{{ peak.point.latitude }}, {{ peak.point.longitude }}]).addTo(mymap).bindPopup("{{ peak.name }}");
+
+      new Zooming().listen('img');
+    </script>
+{% endblock %}
+
