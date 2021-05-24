@@ -5,27 +5,26 @@ from django.utils.translation import ugettext_lazy as _
 #from DjHDGutils.dbutils import get_object_or_none
 
 
-
 GEOCACHING_CACHE_TYPES = {
     # geocaching.su
-    'MS' : _('Trad Multi step'),
-    'MV' : _('Virtual Multi step'),
-    'TR' : _('Traditional'),
-    'VI' : _('Virtual'),
+    'MS': _('Trad Multi step'),
+    'MV': _('Virtual Multi step'),
+    'TR': _('Traditional'),
+    'VI': _('Virtual'),
     # shukach.com
-    'Q' : _('Quest'),
-    'P' : _('Place of interest'),
-    'H' : _('Cache'),
-    'T' : _('Treasure'),
-    'C' : _('Casket'),
+    'Q': _('Quest'),
+    'P': _('Place of interest'),
+    'H': _('Cache'),
+    'T': _('Treasure'),
+    'C': _('Casket'),
     'Con': _('Crossing'),
     'G': _('Geodesy'),
     # opencaching.pl
-    'QZ' : _('Quiz'),
-    'OT' : _('Other'),
-    'MO' : _('Moving'),
-    'WC' : _('Webcam'),
-    }
+    'QZ': _('Quiz'),
+    'OT': _('Other'),
+    'MO': _('Moving'),
+    'WC': _('Webcam'),
+}
 
 CACHE_TYPES = {
     'REAL' : ('TR', 'H', 'T', 'C', 'OT', 'MO', 'DR'),
@@ -62,6 +61,7 @@ class Location(models.Model):
 
     def __unicode__(self):
         return u'location %s: %s / %s' % (self.id, self.NS_degree, self.EW_degree)
+
 
 class Geosite(models.Model):
     code = models.CharField(max_length=16)

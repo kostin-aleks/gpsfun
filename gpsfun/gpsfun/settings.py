@@ -71,7 +71,7 @@ STATICFILES_DIRS = (
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
 # ADMIN_MEDIA_PREFIX = '/media/'
-ADMIN_MEDIA_PREFIX=os.path.join(MEDIA_URL, "admin/")
+# ADMIN_MEDIA_PREFIX=os.path.join(MEDIA_URL, "admin/")
 # Make this unique, and don't share it with anybody.
 # SECRET_KEY='AeW9aisaup8ahGheTheix6Xexe3Vei3CAenai0oilaTh9juirech4OosZou2ahSi'
 
@@ -100,12 +100,12 @@ CSSVERSION=4
 
 ROOT_URLCONF='gpsfun.urls'
 
-TEMPLATES=[
+TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [os.path.join(SITE_ROOT, 'gpsfun/templates/'),
-                 os.path.join(SITE_ROOT, 'gpsfun/admin/templates'),
-                 os.path.join(SITE_ROOT, 'gpsfun/templates/admin/'), ],
+                 os.path.join(SITE_ROOT, 'gpsfun/templates/admin/'),
+                 ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -140,6 +140,7 @@ INSTALLED_APPS = (
     'gpsfun.main.GeoMap',
     'gpsfun.main.GeoKrety',
     'gpsfun.main.User',
+    'gpsfun.main.Carpathians',
     'gpsfun.gpsfun_admin',
     'gpsfun.main',
     'gpsfun.geocaching_su_stat',
@@ -147,7 +148,8 @@ INSTALLED_APPS = (
     'gpsfun.geoname',
     'gpsfun.map',
     'gpsfun.user',
-    'hdg.djangoapps.admintable',
+    'gpsfun.carpathians',
+    # 'hdg.djangoapps.admintable',
     'django_registration',
     'profiles',
     'django_tables2',

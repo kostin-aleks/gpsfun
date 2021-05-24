@@ -5,15 +5,42 @@
 
 {% block script_include %}
   <script src="/static/js/zooming.min.js"></script>
+  <style>
+    td {
+      width: auto;
+    }
+
+    td.min {
+      width: 2%;
+      white-space: nowrap;
+    }
+
+    td.details {
+      width: 5%;
+      white-space: nowrap;
+    }
+  </style>
 {% endblock %}
 
 {% block content %}
+    {% if not route.ready %}
     <div class="panel panel-default">
-      <div class="panel-body">
-        <h3>{{ route.peak.name }} {{ route.peak.height }}м</h3>
-        <h3>{{ route.number }} {{ route.name }}</h3>
+      <div class="panel-body text-danger">
+          <h3>Описание маршрута пока не готово к использованию.</h3>
       </div>
     </div>
+    {% endif %}
+
+    <div class="panel panel-default">
+      <div class="panel-body text-primary">
+        <a href="{% url "peak" route.peak.slug %}">
+          <h3>{{ route.peak.name }} {{ route.peak.height }}м</h3>
+        </a>
+        <h3>{{ route.number }}. {{ route.name }} {{ route.difficulty }} {{ route.max_difficulty }}</h3>
+      </div>
+    </div>
+
+    {% if route.photo %}
     <div class="panel panel-default">
       <div class="panel-body">
         <div class="value-img thumbnail">
@@ -23,31 +50,43 @@
         </div>
       </div>
     </div>
-    <div class="panel panel-default">
-      <div class="panel-body">
-        <div>{{ route.short_description|safe }}</div>
-      </div>
-    </div>
-    <div class="panel panel-default">
-      <div class="panel-body">
-        <div>{{ route.description|safe }}</div>
-      </div>
-    </div>
-    <div class="panel panel-default">
-      <div class="panel-body">
+    {% endif %}
 
+    <div class="panel">
+      <div class="panel-body">
+        <div class="alert alert-success">{{ route.short_description|linebreaks }}</div>
       </div>
     </div>
 
-
-    {% if peak.routes %}
+    {% if route.map_image %}
     <div class="panel panel-default">
       <div class="panel-body">
-        <table>
-        {% for route in peak.routes %}
+        <div class="value-img thumbnail">
+            <img id="img-default" src="{{ route.map_image.url }}"
+                 alt="map" style="height: 400px;"
+                 data-action="zoom" data-original="{{ route.map_image.url }}"/>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <div class="">{{ route.description|linebreaks }}</div>
+      </div>
+    </div>
+
+    {% if route.sections %}
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <table class="table">
+        {% for section in route.sections %}
         <tr>
-          <td><a href="{% url "route" route.slug %}">{{ route.slug }}</a></td>
-          <td>{{ route.name }}</td>
+          <td class="min text-danger"><strong>{{ section.number|safe }}</strong></td>
+          <td>{{ section.description|linebreaks }}</td>
+          <td class="details">
+            <strong>{{ section.details|safe }}</strong>
+          </td>
         </tr>
         {% endfor %}
         </table>
@@ -55,19 +94,47 @@
     </div>
     {% endif %}
 
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <div>{{ route.descent|linebreaks }}</div>
+      </div>
+    </div>
+
+    {% if route.points %}
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <table class="table">
+        {% for point in route.points %}
+        <tr>
+          <td class="min text-primary">
+            <a href="{{ point.point|osmlink|safe }}" target="_blank">
+            <strong>{{ point.point|point:"dms"|safe }}</strong>
+            </a>
+          </td>
+          <td>{{ point.description|linebreaks }}</td>
+        </tr>
+        {% endfor %}
+        </table>
+      </div>
+    </div>
+    {% endif %}
+
+    {% if route.photos %}
+      {% for photo in route.photos %}
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <img src="{{ photo.photo.url }}" alt="{{ photo.description }}"
+                 width="{{ photo.thumbnail.width }}"
+                 height="{{ photo.thumbnail.height }}" />
+            <div class="caption">
+              <h5>{{ photo.description }}</h5>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    {% endif %}
 
     <script>
-      var mymap = L.map('mapid').setView(
-          [{{ peak.point.latitude }}, {{ peak.point.longitude }}], 15);
-      L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-        maxZoom: 18,
-        attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)',
-        tileSize: 512,
-        zoomOffset: -1
-        }).addTo(mymap);
-
-      L.marker([{{ peak.point.latitude }}, {{ peak.point.longitude }}]).addTo(mymap).bindPopup("{{ peak.name }}");
-
       new Zooming().listen('img');
     </script>
 {% endblock %}

@@ -26,4 +26,4 @@ django-filter
 django-crispy-forms
 certifi
 quickchart.io
-
+django-location-field

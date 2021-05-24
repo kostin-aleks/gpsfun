@@ -1,22 +1,101 @@
 {% extends "Routes/base_routes.html" %}
 {% load i18n %}
 {% load static %}
+{% load geopoint %}
 
-    {% block content %}
-    <div>
-      <h2>{{ peak.name }}</h2>
-      <div>{{ peak.description }}</div>
+{% block script_include %}
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+        integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+        crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+        integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+        crossorigin=""></script>
+  <script src="/static/js/zooming.min.js"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <h2>{{ peak.name }} {{ peak.height }}м</h2>
+      </div>
+    </div>
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <h4>{{ peak.ridge.name }}</h4>
+        <div>{{ peak.point|point:"dms"|safe }}</div>
+      </div>
     </div>
 
-    {% if peak.routes %}
-      <table>
-      {% for route in peak.routes %}
-      <tr>
-        <td><a href="{% url "route" route.slug %}">{{ route.slug }}</a></td>
-        <td>{{ route.name }}</td>
-      </tr>
-      {% endfor %}
-      </table>
+    {% if peak.photo %}
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <div class="value-img thumbnail">
+            <img id="img-default" src="{{ peak.photo.url }}"
+                 alt="{{ peak.name }}" style="height: 400px;"
+                 data-action="zoom" data-original="{{ peak.photo.url }}"/>
+        </div>
+      </div>
+    </div>
     {% endif %}
 
-    {% endblock %}
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <div>{{ peak.description|default_if_none:''|safe }}</div>
+      </div>
+    </div>
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <div id="mapid" style="height: 400px;"></div>
+      </div>
+    </div>
+
+
+    {% if peak.routes %}
+    <div class="panel panel-default">
+      <div class="panel-body">
+      <h3>Маршруты восхождений</h3>
+        <table class="table">
+        {% for route in peak.routes %}
+        <tr>
+          <td>{{ route.number }}</td>
+          <td><a href="{% url "route" route.id %}">{{ route.name }}</a></td>
+          <td>{{ route.difficulty }} {{ route.max_difficulty }}</td>
+        </tr>
+        {% endfor %}
+        </table>
+      </div>
+    </div>
+    {% endif %}
+
+    {% if peak.photos %}
+      {% for photo in peak.photos %}
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <img src="{{ photo.photo.url }}" alt="{{ photo.description }}"
+                 width="{{ photo.thumbnail.width }}"
+                 height="{{ photo.thumbnail.height }}" />
+            <div class="caption">
+              <h5>{{ photo.description }}</h5>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    {% endif %}
+
+
+    <script>
+      var mymap = L.map('mapid').setView(
+          [{{ peak.point.latitude }}, {{ peak.point.longitude }}], 15);
+      L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+        attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)',
+        tileSize: 512,
+        zoomOffset: -1
+        }).addTo(mymap);
+
+      L.marker([{{ peak.point.latitude }}, {{ peak.point.longitude }}]).addTo(mymap).bindPopup("{{ peak.name }}");
+
+      new Zooming().listen('img');
+    </script>
+{% endblock %}
+

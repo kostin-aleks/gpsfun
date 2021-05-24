@@ -46,6 +46,8 @@ class UPDATE_TYPE:
     set_caches_authors = 'set_caches_authors'
     search_statistics = 'search_statistics'
     gcsu_check_data = 'gcsu_check_data'
+    geokrety_imported = 'geokrety_imported'
+    geokrety_updated = 'geokrety_updated'
 
 
 class LogUpdate(models.Model):

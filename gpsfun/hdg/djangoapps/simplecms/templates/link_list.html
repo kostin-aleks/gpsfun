@@ -1,7 +1,0 @@
-{% if link_list %}
-<ul{% if link_list.css_class %} class="{{ link_list.css_class }}"{% endif %}>
-  {% for link in link_list.links %}
-    <li><a class="menu_link" href="{{ link.url }}">{{ link.title|safe }}</a></li>
-  {% endfor %}
-{% endif %}
-</ul>
