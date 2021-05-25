@@ -33,7 +33,7 @@ class Command(BaseCommand):
                 last_uid = Geocacher.objects.all().aggregate(
                     last_uid=Max('uid'))['last_uid']
 
-                for uid in range(last_uid, last_uid + 10000):
+                for uid in range(last_uid, last_uid + 1000):
                     r = session.get(
                         'http://www.geocaching.su/profile.php?uid=%d' % uid)
 

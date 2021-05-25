@@ -1,0 +1,18 @@
+mysqldump -h mysql -ucacher -pshukach geocaching > ./gpsfun.org.sql
+zip gpsfun.org.zip gpsfun.org.sql
+
+mysql -h mysql -u cacher -pshukach geocaching
+
+
+https://adw0rd.com/2009/6/7/mysqldump-and-cheat-sheet/
+
+mysqldump -uroot -h82.82.82.82 -p database > database.sql
+
+mysql -uroot -h82.82.82.82 -p database < database.sql
+
+mysql> use database;
+mysql> source database.sql
+
+
+zcat database.sql.gz | mysql -uroot -h82.82.82.82 -p database
+
