@@ -10,14 +10,14 @@ DESCRIPTION
 
 import re
 import requests
-# import djyptestutils as yplib
+from pprint import pprint
 from datetime import datetime, date, timedelta
 from django.core.management.base import BaseCommand
 from gpsfun.main.models import log, UPDATE_TYPE
 from gpsfun.main.db_utils import sql2table, sql2val, execute_query, get_cursor
 from gpsfun.main.GeoMap.models import GEOCACHING_ONMAP_TYPES
 from gpsfun.main.GeoMap.models import Geothing, Geosite, Location
-from gpsfun.DjHDGutils.dbutils import get_object_or_none
+from gpsfun.DjHDGutils.dbutils import get_object_or_none, exec_sql
 from lxml import etree as ET
 from gpsfun.geocaching_su_stat.utils import (
     LOGIN_DATA, logged, get_caches
@@ -71,7 +71,6 @@ class Command(BaseCommand):
             geosite = Geosite.objects.get(code='SHUKACH')
 
             for k in range(100):
-                print(k)
                 ids = range(k * 1000, (k + 1) * 1000)
                 ids_str = ','.join([str(id) for id in ids])
                 url = 'https://www.shukach.com/export_wpt'
@@ -79,10 +78,13 @@ class Command(BaseCommand):
                     url,
                     data={'wptnids': ids_str}).text
                 wpt = r.split('\n')
-
+                print(k, len(wpt))
                 if len(wpt) < 6:
                     continue
-                for point in wpt[:20]:
+
+                for point in wpt:
+                    # print(point)
+                    # print
                     pid = code = None
                     name = ''
                     created_date = None
@@ -129,7 +131,89 @@ class Command(BaseCommand):
                                     ns_str, ew_str)
                                 execute_query(sql)
 
-                # break
+        sql = "SELECT id FROM geosite WHERE code='SHUKACH'"
+        shukach_id = sql2val(sql)
+
+        # update existent geothings
+        sql = """
+        UPDATE geothing gt
+             LEFT JOIN _temp_geothing as t
+             ON gt.pid=t.pid
+        SET gt.created_date=t.created_date,
+            gt.name=t.name,
+            gt.author=t.author,
+            gt.type_code=t.type_code
+        WHERE gt.geosite_id={} AND
+            t.code IS NOT NULL AND
+            (gt.name != t.name OR
+            gt.author != t.author OR
+            gt.type_code != t.type_code)
+        """.format(shukach_id)
+        #print sql
+        updated_things = exec_sql(sql)
+
+        sql = """
+        UPDATE location as l
+            LEFT JOIN geothing as gt ON l.id=gt.location_id
+            LEFT JOIN _temp_geothing as t
+             ON gt.pid=t.pid
+        SET l.NS_degree=t.NS_degree,
+            l.EW_degree=t.EW_degree
+        WHERE gt.geosite_id={} AND
+            t.code IS NOT NULL AND
+            ((ABS(l.NS_degree - t.NS_degree) > 0.00001) OR
+             (ABS(l.EW_degree - t.EW_degree) > 0.00001))
+        """.format(shukach_id)
+        updated_points = exec_sql(sql)
+
+        # list of id of removed geothings
+        sql = """
+        SELECT gt.id
+        FROM geothing gt
+             LEFT JOIN _temp_geothing as t
+             ON gt.pid=t.pid
+        WHERE gt.geosite_id={} AND t.code IS NULL
+        """.format(shukach_id)
+        removed = sql2table(sql)
+
+        new_count = 0
+        # insert new geothings
+        sql = """
+        SELECT t.pid, t.code, t.name, t.created_date, t.author,
+               t.country_code, t.type_code, t.NS_degree, t.EW_degree
+        FROM _temp_geothing as t
+             LEFT JOIN geothing gt ON gt.pid=t.pid AND gt.geosite_id={}
+        WHERE gt.pid IS NULL
+        """.format(shukach_id)
+        cursor = get_cursor(sql)
+        while True:
+            row = cursor.fetchone()
+            if row is None:
+                break
+            else:
+                sql = """
+                INSERT INTO location
+                (NS_degree, EW_degree)
+                VALUES
+                ({}, {})
+                """.format(row[7], row[8])
+
+                execute_query(sql)
+                sql = "SELECT LAST_INSERT_ID()"
+                location_id = sql2val(sql)
+
+                sql = """
+                INSERT INTO geothing
+                (geosite_id, pid, code, name, created_date, author,
+                type_code, location_id, admin_code)
+                SELECT {}, t.pid, t.code, t.name, t.created_date, t.author,
+                t.type_code, {}, '777'
+                FROM _temp_geothing as t
+                WHERE t.pid={}
+                """.format(shukach_id, location_id, row[0])
+                execute_query(sql)
+                new_count += 1
+
 
         message = 'OK. %s waypoints, updated %s waypoints, updated %s locations, new %s, removed %s' % (
             all_points_count,
