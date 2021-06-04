@@ -2,8 +2,7 @@ import random
 from django.db import models
 
 from django.utils.translation import ugettext_lazy as _
-#from DjHDGutils.dbutils import get_object_or_none
-
+from django.db.models import Max
 
 GEOCACHING_CACHE_TYPES = {
     # geocaching.su
@@ -49,8 +48,10 @@ NOISE = {
     'SHUKACH': 500,
 }
 
+
 def random_noise(noise):
     return random.randrange(0, noise) / 1000000.0
+
 
 class Location(models.Model):
     NS_degree = models.FloatField(blank=True, null=True)
@@ -147,6 +148,7 @@ class Geothing(models.Model):
     def longitude(self):
         return self.longitude_degree
 
+
 def point_degree_minutes(degree):
     d = (None, None)
     if degree is not None:
@@ -161,9 +163,19 @@ class BlockNeedBeDivided(models.Model):
     geosite = models.ForeignKey(Geosite, on_delete=models.CASCADE)
     added = models.DateTimeField()
     bb = models.CharField(max_length=128)
+    idx = models.IntegerField(db_index=True)
 
     class Meta:
         db_table = u'block_need_be_divided'
 
     def __unicode__(self):
         return u'Block %s-%s' % (self.geosite, self.bb)
+
+    @classmethod
+    def next_index(cls):
+        """
+        next index to mark executing script
+        """
+        return (cls.objects.aggregate(
+            max_num=Max('idx')).get('max_num') or 0) + 1
+

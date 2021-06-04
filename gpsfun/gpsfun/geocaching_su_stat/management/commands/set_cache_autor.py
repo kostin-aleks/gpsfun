@@ -11,8 +11,7 @@ DESCRIPTION
 import requests
 from django.core.management.base import BaseCommand
 from gpsfun.main.models import log, UPDATE_TYPE
-from gpsfun.main.GeoCachSU.models import Cach
-# , set_cache_author
+from gpsfun.main.GeoCachSU.models import Cach, Geocacher
 from gpsfun.geocaching_su_stat.utils import (
     LOGIN_DATA, logged, get_author, get_user_profile)
 
@@ -37,18 +36,15 @@ class Command(BaseCommand):
                         params={'pn': 101, 'cid': cache.pid}
                     )
                     author_uid = get_author(r.text)
-                    # print('cache autor', cache.pid, author_uid)
                     if author_uid:
-                        author_uid = int(author_uid)
-                        r = session.get(
-                            'http://www.geocaching.su/profile.php?uid=%d',
-                            params={'uid': author_uid}
-                        )
-                        geocacher = get_user_profile(author_uid, r.text)
-                        if geocacher:
-                            # print(author_uid, geocacher.id, geocacher.nickname)
-                            cache.author = geocacher
+                        author = Geocacher.objects.filter(
+                            uid=int(author_uid)).first()
+                        if author:
+                            cache.author = author
                             cache.save()
+                            print('saved', cache.pid, author_uid)
+                        else:
+                            print('not found author', author_uid)
 
 
         log(UPDATE_TYPE.set_caches_authors, 'OK')

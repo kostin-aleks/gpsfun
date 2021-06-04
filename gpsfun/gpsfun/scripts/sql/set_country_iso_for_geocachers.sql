@@ -150,12 +150,17 @@ UPDATE geocacher SET country_iso3='CZE' WHERE country='Чехия';
 UPDATE geocacher SET country_iso3='CZE' WHERE country IN ('Чешская республика', 'Ceska republika');
 UPDATE geocacher SET country_iso3='EST' WHERE country='Эстония';
 UPDATE geocacher SET country_iso3='ETH' WHERE country='эфиопия';
+UPDATE geocacher SET country_iso3='MNE' WHERE country='Черногория';
 
-UPDATE geocacher SET country_iso3='RUS', country='Россия' where uid IN (1860, 2153, 37, 21, 42,  783, 1700, 50, 1400, 6136, 37987, 22181, 31, 51, 52, 82, 84, 96, 100, 111, 129, 149)  AND country_iso3 IS NULL;
+
+UPDATE geocacher SET country_iso3='RUS', country='Россия' where uid IN (1860, 2153, 37, 21, 42, 23, 32, 39, 41, 203, 783, 1700, 50, 1400, 6136, 37987, 22181, 31, 51, 52, 82, 84, 96, 100, 111, 129, 149, 3665, 2359)  AND country_iso3 IS NULL;
 UPDATE geocacher SET country_iso3='RUS', country='Россия' where uid IN (158, 159, 173, 191, 197, 219, 227, 230, 261, 290, 325, 328, 335, 352, 359, 410, 456, 488, 499, 505, 552, 571)  AND country_iso3 IS NULL;
-UPDATE geocacher SET country_iso3='RUS', country='Россия' where uid IN (542, 544, 553, 559, 562, 566, 572, 575)  AND country_iso3 IS NULL;
-UPDATE geocacher SET country_iso3='RUS', country='Россия' where uid IN (576, 577, 578, 589, 597, 598, 609, 614, 616, 621, 623, 646, 647, 659, 1970, 3239, 4855, 50338)  AND country_iso3 IS NULL;
+UPDATE geocacher SET country_iso3='RUS', country='Россия' where uid IN (542, 544, 553, 559, 562, 566, 572, 575, 853, 997, 1066, 1199, 1426, 1574, 1815, 1887, 2598)  AND country_iso3 IS NULL;
+UPDATE geocacher SET country_iso3='RUS', country='Россия' where uid IN (576, 577, 578, 589, 597, 598, 609, 614, 616, 621, 623, 646, 647, 659, 683, 961, 1970, 3239, 4855, 50338)  AND country_iso3 IS NULL;
 UPDATE geocacher SET country_iso3='UKR', country='Украина' where uid IN (2310, 4610) AND country_iso3 IS NULL;
 UPDATE geocacher SET country_iso3='FIN', country='Финляндия' where uid IN (27088, 123717)  AND country_iso3 IS NULL;
+UPDATE geocacher SET country_iso3='GEO', country='Грузия' where uid IN (1532)  AND country_iso3 IS NULL;
+
+
 select id, uid, nickname, country, created_caches, found_caches, photo_albums, last_login from geocacher where country_iso3 is null and created_caches > 1 and found_caches > 1;
 

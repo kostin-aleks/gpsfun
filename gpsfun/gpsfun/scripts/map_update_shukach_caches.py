@@ -6,7 +6,7 @@ from time import time
 from datetime import datetime, date, timedelta
 import re
 from DjHDGutils.dbutils import  exec_sql
-from gpsfun.main.db_utils import sql2table, sql2val, execute_query, get_cursor 
+from gpsfun.main.db_utils import sql2table, sql2val, execute_query, get_cursor
 from gpsfun.main.GeoMap.models import Geothing, Geosite, Location
 from gpsfun.main.GeoMap.models import GEOCACHING_ONMAP_TYPES
 from gpsfun.main.models import log
@@ -25,7 +25,7 @@ def main():
     WPT_DATE = 4
 
     start = time()
-    
+
     geosite = Geosite.objects.get(code='SHUKACH')
 
     yplib.setUp()
@@ -41,7 +41,7 @@ def main():
     DELETE FROM _temp_geothing
     """
     execute_query(sql)
-    
+
     all_points_count = 0
     for k in range(50):
         ids = range(k*1000, (k+1)*1000)
@@ -49,7 +49,7 @@ def main():
         ids_str = ','.join([str(id) for id in ids])
         r = yplib.post2('http://www.shukach.com/export_wpt',
                 (('wptnids', ids_str), ))
-        
+
         wpt = yplib.cmd.show()
 
         wpt = wpt.split('\n')
@@ -63,7 +63,7 @@ def main():
             created_date = None
             author = type_code = ''
             NS_degree = EW_degree = None
-            
+
             fields = point.split(',')
             if fields[0].isdigit():
                 all_points_count += 1
@@ -76,7 +76,7 @@ def main():
                     if type_code in GEOCACHING_ONMAP_TYPES:
                         NS_degree = float(fields[WPT_LAT])
                         EW_degree = float(fields[WPT_LON])
-                        p = re.compile(r'(.+)от(.+)') 
+                        p = re.compile(r'(.+)от(.+)')
                         dgs = p.findall(fields[WPT_TITLE])
                         if dgs:
                             title = dgs[0]
@@ -95,15 +95,16 @@ def main():
                         type_code, NS_degree, EW_degree)
                         VALUES
                         ({},'{}','{}','{}', '{}', '{}', {}, {})
-                        """.format(pid, code, name.replace("'", "\\'"), date_str, author,
-                                   type_code,
-                                   ns_str, ew_str)
+                        """.format(
+                               pid, code, name.replace("'", "\\'"),
+                               date_str, author, type_code,
+                               ns_str, ew_str)
 
                         execute_query(sql)
-        
+
     sql = "SELECT id FROM geosite WHERE code='SHUKACH'"
     shukach_id = sql2val(sql)
-    
+
     # update existent geothings
     sql = """
     UPDATE geothing gt
@@ -121,7 +122,7 @@ def main():
     """.format(shukach_id)
     #print sql
     updated_things = exec_sql(sql)
-    
+
     sql = """
     UPDATE location as l
         LEFT JOIN geothing as gt ON l.id=gt.location_id
@@ -135,7 +136,7 @@ def main():
          (ABS(l.EW_degree - t.EW_degree) > 0.00001))
     """.format(shukach_id)
     updated_points = exec_sql(sql)
-    
+
     # list of id of removed geothings
     sql = """
     SELECT gt.id
@@ -145,11 +146,11 @@ def main():
     WHERE gt.geosite_id={} AND t.code IS NULL
     """.format(shukach_id)
     removed = sql2table(sql)
-    
+
     new_count = 0
     # insert new geothings
     sql = """
-    SELECT t.pid, t.code, t.name, t.created_date, t.author, 
+    SELECT t.pid, t.code, t.name, t.created_date, t.author,
            t.country_code, t.type_code, t.NS_degree, t.EW_degree
     FROM _temp_geothing as t
          LEFT JOIN geothing gt ON gt.pid=t.pid AND gt.geosite_id={}
@@ -171,12 +172,12 @@ def main():
             execute_query(sql)
             sql = "SELECT LAST_INSERT_ID()"
             location_id = sql2val(sql)
-            
+
             sql = """
             INSERT INTO geothing
-            (geosite_id, pid, code, name, created_date, author, 
+            (geosite_id, pid, code, name, created_date, author,
             type_code, location_id, admin_code)
-            SELECT {}, t.pid, t.code, t.name, t.created_date, t.author, 
+            SELECT {}, t.pid, t.code, t.name, t.created_date, t.author,
             t.type_code, {}, '777'
             FROM _temp_geothing as t
             WHERE t.pid={}
@@ -187,14 +188,14 @@ def main():
     message = 'OK. %s waypoints, updated %s waypoints, updated %s locations, new %s, removed %s' % (
         all_points_count,
         updated_things or 0,
-        updated_points or 0, 
+        updated_points or 0,
         new_count,
         len(removed))
-    print message
+    print(message)
     log('map_shukach', message)
     elapsed = time() - start
     print "Elapsed time -->", elapsed
-    
+
     return True
 
 if __name__ == '__main__':

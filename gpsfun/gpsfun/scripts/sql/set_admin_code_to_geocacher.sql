@@ -372,9 +372,15 @@ UPDATE geocacher SET admin_code='10', country_iso3='KAZ' WHERE oblast in ('Юж�
 UPDATE geocacher SET admin_code='63', country_iso3='RUS' WHERE oblast in ('Якутия') AND admin_code IS NULL;
 UPDATE geocacher SET admin_code='63', country_iso3='RUS' WHERE oblast in ('Ямало-Ненецкий авт. окр.','ЯНАО') AND admin_code IS NULL;
 
-UPDATE geocacher SET admin_code='47', country_iso3='RUS' WHERE uid in (87, 18502, 1628) AND admin_code IS NULL; -- Moscow
-UPDATE geocacher SET admin_code='42', country_iso3='RUS' WHERE uid in (8038, 845, 6136)
+UPDATE geocacher SET admin_code='47', country_iso3='RUS' WHERE uid in (87, 18502, 1628, 184583, 185411, 185411, 184714, 183749) AND admin_code IS NULL; -- Moscow
+UPDATE geocacher SET admin_code='42', country_iso3='RUS' WHERE uid in (8038, 845, 6136, 183085)
 AND admin_code IS NULL;  -- Lenin
+UPDATE geocacher SET admin_code='38', country_iso3='RUS' WHERE uid in (184884)
+AND admin_code IS NULL;  -- Краснодар
+UPDATE geocacher SET admin_code='61', country_iso3='RUS' WHERE uid in (181185)
+AND admin_code IS NULL;  -- Ростов
+UPDATE geocacher SET admin_code='13', country_iso3='RUS' WHERE uid in (182214)
+AND admin_code IS NULL;  -- Челябинск
 
 UPDATE geocacher SET admin_code='78', country_iso3='CZE' WHERE uid = 101481;
 UPDATE geocacher SET admin_code='78', country_iso3='CZE' WHERE oblast LIKE 'Южная Моравия%' AND admin_code IS NULL;

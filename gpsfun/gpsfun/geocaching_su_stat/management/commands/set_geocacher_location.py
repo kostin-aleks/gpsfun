@@ -14,7 +14,7 @@ from gpsfun.DjHDGutils.dbutils import get_object_or_none
 from gpsfun.main.models import log, UPDATE_TYPE
 from gpsfun.main.GeoCachSU.models import Geocacher
 from gpsfun.main.GeoName.models import GeoCountry
-from gpsfun.geocaching_su_stat.utils import get_country_data
+from gpsfun.geocaching_su_stat.utils import get_subdiv_data
 
 
 class Command(BaseCommand):
@@ -25,7 +25,7 @@ class Command(BaseCommand):
             for geocacher in Geocacher.objects.filter(
                     country_iso3__isnull=True,
                     admin_code__isnull=True):
-                country = get_country_data(
+                country = get_subdiv_data(
                     geocacher.latitude, geocacher.longitude)
                 print(country)
                 if country and country.get('status') == 'ok':

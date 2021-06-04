@@ -1,3 +1,4 @@
+from pprint import pprint
 import operator
 import re
 import requests
@@ -53,19 +54,19 @@ def get_user_profile(uid, text):
                 if title.startswith('Нас.пункт'):
                     user['town'] = data
                     continue
-                if title.startswith('Создал тайников:'):
+                if title.startswith('Создал'):
                     user['created'] = data
                     continue
-                if title.startswith('Нашел тайников:'):
+                if title.startswith('Нашел') or title.startswith('Нашла'):
                     user['found'] = data
                     continue
-                if title.startswith('Рекомендовал тайников:'):
+                if title.startswith('Рекомендовал'):
                     user['recommended'] = data
                     continue
                 if title.startswith('Фотоальбомы:'):
                     user['photo_albums'] = data
                     continue
-                if title.startswith('Был на сайте'):
+                if title.startswith('Был на сайте') or title.startswith('Была на сайте'):
                     user['last_visited'] = data
                     continue
                 if title.startswith('Дата регистрации:'):
@@ -87,26 +88,30 @@ def get_user_profile(uid, text):
                     continue
 
         if int(user.get('found', 0)):
-            geocacher, created = Geocacher.objects.get_or_create(
-                uid=uid, nickname=user.get('nickname'))
-            geocacher.name = user.get('name')
-            geocacher.birstday = strdate_or_none(user.get('birstday'))
-            geocacher.sex = sex_or_none(user.get('sex'))
-            geocacher.country = user.get('country')
-            geocacher.oblast = user.get('oblast')
-            geocacher.town = user.get('town')
-            geocacher.phone = user.get('phone')
-            geocacher.created_caches = date_or_none(user.get('created'))
-            geocacher.found_caches = user.get('found')
-            geocacher.register_date = date_or_none(user.get('registered'))
-            geocacher.last_login = date_or_none(user.get('last_visited'))
-            geocacher.forum_posts = user.get('forum_posts')
-            geocacher.save()
+            geocacher = Geocacher.objects.filter(uid=uid).first()
+            if geocacher is None:
+                geocacher, created = Geocacher.objects.get_or_create(
+                    uid=uid, nickname=user.get('nickname'))
+                geocacher.name = user.get('name')
+                geocacher.birstday = strdate_or_none(user.get('birstday'))
+                geocacher.sex = sex_or_none(user.get('sex'))
+                geocacher.country = user.get('country')
+                geocacher.oblast = user.get('oblast')
+                geocacher.town = user.get('town')
+                geocacher.phone = user.get('phone')
+                geocacher.created_caches = date_or_none(user.get('created'))
+                geocacher.found_caches = user.get('found')
+                geocacher.register_date = date_or_none(user.get('registered'))
+                geocacher.last_login = date_or_none(user.get('last_visited'))
+                geocacher.forum_posts = user.get('forum_posts')
+                geocacher.save()
+            else:
+                print('check this id', uid)
 
     return geocacher
 
 
-def get_country_data(latitude, longitude):
+def get_subdiv_data(latitude, longitude):
 
     with requests.Session() as session:
         r = session.get(
@@ -117,7 +122,7 @@ def get_country_data(latitude, longitude):
                 'username': 'galdor'
             }
         )
-
+        pprint(r.text)
         soup = BeautifulSoup(r.text, 'lxml')
 
         data = soup.geonames.countrysubdivision
@@ -133,6 +138,28 @@ def get_country_data(latitude, longitude):
             data = soup.status
             if 'hourly limit' in data.get('message', ''):
                 return {'status': 'limit'}
+        return {}
+
+
+def get_country_data(latitude, longitude):
+
+    with requests.Session() as session:
+        r = session.get(
+            'http://api.geonames.org/countryCode',
+            params={
+                'lat': latitude,
+                'lng': longitude,
+                'username': 'galdor'
+            }
+        )
+        print('response:', r.text)
+        iso = r.text.strip()
+
+        if iso and len(iso) == 2:
+            return {
+                'status': 'ok',
+                'country_iso': iso,
+            }
         return {}
 
 
@@ -526,4 +553,28 @@ def get_author(text):
             match = re.search(r"profile.php\?uid\=(\d+)", href)
             if match:
                 return match.groups(1)[0]
+
+
+def get_country(text):
+    soup = BeautifulSoup(text, 'lxml')
+    header_idx = -1
+    for tbl in soup.find_all('table', cellpadding="3", width="160"):
+        rows = tbl.find_all('tr')
+        i = 0
+        for row in rows:
+            # print(row)
+            cell = row.find('td')
+            if cell and cell.text == 'Координаты':
+                header_idx = i + 1
+                break
+            i += 1
+        if header_idx > -1:
+            row = rows[header_idx + 3]
+            cell = row.find('th')
+            s = [x.strip() for x in cell.find_all(text=True, recursive=False)]
+            return {
+                'country': s[0] if len(s) else '',
+                'region': s[1] if len(s) > 1 else '',
+            }
+
 

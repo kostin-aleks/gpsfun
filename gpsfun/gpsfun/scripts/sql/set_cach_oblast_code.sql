@@ -1,7 +1,8 @@
 
 UPDATE cach SET admin_code='01', oblast_name='Abseron Rayonu' WHERE country_code='AZ' AND oblast='Абшерон р-н';
 UPDATE cach SET admin_code='01', oblast_name='Abseron Rayonu' WHERE country_code='AZ' AND oblast='Апшерон';
-
+UPDATE cach SET admin_code='41', oblast_name='Qobustan' WHERE country_code='AZ' AND oblast='Гобустан';
+UPDATE cach SET admin_code='09', oblast_name='Baki' WHERE country_code='AZ' AND oblast='Сураханы (Баку)';
 
 UPDATE cach SET admin_code='01', oblast_name='Aragatsotni Marz' WHERE country_code='AM' AND oblast='Арагацотн';
 UPDATE cach SET admin_code='02', oblast_name='Ararati Marz' WHERE country_code='AM' AND oblast='Арарат';
@@ -96,11 +97,13 @@ UPDATE cach SET admin_code='91', oblast_name='Krasnoyarskiy Kray' WHERE country_
 UPDATE cach SET admin_code='40', oblast_name='Kurganskaya Oblast\'' WHERE country_code='RU' AND oblast='Курганская обл.';
 UPDATE cach SET admin_code='41', oblast_name='Kurskaya Oblast\'' WHERE country_code='RU' AND oblast='Курская обл.';
 UPDATE cach SET admin_code='42', oblast_name='Leningrad' WHERE country_code='RU' AND oblast='Ленинградская обл.';
+UPDATE cach SET admin_code='42', oblast_name='Leningrad' WHERE country_code='RU' AND oblast='СПб и Ленинградская обл.';
 UPDATE cach SET admin_code='43', oblast_name='Lipetskaya Oblast\'' WHERE country_code='RU' AND oblast='Липецкая обл.';
 UPDATE cach SET admin_code='44', oblast_name='Magadanskaya Oblast\'' WHERE country_code='RU' AND oblast='Магаданская обл.';
 UPDATE cach SET admin_code='45', oblast_name='Respublika Mariy-El' WHERE country_code='RU' AND oblast='Марий Эл респ.';
 UPDATE cach SET admin_code='46', oblast_name='Respublika Mordoviya' WHERE country_code='RU' AND oblast='Мордовия респ.';
 UPDATE cach SET admin_code='47', oblast_name='Moskovskaya' WHERE country_code='RU' AND oblast='Московская обл.';
+UPDATE cach SET admin_code='47', oblast_name='Moskovskaya' WHERE country_code='RU' AND oblast='Москва и Московская обл.';
 UPDATE cach SET admin_code='49', oblast_name='Murmansk' WHERE country_code='RU' AND oblast='Мурманская обл.';
 UPDATE cach SET admin_code='50', oblast_name='Nenetskiy Avtonomnyy Okrug' WHERE country_code='RU' AND oblast='Ненецкий авт. окр.';
 UPDATE cach SET admin_code='51', oblast_name='Nizhegorodskaya Oblast\'' WHERE country_code='RU' AND oblast='Нижегородская обл.';
@@ -153,6 +156,7 @@ UPDATE cach SET admin_code='26', oblast_name='Zaporiz\'ka Oblast\'' WHERE countr
 UPDATE cach SET admin_code='06', oblast_name='Ivano-Frankivs\'ka Oblast\'' WHERE country_code='UA' AND oblast='Ивано-Франковская обл.';
 UPDATE cach SET admin_code='13', oblast_name='Kiev' WHERE country_code='UA' AND oblast='Киевская обл.';
 UPDATE cach SET admin_code='10', oblast_name='Kirovohrads\'ka Oblast\'' WHERE country_code='UA' AND oblast='Кировоградская обл.';
+UPDATE cach SET admin_code='82', oblast_name='Respublika Krym' WHERE country_code='RU' AND oblast='Крым респ. и Севастополь';
 UPDATE cach SET admin_code='82', oblast_name='Respublika Krym' WHERE country_code='UA' AND oblast='Крым Авт. Респ.';
 UPDATE cach SET admin_code='14', oblast_name='Luhans\'ka Oblast\'' WHERE country_code='UA' AND oblast='Луганская обл.';
 UPDATE cach SET admin_code='15', oblast_name='L\'vivs\'ka Oblast\'' WHERE country_code='UA' AND oblast='Львовская обл.';
@@ -193,37 +197,16 @@ UPDATE cach SET admin_code='ESYE42', oblast_name='South Aegean' WHERE country_co
 UPDATE cach SET admin_code='ESYE42', oblast_name='South Aegean' WHERE pid=11026;
 UPDATE cach SET admin_code='01', oblast_name='Gorno-Badakhshan' WHERE country_code='TJ' AND oblast='Горно-Бадахшанская А.О.';
 
-UPDATE cach SET 
- name  = 'ДваПиЭр',
- created_date = '2007-07-07',
-changed_date = '2010-06-28',
- created_by_pid = 3648,
- coauthors = 'yes',
- country = 'Россия',
- town = 'Михайловка, Воронино',
- oblast = 'Калужская обл.',
- loc_NS = 'N',
- loc_EW = 'E',
- loc_NS_degree = 54,
- loc_EW_degree = 36,
- loc_NS_minute = 25.609,
- loc_EW_minute = 38.663,
- dostupnost = 3,
- mestnost  = 5,
- grade = 4.81,
- cach_attr =  'Крутой подъем,Змеи,Клещи,Заброшенные шахты,Хорошее место для привала,Проблемы с общественным транспортом,Лучше на внедорожнике,Спелео',
- cach_class = 'Исторический,Природный',
- cach_type = 'Экстрим',
- country_code = 'RU',
- admin_code = '25',
- code_fips10_4 = '',
- code_iso3166_2 = '',
- country_name = 'Russia',
- oblast_name = 'Kaluzhskaya Oblast\'' 
-WHERE pid=2746;
 
-UPDATE cach 
-SET admin_code='47', oblast_name='Moskovskaya' 
-WHERE country_code='RU' AND admin_code IS NULL AND LEFT(code,2) = 'EV';
+UPDATE cach SET admin_code='777', oblast_name='undefined subject' WHERE country_code='RU' AND admin_code IS NULL AND type_code='CT';
 
+UPDATE cach SET admin_code='38', oblast_name='Krasnodarskiy Kray' WHERE pid=24364;
 
+UPDATE cach SET admin_code='09', oblast_name='Baki' WHERE country_code='AZ' AND pid IN (18073, 18173, 18189);
+
+UPDATE cach SET admin_code='53', oblast_name='Brittany' WHERE country_code='FR' AND oblast LIKE 'Бретань%';
+UPDATE cach SET admin_code='28', oblast_name='Normandy' WHERE country_code='FR' AND oblast LIKE 'Нормандия%';
+
+UPDATE cach SET admin_code='33', oblast_name='Goa' WHERE country_code='IN' AND oblast LIKE '%ГОА%';
+
+UPDATE cach SET admin_code='777', oblast_name='undefined subject' WHERE country_code IN ('AQ', 'BR', 'BG', 'KY', 'CL', 'HR', 'CU', 'CY', 'DO', 'EG', 'FI', 'GE', 'DE', 'GR', 'HN', 'IS', 'ID', 'IE', 'IL', 'MO', 'MV', 'MU', 'MX', 'MD', 'ME', 'NZ', 'NO', 'PA', 'PL', 'PT', 'SC', 'SG', 'ZA', 'ES', 'CH', 'SY', 'TZ', 'TH', 'TR', 'AE', 'GB', 'US', 'VA', 'VE', 'VN') AND admin_code IS NULL;

@@ -16,8 +16,9 @@ class Command(BaseCommand):
     help = 'Loads new data'
 
     def handle(self, *args, **options):
-        # call_command('set_cache_autor')
+        call_command('set_cache_autor')
         call_command('patch_geocachers')
+        call_command('patch_caches')
         call_command('set_cach_grades')
         call_command('set_cach_location')
         # call_command('set_geocacher_location')
