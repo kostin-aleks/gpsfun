@@ -6,7 +6,7 @@ from datetime import datetime
 from django.utils.translation import ugettext_lazy as _
 from gpsfun.main.GeoMap.models import Geothing, Location
 
-MAX_POINTS = 1000
+MAX_POINTS = 500
 
 
 def get_latlon_limits(points):
@@ -38,12 +38,13 @@ def get_rectangle(lat_min, lat_max, lng_min, lng_max):
 def points_rectangle(points):
     if not len(points):
         return get_rectangle(45, 55, 30, 40)
-    ADD = 0.2
+    ADD = 0.05
     lat_min, lat_max, lng_min, lng_max = get_latlon_limits(points)
-    if abs(lat_max - lat_min) < 0.1:
+
+    if abs(lat_max - lat_min) < 0.05:
         lat_max += ADD
         lat_min -= ADD
-    if abs(lng_max - lng_min) < 0.1:
+    if abs(lng_max - lng_min) < 0.05:
         lng_max += ADD
         lng_min -= ADD
     return get_rectangle(lat_min, lat_max, lng_min, lng_max)

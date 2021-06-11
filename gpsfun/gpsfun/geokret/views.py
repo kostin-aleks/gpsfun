@@ -1,5 +1,6 @@
 # coding: utf-8
 import re
+from pprint import pprint
 from datetime import datetime
 from lxml import etree
 from django.http import HttpResponse
@@ -7,7 +8,9 @@ from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.template import RequestContext
 from django.db.models import Max
+from django.db.models.functions import Length
 from gpsfun.DjHDGutils.dbutils import iter_sql
+from gpsfun.main.db_utils import sql2table
 from django.utils.translation import ugettext_lazy as _
 from gpsfun.DjHDGutils.dbutils import get_object_or_none
 from gpsfun.DjHDGutils.ajax import accept_ajax
@@ -16,9 +19,11 @@ from gpsfun.main.GeoKrety.models import GeoKret
 from gpsfun.main.GeoName.models import GeoCountry
 from gpsfun.main.models import LogUpdate, log_api
 from gpsfun.main.utils import points_rectangle
+from gpsfun.main.utils import MAX_POINTS
+
 
 GEOKRETY_ONMAP_STATES = [0, 3]
-search_tooltip = _("Find the waypoint")
+search_tooltip = _("Geokret or waypoint")
 
 
 class KretyWaypoint:
@@ -32,9 +37,28 @@ class KretyWaypoint:
 def geokrety_map(request):
     krety = []
 
+    DEFAULT_MAPBOUNDS = {
+        'bottom': 49.5,
+        'top': 50.5,
+        'left': 36.2,
+        'right': 36.6,
+    }
+
+    def rectagle_center(rectangle):
+        return {
+            'lat': (rectangle['bottom'] + rectangle['top']) / 2.0,
+            'lng': (rectangle['left'] + rectangle['right']) / 2.0
+        }
+
+    map_zoom = request.session.get('geokrety_zoom') or 14
+
     user_waypoint = request.session.get('geokrety_map_waypoint', '')
-    mapbounds = request.session.get('geokrety_mapbounds') or {}
-    krety = waypoints_rectangle_with_mask(user_waypoint, mapbounds)
+    geokret_waypoint = request.session.get('geokret_waypoint')
+    mapbounds = request.session.get('geokrety_mapbounds') or {
+        DEFAULT_MAPBOUNDS}
+    map_center = request.session.get(
+        'geokrety_center') or rectagle_center(DEFAULT_MAPBOUNDS)
+    krety = waypoints_rectangle(mapbounds)
 
     update_date = LogUpdate.objects.filter(update_type='kret')\
         .aggregate(last_date=Max('update_date'))
@@ -48,7 +72,11 @@ def geokrety_map(request):
             'map_rect': points_rectangle(krety),
             'update_date': update_date.get("last_date"),
             'tooltip_text': search_tooltip,
-            'user_waypoint': user_waypoint
+            'user_waypoint': user_waypoint,
+            'max_points': MAX_POINTS,
+            'map_center': map_center,
+            'map_zoom': map_zoom,
+            'geokret_waypoint': geokret_waypoint,
         })
 
 
@@ -87,12 +115,18 @@ def geokrety_map_get_geokrety(request):
         'bottom': float(request.GET.get('bottom') or 0),
         'right': float(request.GET.get('right') or 0),
     }
+
     request.session['geokrety_mapbounds'] = mapbounds
+    request.session['geokrety_zoom'] = request.GET.get('zoom') or 14
+    request.session['geokrety_center'] = {
+        'lat': request.GET.get('center_lat'),
+        'lng': request.GET.get('center_lng'), }
     user_waypoint = request.session.get('geokrety_map_waypoint', '')
-    krety = waypoints_rectangle_with_mask(user_waypoint, mapbounds)
+    krety = waypoints_rectangle(mapbounds)
 
     rc['krety'] = get_kret_list(krety)
     rc['rect'] = points_rectangle(krety)
+    rc['count'] = len(krety)
     rc['status'] = 'OK'
 
     return rc
@@ -138,14 +172,34 @@ def geokrety_map_search_waypoint(request):
     if waypoint is None:
         return rc
 
+    found_kret = None
+    krety = []
+
     if waypoint:
-        krety = waypoints_by_mask(waypoint)
-    else:
+        krety = waypoints_by_mask(waypoint)[:1]
+        if len(krety):
+            found_kret = {
+                'lat': krety[0].latitude,
+                'lng': krety[0].longitude}
+            request.session['geokret_waypoint'] = found_kret
+
+            krety_list = get_kret_list(krety)
+            rect = points_rectangle(krety)
+
+            mapbounds = {
+                'top': rect['lat_max'],
+                'left': rect['lng_min'],
+                'bottom': rect['lat_min'],
+                'right': rect['lng_max'],
+            }
+            krety = waypoints_rectangle(mapbounds)
+    if not krety:
         mapbounds = request.session.get('geokrety_mapbounds')
         krety = waypoints_with_geokrety_rectangle(mapbounds)
 
     rc['krety'] = get_kret_list(krety)
     rc['rect'] = points_rectangle(krety)
+    rc['kret_waypoint'] = found_kret
     rc['status'] = 'OK'
 
     return rc
@@ -227,8 +281,8 @@ def geokrety_api_who_in_cache(request, cache_code):
     return response
 
 
-def waypoints_rectangle_with_mask(waypoint, mapbounds):
-    sql = waypoint_mask_sql(waypoint)
+def waypoints_rectangle(mapbounds):
+    sql = all_krety_sql()
     if len(mapbounds.keys()):
         sql += """
         HAVING l.NS_degree > {}
@@ -240,7 +294,11 @@ def waypoints_rectangle_with_mask(waypoint, mapbounds):
                    mapbounds['left'],
                    mapbounds['right'])
 
-    return get_krety_list(sql)
+    sql += " LIMIT {}".format(MAX_POINTS + 1)
+
+    krety = get_krety_list(sql)
+
+    return krety
 
 
 def waypoint_mask_sql(waypoint):
@@ -251,8 +309,8 @@ def waypoint_mask_sql(waypoint):
     wpoint = waypoint.strip().upper()
     pwp = re.compile('(OP|TR|MS|GC|OC|OX|GR|GL|OK|GA|OZ|TR|RH|OU|TC|OS|ON|OL|OJ|N|GE|WM|SH|TP|TB|OB)[\d,A-F]*') #OB GL
     pgk = re.compile('GK([\d,A-F]+)')
-    if pwp.match(wpoint):
-        sql = waypont_sql(wpoint)
+    if pwp.match(wpoint) and len(wpoint) < 9:
+        return waypont_sql(wpoint)
 
     if pgk.match(wpoint):
         hexcode = pgk.findall(wpoint)
@@ -262,14 +320,13 @@ def waypoint_mask_sql(waypoint):
                 kret_id = int(hexcode, 16)
             except:
                 kret_id = 0
-            sql = geokret_sql(kret_id)
+            return geokret_sql(kret_id)
 
-    if sql is None:
-        if not waypoint:
-            return all_krety_sql()
-        else:
-            sql = kret_name_sql(waypoint)
-    return sql
+    if not waypoint:
+        return all_krety_sql()
+    else:
+        sql = kret_name_sql(waypoint)
+        return sql
 
 
 def waypoints_by_mask(waypoint):
@@ -427,6 +484,7 @@ def geokret_sql(kret_id):
 
 
 def kret_name_sql(name):
+    name = name.replace(' ', '%')
     return """
             select
                 kret.waypoint,
@@ -437,18 +495,18 @@ def kret_name_sql(name):
             from geokret kret
             left join location l on kret.location_id=l.id
             where kret.waypoint is not null and length(kret.waypoint) > 0
-                and kret.name RLIKE '.*{}.*' and
+                and kret.name LIKE '%{}%' and
                 kret.state in (0,3)
                 and l.id is not null
             group by kret.waypoint, l.NS_degree, l.EW_degree
-            """.format(name.encode('utf8'))
+            """.format(name)
 
 
 def get_krety_list(sql):
     krety = []
     if not sql:
         return krety
-    for row in iter_sql(sql):
+    for row in sql2table(sql):
         kret = KretyWaypoint()
         kret.waypoint = row[0]
         kret.count = row[3]

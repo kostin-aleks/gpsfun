@@ -52,7 +52,7 @@ def caches_map(request):
     type_ids = request.session.get('map_type') or ['REAL', 'MULTISTEP']
     cache_types = CACHE_KINDS
     rc = get_points(mapbounds, type_ids)
-
+    print(rc.get('caches'))
     return render(
         request,
         'Map/geocaching_map.3.html',

@@ -1,116 +1,115 @@
 GeoKretyMap = {
     infowindow: null,
+    alertwin: null,
     map: null,
     mc: null,
     geocoder: null,
     markers: [],
+    marker: null,
+    krety: [],
     imageTR: null,
     imageVI: null,
     imageMS: null,
     imageMV: null,
     shadow: null,
-    geokret_info_url: null,
+    cache_info_url: null,
     change_country_url: null,
-    find_by_waypoint_url: null,
-    get_geokrety_url: null,
-    text_changed: false,
+    region_caches_url: null,
+    get_confluence_url: null,
+    get_things_url: null,
+    show_cache_types_url: null,
+    MAX_COUNT: 500,
+    marker_style: null,
+    vectorSource: null,
+    vectorLayer: null,
+    popup: null,
+    markers: null,
+    //pruneCluster: null,
+    leafletView: null,
     tip_text: '',
+    only_found: false,
+    geokret_waypoint: null,
+
+    init: function(center, zoom) {
+        osmAttrib = '&copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+
+        var map = L.map("map", {
+            attributionControl: false,
+            zoomControl: false
+        }).setView(center, zoom);
+
+        osm = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+            detectRetina: true,
+            maxNativeZoom: 17,
+            maxZoom: 18,
+            attribution: osmAttrib
+        }).addTo(map);
 
 
-    setInformationWindow: function (obj) {
-        $.ajax({
-            url: GeoKretyMap.geokret_info_url,
-            type: 'GET',
-            dataType: 'JSON',
-            data: {    'waypoint': obj.waypoint },
-            success: function(doc) {
-                if (doc.status != "OK") {
-                    return;
-                }
-                GeoKretyMap.infowindow.setContent(doc.content);
-                //document.getElementById('infoWindow').parentNode.style.overflow = '';
-                //document.getElementById('infoWindow').parentNode.style.overflowX = 'hidden';
+        OpenTopoMap = L.tileLayer('http://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+            maxZoom: 17,
+            attribution: 'Map data: &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+        }).addTo(map);
 
-                //GeoKretyMap.infowindow.setContent(doc.content);
-                GeoKretyMap.infowindow.open(GeoKretyMap.map, obj);
-            }
+        var HERE_hybridDay = L.tileLayer(
+            'http://{s}.{base}.maps.cit.api.here.com/maptile/2.1/{type}/{mapID}/hybrid.day/{z}/{x}/{y}/{size}/{format}?app_id={app_id}&app_code={app_code}&lg={language}', {
+            attribution: 'Map &copy; 1987-2014 <a href="http://developer.here.com">HERE</a>',
+            subdomains: '1234',
+            mapID: 'newest',
+            app_id: '053oEDBlB1koyGZIa8pj',
+            app_code: 'eTHqVLdXEek6IDFVJlUc2A',
+            base: 'aerial',
+            maxZoom: 20,
+            minZoom: 14,
+            type: 'maptile',
+            language: 'eng',
+            format: 'png8',
+            size: '256'
         });
 
-    //var df = Ajax.load_json(GeoKretyMap.geokret_info_url,
-                            //{'waypoint': obj.waypoint
-                             //});
-    //df.addCallback(function(doc) {
-                           //if (doc.status != "OK") {
-                               //return;
-                           //}
-                           //GeoKretyMap.infowindow.setContent(doc.content);
-               //GeoKretyMap.infowindow.open(GeoKretyMap.map, obj);
-                       //});
-
-    },
-
-
-    init: function() {
-    var latlng = new google.maps.LatLng(50.0, 36.0);
-    var myOptions = {
-        zoom: 6,
-        center: latlng,
-        scaleControl: true,
-        mapTypeId: google.maps.MapTypeId.ROADMAP
-    };
-    setElementWidth("id_space", 98);
-    GeoKretyMap.map = new google.maps.Map($("#map_canvas")[0],
-                                  myOptions);
-    var mcOptions = {gridSize: 50, maxZoom: 10};
-
-    var boxText = document.createElement("div");
-        boxText.style.cssText = "border: 1px solid black; margin-top: 8px; background: white; padding: 5px;";
-        boxText.innerHTML = "...";
-
-        var myOptions = {
-                 content: boxText
-                ,disableAutoPan: false
-        ,alignBottom: false
-                ,maxWidth: 280
-                ,pixelOffset: new google.maps.Size(-140, 0)
-                ,zIndex: null
-                ,boxStyle: {
-                  background: "url('/img/tipbox.gif') no-repeat"
-                  //,opacity: 0.9
-                  ,width: "280px"
-                 }
-                ,closeBoxMargin: "10px 2px 2px 2px"
-                ,closeBoxURL: "http://www.google.com/intl/en_us/mapfiles/close.gif"
-                ,infoBoxClearance: new google.maps.Size(1, 1)
-                ,isHidden: false
-                ,pane: "floatPane"
-                ,enableEventPropagation: false
+        var baseMaps = {
+            "OSM StreetMap": osm,
+            //"HERE hybrid": HERE_hybridDay,
+            "OpenTopoMap": OpenTopoMap,
         };
 
-    GeoKretyMap.infowindow = new InfoBubble({
-        minWidth: 300,
-        minHeight: 130,
-        disableAnimation: true,
-        backgroundColor: '#E8FFDD'
-        });
+        var overlayMaps = {};
 
-    GeoKretyMap.mc = new MarkerClusterer(GeoKretyMap.map, [], mcOptions);
-    GeoKretyMap.createIcons();
-    GeoKretyMap.geocoder = new google.maps.Geocoder();
+        L.control.layers(baseMaps, overlayMaps).addTo(map);
 
-    google.maps.event.addListener(GeoKretyMap.map, 'click', function() {
-        GeoKretyMap.infowindow.close();
-        });
-    google.maps.event.addListener(GeoKretyMap.map, 'mousemove', function (event) {
-        GeoKretyMap.showMouseLocation(event);
-    });
-    google.maps.event.addListener(GeoKretyMap.map, 'zoom_changed', function() {
-            GeoKretyMap.loadGeoKrety();
-        });
-    google.maps.event.addListener(GeoKretyMap.map, 'dragend', function() {
-            GeoKretyMap.loadGeoKrety();
-        });
-    var all_option =  $('#id_types_all')[0];
+        L.control.scale(imperial=false).addTo(map);
+        L.control.zoom().addTo(map);
+
+
+        //map.on('viewreset', GeoKretyMap.loadThings);
+        map.on('dragend', GeoKretyMap.loadThings);
+        map.on('zoomend', GeoKretyMap.loadThings);
+
+
+        new L.control.mousePosition({
+            lngFormatter: function(lng) { return GeoKretyMap.to_string(lng, ['E', 'W']);},
+            latFormatter: function(lat) { return GeoKretyMap.to_string(lat, ['N', 'S']);},
+            separator: '&nbsp;'
+        }).addTo(map);
+
+        new L.Control.GeoSearch({
+            provider: new L.GeoSearch.Provider.OpenStreetMap()
+        }).addTo(map);
+
+        GeoKretyMap.map = map;
+
+        GeoKretyMap.alertwin = L.popup({
+            closeOnClick: true,
+            })
+            .setLatLng(center)
+            .setContent('')
+
+
+        GeoKretyMap.createIcons();
+
+        GeoKretyMap.leafletView = new PruneClusterForLeaflet();
+        GeoKretyMap.reset_found();
+        GeoKretyMap.loadThings();
 
     },
 
@@ -123,207 +122,190 @@ GeoKretyMap = {
     },
 
     createIcons: function() {
-    GeoKretyMap.green_kret_marker = new google.maps.MarkerImage("/static/img/kret_green.png",
-        new google.maps.Size(33.0, 24.0),
-        new google.maps.Point(0, 0),
-        new google.maps.Point(16.0, 12.0)
-    );
-    GeoKretyMap.yellow_kret_marker = new google.maps.MarkerImage("/static/img/kret_yellow.png",
-        new google.maps.Size(33.0, 24.0),
-        new google.maps.Point(0, 0),
-        new google.maps.Point(16.0, 12.0)
-    );
-    GeoKretyMap.red_kret_marker = new google.maps.MarkerImage("/static/img/kret_red.png",
-        new google.maps.Size(33.0, 24.0),
-        new google.maps.Point(0, 0),
-        new google.maps.Point(16.0, 12.0)
-    );
-    GeoKretyMap.shadow = new google.maps.MarkerImage("/static/img/shadow-kret.png",
-        new google.maps.Size(46.0, 24.0),
-        new google.maps.Point(0, 0),
-        new google.maps.Point(16.0, 12.0)
-    );
+        GeoKretyMap.green_kret_marker = L.icon({
+            iconUrl: "/static/img/kret_green.png",
+            shadowUrl: "/static/img/shadow-kret.png",
+            iconSize:     [33.0, 24.0],
+            shadowSize:   [46.0, 24.0],
+            iconAnchor:   [0, 0],
+            shadowAnchor: [0, 0],
+            popupAnchor:  [16, 12]
+            }
+        );
+
+        GeoKretyMap.yellow_kret_marker = L.icon({
+            iconUrl: "/static/img/kret_yellow.png",
+            shadowUrl: "/static/img/shadow-kret.png",
+            iconSize:     [33.0, 24.0],
+            shadowSize:   [46.0, 24.0],
+            iconAnchor:   [0, 0],
+            shadowAnchor: [0, 0],
+            popupAnchor:  [16, 12]
+            }
+        );
+
+        GeoKretyMap.red_kret_marker = L.icon({
+            iconUrl: "/static/img/kret_red.png",
+            shadowUrl: "/static/img/shadow-kret.png",
+            iconSize:     [33.0, 24.0],
+            shadowSize:   [46.0, 24.0],
+            iconAnchor:   [0, 0],
+            shadowAnchor: [0, 0],
+            popupAnchor:  [16, 12]
+            }
+        );
+
+        GeoKretyMap.default_marker = L.icon({
+            iconUrl: '/static/img/green_bulb.png',
+            shadowUrl: '/static/img/shadow-bulb.png',
+
+            iconSize:     [21.0, 34.0], // size of the icon
+            shadowSize:   [39.0, 34.0], // size of the shadow
+            iconAnchor:   [0, 0], // point of the icon which will correspond to marker's location
+            shadowAnchor: [0, 0],  // the same for the shadow
+            popupAnchor:  [10, 0] // point from which the popup should open relative to the iconAnchor
+        });
 
     },
 
+    iconByType: function() {
+        return GeoKretyMap.default_marker
+    },
 
-    iconByDistance: function(d, c) {
+    iconByDistance: function(d) {
         if (d==0) {
-        return GeoKretyMap.green_kret_marker;
+            return GeoKretyMap.green_kret_marker;
         }
         if (d > 0 && d < 500) {
-        return  GeoKretyMap.yellow_kret_marker;
+            return  GeoKretyMap.yellow_kret_marker;
         }
         if (d > 499) {
-        return  GeoKretyMap.red_kret_marker;
+            return  GeoKretyMap.red_kret_marker;
         }
-
-
-    return GeoKretyMap.green_kret_marker
     },
 
-    shadowByDistance: function(d,c) {
-    return GeoKretyMap.shadow;
+    showAlert: function(count) {
+        var bounds = GeoKretyMap.map.getBounds();
+        var lat = (3*bounds.getNorthEast().lat + 2*bounds.getSouthWest().lat)/5.0;
+        var lon = (bounds.getSouthWest().lng + bounds.getNorthEast().lng)/2.0
+        GeoKretyMap.alertwin.setContent(gettext('Only first ')+ count +
+                gettext(' geocaches are shown on the map. <br/>Please magnify the view to display all geocaches.'));
+        GeoKretyMap.alertwin.setLatLng([lat, lon])
+        GeoKretyMap.alertwin.openOn(GeoKretyMap.map);
     },
-    drawMap: function() {
 
-
-    GeoKretyMap.mc.addMarkers(GeoKretyMap.markers);
+    hideAlert: function(count) {
+       GeoKretyMap.map.closePopup(GeoKretyMap.alertwin);
     },
 
+    getMapBounds: function() {
+        return GeoKretyMap.map.getBounds();
+        },
 
-    loadGeoKrety: function(o) {
-    //var country_iso = $('#id_country').val();
-    //if (country_iso == 'SEARCH') return;
-
-    this.show_spinner();
-    //this.clear_search()
-    bounds = GeoKretyMap.map.getBounds();
-    $.ajax({
-            url: GeoKretyMap.get_geokrety_url,
-            type: 'GET',
-            dataType: 'JSON',
-            data: {    'left': bounds.getSouthWest().lng(),
-                    'top': bounds.getNorthEast().lat(),
-                    'right': bounds.getNorthEast().lng(),
-                    'bottom': bounds.getSouthWest().lat()
-            },
-            success: function(doc) {
-                {
-                    GeoKretyMap.addMarkers(doc.krety);
-                    GeoKretyMap.hide_spinner();
-                }
-            }
-        })
-
+    getCenter: function() {
+        return GeoKretyMap.map.getCenter();
     },
+
     loadThings: function() {
-        CachesMap.show_spinner();
-        bounds = CachesMap.map.getBounds();
-        $.ajax({
-            url: CachesMap.get_things_url,
-            type: 'GET',
-            dataType: 'JSON',
-            data: {    'left': bounds.getSouthWest().lng(),
-                    'top': bounds.getNorthEast().lat(),
-                    'right': bounds.getNorthEast().lng(),
-                    'bottom': bounds.getSouthWest().lat()
-            },
-            success: function(doc) {
-                {
-                    CachesMap.addMarkers(doc.caches);
-                    CachesMap.addConfluence(doc.points);
-                    CachesMap.hide_spinner();
+        GeoKretyMap.hideAlert();
+        GeoKretyMap.clear_search()
+        bounds = GeoKretyMap.getMapBounds();
+        map_center = GeoKretyMap.getCenter();
+
+        if (!GeoKretyMap.only_found) {
+            GeoKretyMap.show_spinner();
+            $.ajax({
+                url: GeoKretyMap.get_things_url,
+                type: 'GET',
+                dataType: 'JSON',
+                data: {
+                    'left': bounds.getWest(),
+                    'top': bounds.getNorth(),
+                    'right': bounds.getEast(),
+                    'bottom': bounds.getSouth(),
+                    'center_lat': map_center.lat,
+                    'center_lng': map_center.lng,
+                    'zoom': GeoKretyMap.map.getZoom(),
+                },
+                success: function(doc) {
+                    GeoKretyMap.removeAllMarkers();
+                    GeoKretyMap.hide_spinner();
+                    GeoKretyMap.showFound(doc.count);
+
+                    if (doc.count > GeoKretyMap.MAX_COUNT) {
+                        GeoKretyMap.showAlert(doc.count);
+                    } else {
+                        GeoKretyMap.hideAlert();
+                        GeoKretyMap.krety = doc.krety;
+                        GeoKretyMap.addMarkers(GeoKretyMap.krety);
+                    }
+                    GeoKretyMap.addMarker();
                 }
-            }
-        });
+            });
+        }
+    },
+
+
+    removeAllMarkers: function () {
+        GeoKretyMap.leafletView.RemoveMarkers();
     },
 
     addMarkers: function(krety_list) {
-        //$('#id_count')[0].innerHTML = '';
-    GeoKretyMap.markers = [];
-    GeoKretyMap.mc.clearMarkers();
-    if (!krety_list.length) return;
+        GeoKretyMap.removeAllMarkers();
 
-    var marker;
-    for (var i=0;i<krety_list.length;i++) {
-        marker = new google.maps.Marker({
-        position: new google.maps.LatLng(krety_list[i].latitude, krety_list[i].longitude),
-        map: GeoKretyMap.map,
-        title: krety_list[i].waypoint,
-        waypoint: krety_list[i].waypoint,
-        icon: GeoKretyMap.iconByDistance(krety_list[i].distance, krety_list[i].count),
-        shadow:  GeoKretyMap.shadowByDistance(krety_list[i].distance, krety_list[i].distance)
-        });
-        google.maps.event.addListener(marker, 'click', function () {
-        GeoKretyMap.setInformationWindow(this);
-        });
-        GeoKretyMap.markers[GeoKretyMap.markers.length] = marker;
-    }
-    GeoKretyMap.mc.addMarkers(GeoKretyMap.markers);
-    //$('#id_count')[0].innerHTML = gettext('found') + ': ' + krety_list.length;
+        if (!krety_list.length) {GeoKretyMap.hide_spinner(); return;}
+        for (var i = 0; i < krety_list.length; ++i) {
+            var kret = krety_list[i];
 
-    },
+            var marker = new PruneCluster.Marker(
+                kret.latitude,
+                kret.longitude,
+                {
+                    popup: kret.content,
+                    icon: GeoKretyMap.iconByDistance(kret.distance)
+                });
 
-    centerMap: function(rectangle) {
-        if ((rectangle.lat_min=='') || (rectangle.lat_max=='') || (rectangle.lng_min=='') || (rectangle.lng_max=='')) return;
-
-        GeoKretyMap.map.setCenter(new google.maps.LatLng(
-            ((rectangle.lat_max + rectangle.lat_min) / 2.0),
-            ((rectangle.lng_max + rectangle.lng_min) / 2.0)
-        ));
-
-        GeoKretyMap.map.fitBounds(new google.maps.LatLngBounds(
-            //bottom left
-            new google.maps.LatLng( rectangle.lat_min,  rectangle.lng_min),
-            //top right
-            new google.maps.LatLng( rectangle.lat_max,  rectangle.lng_max)
-        ));
-    },
-
-    codeAddress: function(address) {
-    GeoKretyMap.geocoder.geocode( { 'address': address}, function(results, status) {
-        if (status == google.maps.GeocoderStatus.OK) {
-        GeoKretyMap.map.setCenter(results[0].geometry.location);
-        GeoKretyMap.map.setZoom(10);
+            GeoKretyMap.leafletView.RegisterMarker(marker);
         }
-    });
-    },
 
-
-    showMouseLocation: function(event) {
-    var latlng = event.latLng;
-    $('#id_current_location')[0].innerHTML = GeoKretyMap.toWGS84(1, latlng);
+        GeoKretyMap.map.addLayer(GeoKretyMap.leafletView);
 
     },
 
-    toWGS84: function(type_, latlng)
-    {
-    var lat = latlng.lat(), lng = latlng.lng();
-    var latD = 'N', lngD = 'E';
+    addMarker: function() {
+        if (GeoKretyMap.geokret_waypoint) {
+           if (GeoKretyMap.marker != undefined) {
+                GeoKretyMap.map.removeLayer(GeoKretyMap.marker)
+            }
+            GeoKretyMap.marker = new L.marker([
+                GeoKretyMap.geokret_waypoint.lat,
+                GeoKretyMap.geokret_waypoint.lng]).addTo(GeoKretyMap.map);
+        }
+    },
 
-    if(lat < 0) {
-        lat = -lat;
-        latD = 'S';
-    }
-    if(lng < 0) {
-        lng = -lng;
-        lngD = 'W';
-    }
+    to_string: function(x, signs) {
+        var D = signs[0];
+        if(x < 0) {
+            x = -x;
+            D = signs[1];
+        }
 
-    var latstr, lngstr;
+        var degs = x | 0;
+        var minutes = ((x - degs)*60);
+        var s = degs + "° " + minutes.toFixed(3) + "'";
+        return D + " " + s;
+    },
 
-    if(type_ == 0) {
-        latstr = lat.toFixed(5) + "°";
-        lngstr = lng.toFixed(5) + "°";
-    }
-    else if(type_ == 1) {
-        var degs1 = lat | 0;
-        var degs2 = lng | 0;
-        var minutes1 = ((lat - degs1)*60);
-        var minutes2 = ((lng - degs2)*60);
-        latstr = degs1 + "° " + minutes1.toFixed(3) + "'";
-        lngstr = degs2 + "° " + minutes2.toFixed(3) + "'";
-    }
-    else if(type_ == 2) {
-        var degs1 = lat | 0;
-        var degs2 = lng | 0;
-        var minutes1 = ((lat - degs1)*60);
-        var minutes2 = ((lng - degs2)*60);
-        var seconds1 = (minutes1 - (minutes1 | 0))*60;
-        var seconds2 = (minutes2 - (minutes2 | 0))*60;
-        latstr = degs1 + "° " + (minutes1 | 0) + "' " + (seconds1.toFixed(2)) + "\"";
-        lngstr = degs2 + "° " + (minutes2 | 0) + "' " + (seconds2.toFixed(2)) + "\"";;
-    }
-    return latD + " " + latstr + " <br/>" + lngD + " " + lngstr;
+    showFound: function(cnt) {
+        var txt = '';
+        txt = gettext("found:") + ' ' + cnt;
+        document.getElementById('id_count').innerHTML = txt;
     },
 
     go_in: function() {
         var item_id = 'waypoint';
-        this.set_search();
         if (GeoKretyMap.text_changed) { return; }
         var  item = document.getElementById(item_id)
-        //item.className = css_class;
         item.value = '';
     },
 
@@ -344,19 +326,23 @@ GeoKretyMap = {
         var txt = elm.value;
         if (txt!=GeoKretyMap.tip_text) {
             var waypoint = txt;
-            this.set_search();
             this.show_spinner();
             $.ajax({
                 url: GeoKretyMap.find_by_waypoint_url,
                 type: 'GET',
                 dataType: 'JSON',
-                data: {    'waypoint': txt },
+                data: {'waypoint': txt},
                 success: function(doc) {
                     if (doc.status != "OK") {
                         return;
                     }
                     GeoKretyMap.centerMap(doc.rect);
                     GeoKretyMap.addMarkers(doc.krety);
+                    GeoKretyMap.geokret_waypoint = null;
+                    if (doc.kret_waypoint) {
+                        GeoKretyMap.geokret_waypoint = doc.kret_waypoint;
+                    }
+                    GeoKretyMap.addMarker();
                     GeoKretyMap.hide_spinner();
                 },
                 error:  function(xhr, str){
@@ -365,7 +351,25 @@ GeoKretyMap = {
                 complete:  function(){
                 }
             });
-        }
+        } else {}
+    },
+
+    centerMap: function(rectangle) {
+        if (rectangle == []) return;
+        if ((rectangle.lat_min=='') || (rectangle.lat_max=='') || (rectangle.lng_min=='') || (rectangle.lng_max=='')) return;
+
+        GeoKretyMap.map.fitBounds([
+            [rectangle.lat_min, rectangle.lng_min],
+            [rectangle.lat_max, rectangle.lng_max]
+        ]);
+    },
+
+    set_found: function() {
+        GeoKretyMap.only_found = true;
+    },
+
+    reset_found: function() {
+        GeoKretyMap.only_found = false;
     },
 
     key_pressed_here: function(e) {
@@ -378,31 +382,10 @@ GeoKretyMap = {
 
     clear_search: function() {
         $('#waypoint').val('');
-        this.go_out();
+        // this.go_out();
     },
 
-    set_search: function() {
-        $('#id_country').val('SEARCH');
-    }
-
 }
 
-function getInsideWindowWidth() {
-  if (window.innerWidth) {
-    return window.innerWidth;
-  } else if (isIE6CSS) {
-    return document.body.parentElement.clientWidth;
-  } else if (document.body && document.body.clientWidth) {
-    return document.body.clientWidth;
-  }
-  return 0;
-}
 
-function setElementWidth(element_id, percent) {
-    var e = document.getElementById(element_id);
-    if (!e) return;
-    var win_width =  getInsideWindowWidth();
-    var perc_width = Math.round(win_width * percent / 100.0 );
-    e.style.width = perc_width + 'px';
-}
 

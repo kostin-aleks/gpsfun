@@ -5,121 +5,85 @@
 {% block menu_item_geokrety %}active{% endblock %}
 {% block in_head %}
   <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{% static '/js/leaflet/leaflet.css' %}" />
+    <script src="{% static '/js/leaflet/leaflet.js' %}"></script>
+    <script src="/jsi18n/" type="text/javascript"></script>
+    <script src="{% static '/js/browser_kind.js' %}" type="text/javascript"></script>
+    <script src="{% static '/js/map.js' %}" type="text/javascript"></script>
+    <script src="{% static '/js/leaflet/plugins/Leaflet.MousePosition-master/src/L.Control.MousePosition.js' %}" type="text/javascript"></script>
+    <link rel="stylesheet" href="{% static '/js/leaflet/plugins/Leaflet.MousePosition-master/src/L.Control.MousePosition.css' %}" />
+    <script src="{% static '/js/leaflet/plugins/L.GeoSearch-develop/src/js/l.control.geosearch.js' %}"></script>
+    <link rel="stylesheet" href="{% static '/js/leaflet/plugins/L.GeoSearch-develop/src/css/l.geosearch.css' %}" />
+    <script src="{% static '/js/leaflet/plugins/L.GeoSearch-develop/src/js/l.geosearch.provider.openstreetmap.js' %}"></script>
+    <script src="{% static '/js/leaflet/plugins/leaflet-providers-master/leaflet-providers.js' %}"></script>
+    <script src="{% static '/js/leaflet/plugins/PruneCluster-master/dist/PruneCluster.js' %}"></script>
+    <link rel="stylesheet" href="{% static '/js/leaflet/plugins/PruneCluster-master/LeafletStyleSheet.css' %}" />
 
-  <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
-  <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
-  <script src="{% static '/js/leaflet/plugins/Leaflet.MousePosition-master/src/L.Control.MousePosition.js' %}" type="text/javascript"></script>
-  <link rel="stylesheet" href="{% static '/js/leaflet/plugins/Leaflet.MousePosition-master/src/L.Control.MousePosition.css' %}" />
-  <script src="{% static '/js/leaflet/plugins/L.GeoSearch-develop/src/js/l.control.geosearch.js' %}"></script>
-  <link rel="stylesheet" href="{% static '/js/leaflet/plugins/L.GeoSearch-develop/src/css/l.geosearch.css' %}" />
-  <script src="{% static '/js/leaflet/plugins/L.GeoSearch-develop/src/js/l.geosearch.provider.openstreetmap.js' %}"></script>
-  <script src="{% static '/js/leaflet/plugins/leaflet-providers-master/leaflet-providers.js' %}"></script>
-  <script src="{% static '/js/leaflet/plugins/PruneCluster-master/dist/PruneCluster.js' %}"></script>
-  <link rel="stylesheet" href="{% static '/js/leaflet/plugins/PruneCluster-master/LeafletStyleSheet.css' %}" />
+
+
+  <script src="{% static '/js/geokrety_map.js' %}" type="text/javascript"></script>
+
 
   <script src="/jsi18n/" type="text/javascript"></script>
-  <script src="{% static '/js/infobubble.js' %}" type="text/javascript"></script>
-  <script src="{% static '/js/browser_kind.js' %}" type="text/javascript"></script>
-  <script src="{% static '/js/geokrety_map.js' %}" type="text/javascript"></script>
+  <!--script src="{% static '/js/infobubble.js' %}" type="text/javascript"></script-->
+
   <script type="text/javascript">
 
-  function addMarkers() {
-    var marker;
-    {% if map_rect %}
-    GeoKretyMap.centerMap({
-          'lat_min': {{ map_rect.lat_min }},
-          'lat_max': {{ map_rect.lat_max }},
-          'lng_min': {{ map_rect.lng_min }},
-          'lng_max': {{ map_rect.lng_max }}
-          });
-    {% endif %}
-    {% for geokret in geokrety %}
-    marker = new google.maps.Marker({
-        position: new google.maps.LatLng({{ geokret.latitude }}, {{ geokret.longitude }}),
-        map: GeoKretyMap.map,
-        title:"{{ geokret.waypoint }}",
-        waypoint: '{{ geokret.waypoint }}',
-        //gkid: {{ geokret.gkid }},
-        icon: GeoKretyMap.iconByDistance({{ geokret.distance|default_if_none:0 }}, {{ geokret.count|default_if_none:0 }}),
-        shadow:  GeoKretyMap.shadowByDistance({{ geokret.distance|default_if_none:0 }}, {{ geokret.count|default_if_none:0 }})
-        //dist: {{ geokret.distance|default_if_none:0 }}
-    });
-    google.maps.event.addListener(marker, 'click', function () {
-        GeoKretyMap.map.setCenter(this.position);
-        GeoKretyMap.setInformationWindow(this);
+    function initURLs() {
+      GeoKretyMap.geokret_info_url = '{% url 'map-geokret-info' %}';
+      GeoKretyMap.change_country_url = '{% url 'geokrety-map-change-country' %}';
+      GeoKretyMap.text_changed = false;
+      GeoKretyMap.tip_text = '{{ tooltip_text }}';
+      GeoKretyMap.find_by_waypoint_url = '{% url 'geokret-map-search-by-waypoint' %}';
+      GeoKretyMap.get_things_url = '{% url 'geokret-map-get-geokrety' %}';
+      {% if geokret_waypoint.lat %}
+      GeoKretyMap.geokret_waypoint = {
+          lat: {{ geokret_waypoint.lat }},
+          lng: {{ geokret_waypoint.lng }}};
+      {% endif %}
+    }
 
-
-    });
-    GeoKretyMap.markers[GeoKretyMap.markers.length] = marker;
-    {% endfor %}
-  }
-
-  function initURLs() {
-    GeoKretyMap.geokret_info_url = '{% url 'map-geokret-info' %}';
-    GeoKretyMap.change_country_url = '{% url 'geokrety-map-change-country' %}';
-    GeoKretyMap.text_changed = false;
-    GeoKretyMap.tip_text = '{{ tooltip_text }}';
-    GeoKretyMap.find_by_waypoint_url = '{% url 'geokret-map-search-by-waypoint' %}';
-    GeoKretyMap.get_geokrety_url = '{% url 'geokret-map-get-geokrety' %}';
-  }
-
-</script>
+  </script>
 
 {% endblock %}
-
-{% block body_onload %}initURLs(); GeoKretyMap.init([50, 37], 12); //addMarkers(); //GeoKretyMap.drawMap(); {% if not map_rect %}//GeoKretyMap.codeAddress('{{ user_country }}');{% endif %} {% endblock %}
 
 
 {% block main-content %}
 <div class="row">
-  <div class="col-md-8">
-    <table>
-      <tr >
-        <td >
-          <form class="form-inline pull-left" role="form" action=""
-              onsubmit="GeoKretyMap.codeAddress(this.address.value); return false">
-            <input id="address" type="text" value="" />
-            <input type="submit" value="{% trans "Where" %}" class="btn btn-default"/>
-          </form>
-        </td>
-        <td rowspan="2" width="200"><span class="col-md-8" id="id_current_location"></span></td>
-      </tr>
-      <tr >
-        <td>
-          <input type="text" class="search-query" id="waypoint" name="waypoint"
-              placeholder="{% if user_waypoint %}{{ user_waypoint }}{% else %}{{ tooltip_text }}{% endif %}"
-              value="" onChange="text_changed=true;"
-              onKeyUp="return GeoKretyMap.key_pressed_here(event);" />
-          <input type="submit" value="{% trans "What" %}"
-                 class="btn btn-default" onClick="GeoKretyMap.go_out();" />
-        </td>
-      </tr>
-    </table>
+  <div class="col-md-6">
+    <input type="text" class="form-control form-control-sm" id="waypoint" name="waypoint"
+        placeholder="{% if user_waypoint %}{{ user_waypoint }}{% else %}{{ tooltip_text }}{% endif %}"
+        value="" onChange="text_changed=true;" size="10"
+        onKeyUp="return GeoKretyMap.key_pressed_here(event);" />
+  </div>
+  <div class="col-md-1">
+    <input type="submit" value="{% trans "Search" %}"
+        class="btn btn-primary btn-sm" onClick="GeoKretyMap.go_out();" />
+  </div>
 
-    <span id="map_spinner" style="display:none"><img src="{% static '/img/spinner-bar.gif' %}" /></span>
+  <div class="col-md-4">
+    <span class="" id="id_count">
+       {% if geokrety_count %}{% trans "found" %}: {{ geokrety_count|default_if_none:""}}{% endif %}
+    </span>
+    <span id="map_spinner" style="display:none">
+      <img src="{% static '/img/spinner-bar.gif' %}" />
+    </span>
   </div>
 </div>
-<hr/>
-<div id="map" style="width:100%; height:600px;"></div>
+
+
+<div class="container">
+  <div id="map" class="map map-home" style="height: 500px; margin-top: 50px"></div>
+
+</div>
 
 <script>
-      // initialize Leaflet
-      //var map = L.map('map').setView({lon: 36, lat: 50}, 12);
+    initURLs();
+    GeoKretyMap.init([{{ map_center.lat }}, {{ map_center.lng }}], {{ map_zoom }});
+</script>
 
-      // add the OpenStreetMap tiles
-      //L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      //  maxZoom: 19,
-      //  attribution: '&copy; <a //href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
-      //}).addTo(map);
-
-      // show the scale bar on the lower left corner
-      //L.control.scale().addTo(map);
-
-      // show a marker on the map
-      //L.marker({lon: 0, lat: 0}).bindPopup('The center of the world').addTo(map);
-    </script>
-
-<!--div class="row"><span class="col-md-4">{% trans 'Map of caches where GeoKrety live' %}</span></div-->
+<br />
 <div class="row">
     <div class="col-md-4">
     <table>
@@ -134,4 +98,5 @@
     </a>
   </span>
 </div>
+
 {% endblock %}

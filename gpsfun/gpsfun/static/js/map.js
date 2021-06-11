@@ -29,28 +29,6 @@ CachesMap = {
     tip_text: '',
     only_found: false,
 
-/*
-    setInformationWindow: function (obj) {
-        $.ajax({
-            url: CachesMap.cache_info_url,
-            type: 'GET',
-            dataType: 'JSON',
-            data: { 'cache_pid': obj.pid,
-                    'cache_site': obj.site_code
-            },
-            success: function(doc) {
-                if (doc.status != "OK") { return;}
-                //obj.setPopupContent(doc.content);
-                if (obj.getPopup()) {
-                    obj.setPopupContent(doc.content);
-                } else {
-                    obj.bindPopup(doc.content);
-                }
-            }
-        })
-    },
-*/
-
     init: function(center, zoom) {
         osmAttrib = '&copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors';
         var map = L.map("map", {
@@ -102,8 +80,9 @@ CachesMap = {
         L.control.zoom().addTo(map);
 
 
-        map.on('moveend', CachesMap.loadThings);
+        map.on('viewreset', CachesMap.loadThings);
         map.on('zoomend', CachesMap.loadThings);
+        map.on('dragend', CachesMap.loadThings);
 
         new L.control.mousePosition({
             lngFormatter: function(lng) { return CachesMap.to_string(lng, ['E', 'W']);},
