@@ -1,22 +1,27 @@
+"""
+table controller
+"""
+
 from django.http import HttpResponseRedirect
 from django.template.loader import render_to_string
 from django.template import RequestContext
 from gpsfun.main.db_utils import get_object_or_none
-# from DjHDGutils.paginator import Paginator
 
 from .models import TableViewProfile
 from .table import CellTitle, BoundRow
 import pickle
 
 
-class TableController(object):
+class TableController:
+    """ table controller """
+
     def __init__(self, table, datasource, request, row_per_page=None):
         self.table = table
         self.request = request
         self.profile = None
         self.filter_modified = False
-        self.session_key = "tableview_%s" % self.table.id
-        self.last_profile_key = "%s__last" % self.session_key
+        self.session_key = f"tableview_{self.table.id}"
+        self.last_profile_key = f"{self.session_key}__last"
         self.source = datasource
         self.paginator = None
         self.visible_columns = []
@@ -31,12 +36,14 @@ class TableController(object):
             self._init_paginator(row_per_page)
 
     def _init_paginator(self, row_per_page):
+        """ init paginator """
         self.paginator = Paginator(self.source,
                                    page=1,
                                    row_per_page=row_per_page,
                                    request=self.request)
 
     def show_column(self, column_name):
+        """ show column """
         if not column_name in self.table.columns:
             return False
 
@@ -47,6 +54,7 @@ class TableController(object):
         return True
 
     def get_paginated_rows(self):
+        """ get paginated rows """
         if self.paginator:
             self.source.set_limit(*self.paginator.get_offset())
 
@@ -56,10 +64,12 @@ class TableController(object):
             yield BoundRow(self, row_index, row)
 
     def set_page(self, page):
+        """ set page """
         if self.paginator:
             self.paginator.page = page
 
     def set_sort(self, column_name):
+        """ set sort """
         asc = True
         if column_name.startswith('-'):
             asc = False
@@ -70,9 +80,9 @@ class TableController(object):
             self.sort_asc = asc
 
             column = self.table.columns[column_name]
-            if hasattr(self.table, 'order_by_%s' % column_name):
+            if hasattr(self.table, f'order_by_{column_name}'):
                 order_callback = getattr(
-                    self.table, 'order_by_%s' % column_name)
+                    self.table, f'order_by_{column_name}')
                 order_callback(column, self.source, asc)
             else:
                 self.source.set_order(column.refname, asc)
@@ -81,6 +91,7 @@ class TableController(object):
         return False
 
     def get_sort(self):
+        """ get sort """
         if not self.sort_by:
             return ''
         if self.sort_asc:
@@ -88,9 +99,10 @@ class TableController(object):
         else:
             mode = '-'
 
-        return "%s%s" % (mode, self.sort_by)
+        return f"{mode}{self.sort_by}"
 
     def apply_state(self, state):
+        """ apply state """
         self.visible_columns = state.get('visible', [])
         self.sort_by = state.get('sort_by')
         self.filter = state.get('filter', {}) or {}
@@ -98,14 +110,17 @@ class TableController(object):
             self.set_sort(self.sort_by)
 
     def get_state(self):
+        """ get state """
         return {'visible': self.visible_columns,
                 'sort_by': self.get_sort(),
                 'filter': self.filter}
 
     def apply_search(self, value):
+        """ apply search """
         self.search_value = value
 
     def restore(self, id=None):
+        """ restore """
         state = None
 
         if id is None and self.last_profile_key in self.request.session:
@@ -127,9 +142,10 @@ class TableController(object):
                                               is_default=True)
 
         elif id and id.isdigit():
-            self.profile = get_object_or_none(profile_qs,
-                                              is_default=False,
-                                              pk=id)
+            self.profile = get_object_or_none(
+                profile_qs,
+                is_default=False,
+                pk=id)
 
         if self.session_key in self.request.session:
             state = self.request.session[self.session_key]
@@ -141,9 +157,11 @@ class TableController(object):
             self.apply_state(state)
 
     def save(self):
-        self.request.session["tableview_%s" % self.table.id] = self.get_state()
+        """ save """
+        self.request.session[f"tableview_{self.table.id}"] = self.get_state()
 
     def save_state(self, name=None):
+        """ save state """
         state = self.get_state()
         dump = pickle.dumps(state, pickle.HIGHEST_PROTOCOL)
         dump = dump.encode('hex_codec')
@@ -173,10 +191,12 @@ class TableController(object):
                 'created': created}
 
     def remove_profile(self, profile_id):
-        qs = TableViewProfile.objects.filter(id=profile_id,
-                                             tableview_name=self.table.id,
-                                             is_default=False
-                                             )
+        """ remove profile """
+        qs = TableViewProfile.objects.filter(
+            id=profile_id,
+            tableview_name=self.table.id,
+            is_default=False
+            )
         if self.table.global_profile:
             qs = qs.filter(user__isnull=True)
         else:
@@ -186,6 +206,7 @@ class TableController(object):
         return {'status': 'OK'}
 
     def process_request(self):
+        """ process request """
         self.restore(self.request.GET.get('profile'))
 
         if self.request.GET.has_key('page'):
@@ -199,7 +220,7 @@ class TableController(object):
                 return self.save_state(self.request.GET.get('name'))
 
             if self.request.GET.get('action') == 'load_json':
-                fun_name = 'ajax_%' % self.request.GET.get('function', 'undef')
+                fun_name = f"ajax_{self.request.GET.get('function', 'undef')}"
                 if hasattr(self.table, fun_name):
                     fun = getattr(self.table, fun_name)
                     if callable(fun):
@@ -212,42 +233,44 @@ class TableController(object):
                 return {'page_count': self.paginator.get_page_count(),
                         'body': render_to_string(
                             "table_body_content.html",
-                             RequestContext(self.request,
-                                             {'table': self.table,
-                                              'controller': self,
-                                              })),
+                            RequestContext(
+                                self.request,
+                                {'table': self.table,
+                                 'controller': self,
+                                 })),
                         'paginator': render_to_string(
                             "table_paginator.html",
-                              RequestContext(self.request,
-                                              {'table': self.table,
-                                               'controller': self,
-                                               })),
+                            RequestContext(
+                                self.request,
+                                {'table': self.table,
+                                 'controller': self,
+                                 })),
                         }
 
         if 'search' in self.request.GET:
             self.apply_search(self.request.GET['search'])
 
-        rc = self.process_form_filter()
+        result = self.process_form_filter()
 
         if self.request.GET.has_key('sort_by'):
             self.set_sort(self.request.GET.get('sort_by'))
-            rc = HttpResponseRedirect('?profile=custom')
+            result = HttpResponseRedirect('?profile=custom')
 
         if self.request.method == 'POST':
             if '_save_column_setup' in self.request.POST:
-                prefix = "setup_%s_column_" % self.table.id
+                prefix = f"setup_{self.table.id}_column_"
                 self.visible_columns = []
                 for key, value in self.request.POST.iteritems():
                     if key.startswith(prefix):
                         self.show_column(value)
-                rc = HttpResponseRedirect("?profile=custom")
+                result = HttpResponseRedirect("?profile=custom")
 
         self.save()
 
-        if rc:
-            return rc
+        return result if result else None
 
-    def process_form_filter(self, initial=None):
+    def process_form_filter(self):
+        """ process form filter """
         if not self.table.filter_form:
             return
 
@@ -263,8 +286,10 @@ class TableController(object):
             form = self.table.filter_form(request=self.request,
                                           initial=self.filter)
         self.form_filter_instance = form
+        return None
 
     def get_saved_state(self):
+        """ get saved state """
         if self.table.global_profile:
             return TableViewProfile.objects.filter(user__isnull=True,
                                                    tableview_name=self.table.id,
@@ -275,23 +300,28 @@ class TableController(object):
                                                    is_default=False)
 
     def iter_columns(self):
+        """ iter columns """
         for key, column in self.table.columns.iteritems():
             if  key in self.table.permanent or key in self.visible_columns:
                 yield (key, column)
 
     def iter_all_columns(self):
+        """ iter all columns """
         for key, column in self.table.columns.iteritems():
             yield (key, column)
 
     def iter_all_title(self):
+        """ iter all title """
         for key, column in self.iter_all_columns():
             yield (key, CellTitle(self, key, column))
 
     def iter_title(self):
+        """ iter title """
         for key, column in self.iter_columns():
             yield (key, CellTitle(self, key, column))
 
     def as_html(self):
+        """ as html """
         if self.search_value:
             self.table.apply_search(self.search_value, self.source)
         else:
@@ -304,8 +334,8 @@ class TableController(object):
             "table_body.html",
             RequestContext(
             self.request,
-                        {'table': self.table,
-                         'filter_form': self.form_filter_instance,
-                         'controller': self,
-                         'base_count': (self.paginator.page - 1) * self.paginator.row_per_page,
-                         }))
+            {'table': self.table,
+             'filter_form': self.form_filter_instance,
+             'controller': self,
+             'base_count': (self.paginator.page - 1) * self.paginator.row_per_page,
+             }))
