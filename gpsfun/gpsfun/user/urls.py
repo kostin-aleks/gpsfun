@@ -1,3 +1,7 @@
+"""
+urls for app user
+"""
+
 from django.urls import path
 from gpsfun.user.views import (user_profile, user_profile_edit)
 

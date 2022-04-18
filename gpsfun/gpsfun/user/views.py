@@ -1,16 +1,21 @@
-# coding: utf-8
+"""
+views related to application user
+"""
+
+from django.contrib import messages
 from django.shortcuts import render
-from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
+
 from gpsfun.DjHDGutils.misc import atoi
 from gpsfun.main.GeoName.models import get_city_by_geoname
 from gpsfun.main.GeoMap.models import Location
 from gpsfun.user.forms import CityForm
 from gpsfun.geocaching_su_stat.views import get_degree
-from django.contrib import messages
+
 
 
 def user_profile(request):
+    """ return user profile """
     return render(
         request,
         'User/profile.html',
@@ -18,12 +23,14 @@ def user_profile(request):
 
 
 def user_profile_edit(request):
+    """ return page to edit user profile """
 
     def get_form_parameters(city):
+        """ return form parameters for the city """
+        data = (None, None, None)
         if city:
-            return city.geonameid, city.admin1, city.country
-        else:
-            return None, None, None
+            data = (city.geonameid, city.admin1, city.country)
+        return data
 
     user = request.user
     user_city = None
@@ -33,8 +40,7 @@ def user_profile_edit(request):
         city_id, region, country = get_form_parameters(user_city)
 
     if request.method == 'POST':
-        print('POST', request.POST)
-        if 'save'in request.POST:
+        if 'save' in request.POST:
             city_geoname = atoi(request.POST.get('city'))
             city = get_city_by_geoname(city_geoname)
             if city:
@@ -49,10 +55,6 @@ def user_profile_edit(request):
                     user.gpsfunuser.geocity = None
                     user.gpsfunuser.save()
                     messages.warning(request, _('You reset city'))
-            # changed = set_user_location(user, request.POST)
-
-            #if changed:
-                #messages.success(request, _('Your location changed'))
 
             user.first_name = request.POST.get('first_name')
             user.last_name = request.POST.get('last_name')
@@ -80,9 +82,11 @@ def user_profile_edit(request):
 
 
 def set_user_location(user, data):
+    """ set user location """
+
     def is_valid_position(position):
-        if position.get('latitude') and position.get('longitude'):
-            return True
+        """ check coordinates """
+        return bool(position.get('latitude') and position.get('longitude'))
 
     user_changed = False
     position = {
@@ -101,7 +105,7 @@ def set_user_location(user, data):
         position['latitude'] = degree
     degree = get_degree(longitude)
     if degree:
-        if lat_sign == 'W':
+        if lon_sign == 'W':
             degree = -degree
         position['longitude'] = degree
 
@@ -119,6 +123,3 @@ def set_user_location(user, data):
             user_changed = True
 
     return user_changed
-
-
-

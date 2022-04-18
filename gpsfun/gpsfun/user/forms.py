@@ -1,19 +1,16 @@
-# coding: utf-8
+"""
+forms related to app user
+"""
+
 from django import forms
 from django.utils.translation import ugettext_lazy as _
+
 from gpsfun.DjHDGutils.newforms import TemplatedForm
-#from olwidget.widgets import EditableMap
-
 from gpsfun.main.GeoName.models import populate_country_subject_city
-from gpsfun.main.GeoName.models import GeoCountry, GeoCountryAdminSubject, \
-     country_iso_by_iso3, geocountry_by_code
-
-from django.template.loader import render_to_string
-from location_field.forms.plain import PlainLocationField
-#from registration.forms import RegistrationFormUniqueEmail  #, attrs_dict
 
 
 class CityForm(TemplatedForm):
+    """ Form City """
     country = forms.ChoiceField(
         required=False,
         label=_('Country'),
@@ -44,9 +41,10 @@ class CityForm(TemplatedForm):
             else:
                 my_kwargs[key] = value
 
-        super(CityForm, self).__init__(*kargs, **my_kwargs)
+        super().__init__(*kargs, **my_kwargs)
 
     def custom_init(self):
+        """ custom init """
         self.fields['country'], self.fields['subject'], self.fields['city'] = \
             populate_country_subject_city(
                 self.fields['country'],
@@ -54,22 +52,3 @@ class CityForm(TemplatedForm):
                 self.fields['city'],
                 self.user_city,
             )
-
-#class LocationForm(TemplatedForm):
-    #location = forms.CharField(widget=EditableMap(options={'default_lat': 49.5800781249997, 'default_lon': 36.1405547824504, 'default_zoom': 11,},
-                                                  #))
-    #lat_deg = forms.CharField(widget=forms.TextInput(attrs={'size': '2', 'maxlength': '2',}),)
-    #lat_min = forms.CharField(widget=forms.TextInput(attrs={'size': '2', 'maxlength': '2',}),)
-    #lat_mindec = forms.CharField(widget=forms.TextInput(attrs={'size': '3', 'maxlength': '3',}),)
-    #lon_deg = forms.CharField(widget=forms.TextInput(attrs={'size': '2', 'maxlength': '2',}),)
-    #lon_min = forms.CharField(widget=forms.TextInput(attrs={'size': '2', 'maxlength': '2',}),)
-    #lon_mindec = forms.CharField(widget=forms.TextInput(attrs={'size': '3', 'maxlength': '3',}),)
-
-#class RegistrationGpsfunUser(RegistrationFormUniqueEmail):
-    #username = forms.RegexField(regex=u'^[\u0400-\u0500\ \w\d\.\@\+\-]+$',
-                                #max_length=30,
-                                #widget=forms.TextInput(),
-                                #label=_("Username"),
-                                #error_messages={'invalid': _("This value may contain only letters, numbers and @/./+/-/_ characters.")})
-
-#
