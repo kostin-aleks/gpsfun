@@ -1,3 +1,7 @@
+"""
+urls for carpathians
+"""
+
 from django.urls import path
 from gpsfun.carpathians.views import (
     ridges, ridge, peak, route, routes, peaks)

@@ -1,6 +1,8 @@
-import urllib
+"""
+Template tags and filters related to geopoint
+"""
+
 from django import template
-from django.template import Variable
 
 
 register = template.Library()
@@ -9,36 +11,46 @@ register = template.Library()
 DMS = 'dms'
 
 
-def split_to_dms(c):
-    c = abs(float(c))
-    degree = int(c)
-    float_minutes = (c - degree) * 60.0
+def split_to_dms(coordinate):
+    """
+    Split coordinate DD.DDDDD into D M S
+    """
+    coordinate = abs(float(coordinate))
+    degree = int(coordinate)
+    float_minutes = (coordinate - degree) * 60.0
     minutes = int(float_minutes)
     seconds = int(round((float_minutes - minutes) * 60.0, 0))
     return degree, minutes, seconds
 
 
-def format_coordinate(c, fmt):
+def format_coordinate(coordinate, fmt):
+    """
+    format coordinate string
+    """
     if fmt == DMS:
-        degree, minutes, seconds = split_to_dms(c)
-        return "{:02d}&deg; {:02d}&prime; {:02d}&Prime;".format(
-            degree, minutes, seconds)
-    return str(c)
+        degree, minutes, seconds = split_to_dms(coordinate)
+        return f"{degree:02}&deg; {minutes:02}&prime; {seconds:02}&Prime;"
+    return str(coordinate)
 
 
 @register.filter
 def point(value, arg):
+    """
+    template filter
+    format point coordinates string
+    """
     north = 'с.ш.' if value.latitude >= 0 else 'ю.ш.'
     east = 'в.д.' if value.longitude >= 0 else 'з.д.'
 
-    return "{} {} {} {}".format(
-        format_coordinate(value.latitude, arg), north,
-        format_coordinate(value.longitude, arg), east,
-    )
+    return f"{format_coordinate(value.latitude, arg)} {north} {format_coordinate(value.longitude, arg)} {east}"
 
 
 @register.filter
 def osmlink(value):
+    """
+    template filter
+    link to openstreetmap
+    """
     north = 'N' if value.latitude >= 0 else 'S'
     east = 'E' if value.longitude >= 0 else 'W'
     osm_link = "https://www.openstreetmap.org/search?query="
