@@ -1,10 +1,13 @@
+"""
+common views
+"""
+
 from django import http
 from django.views.decorators.cache import cache_page
 from django.views.decorators.csrf import requires_csrf_token
 from django.template import RequestContext, loader
 from django.shortcuts import render
-from django.core.urlresolvers import reverse
-from datetime import datetime
+from django.urls import reverse
 
 
 @requires_csrf_token
@@ -12,12 +15,13 @@ def page_not_found(request):
     """ YP 404 handler """
     template_name = '404.html'
 
-    t = loader.get_template(template_name)
-    return http.HttpResponseNotFound(t.render(RequestContext(request, {})))
+    template = loader.get_template(template_name)
+    return http.HttpResponseNotFound(template.render(RequestContext(request, {})))
 
 
 @cache_page(60 * 60 * 24)
 def jsu18n(request):
+    """ js u18n """
     return render(request, 'js/i18n.js.html',
                   content_type='text/javascript;charset=UTF-8')
 
@@ -44,14 +48,16 @@ def allow_ssl(request):
 
 
 def disable_ssl_info(request):
+    """ disable ssl info """
     return render(request, "Teacher/Freemium/disable_ssl_info.html")
 
 
 def custom_csrf_error(request, reason=""):
-    csrf_error = ErrorLog()
-    csrf_error.error_type = "CSRF"
-    csrf_error.error_source = request.path
-    csrf_error.error_date = datetime.now()
-    csrf_error.error_details = reason
-    csrf_error.save()
+    """ custom csrf error """
+    #csrf_error = ErrorLog()
+    #csrf_error.error_type = "CSRF"
+    #csrf_error.error_source = request.path
+    #csrf_error.error_date = datetime.now()
+    #csrf_error.error_details = reason
+    #csrf_error.save()
     return render(request, 'custom_csrf_error.html', {'reason': reason})

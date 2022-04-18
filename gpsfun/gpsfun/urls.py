@@ -15,14 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from django.conf.urls import i18n
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth.views import LoginView, LogoutView
 from django.views.i18n import JavaScriptCatalog
-from django.views.static import serve
 from gpsfun.main.views import homepage, update
-from gpsfun import geocaching_su_stat
 
 
 urlpatterns = [
@@ -50,5 +47,3 @@ urlpatterns = [
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) \
   + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-

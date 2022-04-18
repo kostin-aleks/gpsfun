@@ -3,14 +3,9 @@ Module stores utilities
 """
 
 import os
-from os.path import join as path_join
-from os import listdir
-from os.path import isfile
-import sys
-from random import choice
 from datetime import datetime
+
 from django.shortcuts import _get_queryset
-from django.conf import settings
 
 
 def class_name(instance):
@@ -61,4 +56,3 @@ def image_url(image):
             url = ''
         return url
     return ''
-
