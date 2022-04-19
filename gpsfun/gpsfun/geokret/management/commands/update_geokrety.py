@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 NAME
      update_geokrety.py
@@ -8,28 +7,29 @@ DESCRIPTION
      Updates geokrets
 """
 
-from datetime import datetime, date, timedelta
+from datetime import datetime, timedelta
 import requests
 from bs4 import BeautifulSoup
 from django.core.management.base import BaseCommand
 from gpsfun.main.models import log, UPDATE_TYPE
-from gpsfun.main.models import LogCheckData
 from gpsfun.main.GeoKrety.models import GeoKret, Location
 
 
 class Command(BaseCommand):
+    """ command """
     help = 'Updates geokrets'
 
     def handle(self, *args, **options):
+        """ handler """
         sincedate = datetime.now() - timedelta(days=7)
         sincedatestr = sincedate.strftime('%Y%m%d%H%M%S')
         with requests.Session() as session:
-            r = session.get(
+            result = session.get(
                 'http://geokrety.org/export_oc.php',
                 params={'modifiedsince': sincedatestr}
             )
 
-            soup = BeautifulSoup(r.text, 'lxml')
+            soup = BeautifulSoup(result.text, 'lxml')
             all_krety = soup.find_all('geokret')
 
             for kret in all_krety:
@@ -40,11 +40,11 @@ class Command(BaseCommand):
                 name = kret.find('name').text
                 distance = kret.distancetravelled.text
                 position = kret.position
-                latitude = float(position.get('latitude')or 0)
+                latitude = float(position.get('latitude') or 0)
                 longitude = float(position.get('longitude') or 0)
                 waypoints = kret.waypoints
-                wp = waypoints.find_all('waypoint')
-                waypoint = wp[0].text if wp else None
+                wpoint = waypoints.find_all('waypoint')
+                waypoint = wpoint[0].text if wpoint else None
                 state = kret.state.text
 
                 geokret, created = GeoKret.objects.get_or_create(gkid=gkid)
@@ -54,8 +54,8 @@ class Command(BaseCommand):
                     geokret.distance = distance
                     if geokret.location is None:
                         geokret.location = Location.objects.create(
-                                        NS_degree=latitude,
-                                        EW_degree=longitude)
+                            NS_degree=latitude,
+                            EW_degree=longitude)
                     else:
                         geokret.location.NS_degree = latitude
                         geokret.location.EW_degree = longitude
@@ -69,5 +69,3 @@ class Command(BaseCommand):
         log(UPDATE_TYPE.geokrety_updated, 'OK')
 
         return 'Geokrety are updated'
-
-

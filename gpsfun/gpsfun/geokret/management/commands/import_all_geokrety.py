@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 NAME
      import_all_geokrety.py
@@ -12,14 +11,15 @@ import urllib.request
 import bz2
 from bs4 import BeautifulSoup
 import requests
+
 from django.core.management.base import BaseCommand
+
 from gpsfun.main.models import log, UPDATE_TYPE
 from gpsfun.main.GeoKrety.models import GeoKret, Location
-from lxml import etree as ET
-from gpsfun.DjHDGutils.dbutils import get_object_or_none
 
 
 class Command(BaseCommand):
+    """ command """
     help = 'Imports all geokrety'
 
     def handle(self, *args, **options):
@@ -30,11 +30,13 @@ class Command(BaseCommand):
         zipfile = bz2.BZ2File(filename)
         data = zipfile.read()
         newfilepath = filename[:-4]
-        open(newfilepath, 'wb').write(data)
+        with open(newfilepath, 'wb') as newfile:
+            newfile.write(data)
+            newfile.close()
 
-        fh = open(newfilepath, 'r')
-        xml = fh.read()
-        fh.close()
+        with open(newfilepath, 'r') as newfile:
+            xml = newfile.read()
+            newfile.close()
 
         soup = BeautifulSoup(xml, 'lxml')
 
@@ -77,12 +79,12 @@ class Command(BaseCommand):
 
         for kret in GeoKret.objects.filter(name__isnull=True):
             with requests.Session() as session:
-                r = session.get(
+                result = session.get(
                     'https://geokrety.org/konkret.php',
                     params={'id': kret.gkid}
                 )
 
-                soup = BeautifulSoup(r.text, 'lxml')
+                soup = BeautifulSoup(result.text, 'lxml')
                 for cell in soup.find_all('td', attrs={'class': 'heading1'}):
                     if cell.text and cell.text.strip().startswith('GeoKret'):
                         strong = cell.find('strong')
@@ -94,4 +96,3 @@ class Command(BaseCommand):
         log(UPDATE_TYPE.geokrety_imported, 'OK')
 
         return 'Geokrety are imported'
-
