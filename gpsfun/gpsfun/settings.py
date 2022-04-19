@@ -149,7 +149,6 @@ INSTALLED_APPS = (
     'gpsfun.map',
     'gpsfun.user',
     'gpsfun.carpathians',
-    # 'hdg.djangoapps.admintable',
     'django_registration',
     'profiles',
     'django_tables2',

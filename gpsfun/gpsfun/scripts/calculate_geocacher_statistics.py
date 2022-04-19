@@ -16,23 +16,18 @@ def patch_it():
         sql = sql.strip()
         if not sql.startswith('SELECT') and not sql.startswith('select') and len(sql):
             print
-            print sql
+            print(sql)
             exec_sql_modify(sql)
             #execute_query(sql)
 
 def main():
-    #if not switch_off_status_updated():
-    #    return False
-
     start = time()
 
-
-
     patch_it()
-    print ' calculated'
+    print(' calculated')
 
     elapsed = time() - start
-    print "Elapsed time -->", elapsed
+    print("Elapsed time -->", elapsed)
     switch_on_status_updated()
     log('gcsu_casherstat', 'OK')
 

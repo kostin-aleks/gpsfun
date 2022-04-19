@@ -40,13 +40,13 @@ def check_cach_list(item_list):
     for item in item_list:
         #cach, ok = Cach.objects.get_or_create(pid=item['id'], code=item['code'])
         check_cach(item['id'])
-        
+
 def nonempty_cell(cell):
     r = True
     if not cell or cell=='&nbsp;':
         r = False
     return r
-    
+
 def text_or_none(cell):
     r = None
     if nonempty_cell(cell):
@@ -74,7 +74,7 @@ def strdate_or_none(cell):
             if r < 1000:
                 r = 1900
         return r
-    
+
     dmonths = {
         'января': 1,
         'февраля': 2,
@@ -92,7 +92,7 @@ def strdate_or_none(cell):
     r = None
     if nonempty_cell(cell):
         parts = cell.split()
-        print cell, parts
+        print(cell, parts)
         if len(parts) > 2:
             year = year_from_text(parts[2])
             if year:
@@ -147,16 +147,16 @@ def equal_coordinates(cache, cache2):
         if d is None or m is None:
             return None
         return int(abs(d) + m / 60.0 * 1000000)
-    
+
     if degree(cache.loc_NS_degree, cache.loc_NS_minute) != degree(cache2.loc_NS_degree, cache2.loc_NS_minute):
         return False
-    
+
     if degree(cache.loc_EW_degree, cache.loc_EW_minute) != degree(cache2.loc_EW_degree, cache2.loc_EW_minute):
         return False
-    
+
     return True
-    
-def update_geocache(geocache, the_geocache):    
+
+def update_geocache(geocache, the_geocache):
     changed = False
     if geocache.code != the_geocache.code:
         changed = True
@@ -169,11 +169,11 @@ def update_geocache(geocache, the_geocache):
         geocache.name = the_geocache.name
     if geocache.created_by != the_geocache.created_by:
         changed = True
-        geocache.created_by = the_geocache.created_by        
+        geocache.created_by = the_geocache.created_by
     if geocache.code != the_geocache.code:
         changed = True
         geocache.code = the_geocache.code
-    
+
     location_changed = False
     if not equal_coordinates(geocache, the_geocache):
         location_changed = True
@@ -181,12 +181,10 @@ def update_geocache(geocache, the_geocache):
         geocache.admin_code = None
         geocache.country_name = None
         geocache.oblast_name = None
-    #print geocache.code, changed, location_changed
+
     if changed or location_changed:
-        #print 'SAVED', geocache.pid
-        #geocache.country_code = the_geocache.country
         geocache.__dict__.update(the_geocache.__dict__)
-        print 'save', geocache.pid
+        print('save', geocache.pid)
         geocache.save()
         return 1
 
@@ -200,12 +198,12 @@ def check_cach(cach_pid):
         NS = parts[0]
         parts = t4.findall(coordinates)
         EW = parts[0]
-        
+
         return ns_degree, ns_minute, ew_degree, ew_minute, NS, EW
-    
+
     def get_type(cell):
         return cell.text
-    
+
     def get_class(cell):
         class_ = None
         if cell:
@@ -217,7 +215,7 @@ def check_cach(cach_pid):
                     items.append(txt)
             class_ = ';'.join(items)
         return class_
-    
+
     def get_mestnost(cell):
         oblast = country = None
         parts = cell.contents
@@ -225,23 +223,23 @@ def check_cach(cach_pid):
             country = parts[0]
         if len(parts) > 2:
             oblast = parts[2]
-        return country, oblast 
-    
+        return country, oblast
+
     def get_dostupnost(cell):
         parts = cell.contents
         dostupnost = parts[0].split(':')[1].strip()
         mestnost = parts[2].split(':')[1].strip()
         return dostupnost, mestnost
-    
+
     def get_town(cell):
         return cell.text
-        
+
     def get_grade(cell):
         grade = None
         if cell.img:
             grade = cell.img.get('title')
         return grade
-    
+
     def get_attributes(element):
         attr = None
         items = []
@@ -250,13 +248,13 @@ def check_cach(cach_pid):
             if 'images/attrib/' in img.get('src'):
                 items.append(img.get('title'))
             attr = ';'.join(items)
-        return attr 
-    
+        return attr
+
     url = 'http://www.geocaching.su/?pn=101&cid=%d'%int(cach_pid)
     try:
         yplib.get(url)
     except:
-        print 'exception'
+        print('exception')
         return False
     soup=yplib.soup()
 
@@ -267,7 +265,7 @@ def check_cach(cach_pid):
     t3 = re.compile('([N,S]\s\d+\&\#176\;\s[\d\.]+.)')
     t4 = re.compile('([E,W]\s\d+\&\#176\;\s[\d\.]+.)')
     t5 = re.compile('WinPopup\(\'profile\.php\?pid\=(\d+)')
-    
+
     name = None
     items = t.findall(h.text)
     if items:
@@ -277,16 +275,16 @@ def check_cach(cach_pid):
     if items:
         full_code = items[0]
         type_code, pid = full_code.split('/')
-    
+
     tbl = soup.find('table', attrs={'cellpadding':3, 'width':160})
     rows = tbl.findAll('tr')
-    
+
     ns_degree = ns_minute = ew_degree = ew_minute = NS = EW = None
     country = oblast = town = None
     dostupnost = mestnost = None
     cach_type = cach_class = None
     grade = attr = None
-    
+
     act = None
     for row in rows:
         tds = row.findAll('td')
@@ -294,7 +292,7 @@ def check_cach(cach_pid):
         td = None
         if tds:
             td = tds[0]
-        
+
         cell = None
         if act:
             if ths:
@@ -312,7 +310,7 @@ def check_cach(cach_pid):
             if act == 'grade':
                 grade = get_grade(cell)
             act = None
-        
+
         if td and td.text.startswith(u'Тип:'):
             cach_type = get_type(tds[1])
             act = None
@@ -332,7 +330,7 @@ def check_cach(cach_pid):
         if td and td.text.startswith(u'АТРИБУТЫ'):
             attr = get_attributes(tbl)
             act = None
-    
+
     created_by = created_date = changed_date = coauthors = None
     div = soup.findAll('div', attrs={'style':'padding: 5px; font-family: Verdana; font-weight: bold;'})[0]
     a = div.a
@@ -346,9 +344,7 @@ def check_cach(cach_pid):
     parts = div.contents
     for p in parts:
         txt = p.string
-        #if txt:
-            #print txt.encode('utf8'), type(txt)
-            
+
         if txt and nottag(txt):
             txt = txt.string.strip()
             if txt.startswith(u'Создан:'):
@@ -370,14 +366,12 @@ def check_cach(cach_pid):
 
             if txt.startswith(u'Компаньоны:'):
                 coauthors = 'yes'
-                
+
     the_cach = TheCach()
     the_cach.pid = cach_pid
     the_cach.code = '%s%s' % (type_code, the_cach.pid)
     the_cach.type_code = type_code
-    #print    
-    #print cach.pid
-    #print '|%s|'%the_cach.code.encode('utf8')
+
     the_cach.name = text_or_none(name)
     the_cach.cach_type = text_or_none(cach_type)
     the_cach.cach_class = text_or_none(cach_class)
@@ -398,33 +392,28 @@ def check_cach(cach_pid):
     the_cach.created_date = created_date
     the_cach.changed_date = changed_date
     the_cach.coauthors = coauthors
-    
-    print the_cach.name.encode('utf8')
+
+    print(the_cach.name.encode('utf8'))
     geocache = get_object_or_none(Cach, pid=cach_pid)
     if geocache is not None:
         update_geocache(geocache, the_cach)
     else:
         cach = Cach.objects.create(pid=cach_pid)
         cach.__dict__.update(the_cach.__dict__)
-        print 'save', cach.pid
+        print('save', cach.pid)
         cach.save()
-        #nc += 1
-    #if True:
-        #cach.__dict__.update(the_cach.__dict__)
-        #print 'save', cach.pid
-        #cach.save()
-    
+
     return True
 
 def main():
     if not switch_off_status_updated():
         return False
-    
+
     LOAD_CACHES = True
-    
-    start = time() 
-    
-    yplib.setUp()
+
+    start = time()
+
+    yplib.set_up()
     yplib.set_debugging(False)
 
     r = yplib.post2('http://www.geocaching.su/?pn=108',
@@ -434,9 +423,9 @@ def main():
 
     a = soup.find('a', attrs={'class':"profilelink"}, text='galdor')
     if not a:
-        print 'Authorization failed'
+        print('Authorization failed')
         return False
-    
+
     if LOAD_CACHES:
         #Cach.objects.all().delete()
         cntr_list = []
@@ -450,18 +439,18 @@ def main():
             for code in code_list:
                 pid = code[2:]
                 item_list.append({'id': pid, 'code': code})
-            
+
             if item_list == cntr_list:
                 break
             else:
                 cntr_list = item_list
                 check_cach_list(item_list)
-            
+
     switch_on_status_updated()
     log('gcsu_caches', 'OK')
-            
+
     elapsed = time() - start
-    print "Elapsed time -->", elapsed
+    print("Elapsed time -->", elapsed)
 
 if __name__ == '__main__':
     main()

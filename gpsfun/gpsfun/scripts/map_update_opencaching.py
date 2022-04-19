@@ -293,26 +293,22 @@ OCPL_TYPES = {
 
 
 def process(rectangle, geosite, params):
-    #print 'process'
-    #print rectangle, geosite, params
-    print geosite
+    print(geosite)
     bbox = [str(x) for x in  rectangle]
     url = params.get('url_pattern') % (params['MY_CONSUMER_KEY'],
                                        '|'.join(bbox),
                                        params['FIELDS'])
-    #print geosite, rectangle
-    #print 'URL'
-    #print url
+
     try:
         response = urllib2.urlopen(url)
-        print 'GOT'
+        print('GOT')
     except Exception as e:
-        print 'exception', e
+        print('exception', e)
         return
     data = response.read()
     caches_data = json.loads(data)
     caches = caches_data.get('results')
-    #print 'count', len(caches)
+
     more_data = caches_data.get('more')
     if more_data:
         BlockNeedBeDivided.objects.create(geosite=geosite,
@@ -323,9 +319,8 @@ def process(rectangle, geosite, params):
     k = 0
     uc = 0
     nc = 0
-    #print caches
+
     for code, cache in caches.iteritems():
-        #print cache
         k += 1
         the_geothing = TheGeothing()
         the_location = TheLocation()
@@ -336,7 +331,6 @@ def process(rectangle, geosite, params):
         the_location.EW_degree = lon_degree
         the_geothing.code = cache.get('code')
         the_geothing.name = cache.get('name')
-
 
         if cache.get('status') != 'Available':
             continue
@@ -363,13 +357,10 @@ def process(rectangle, geosite, params):
 
         if the_geothing.type_code in GEOCACHING_ONMAP_TYPES:
             geothing = get_object_or_none(Geothing, pid=the_geothing.pid, geosite=geosite)
-            #print
-            #print geothing
+
             if geothing is not None:
-                #print 'update'
                 uc += update_geothing(geothing, the_geothing, the_location) or 0
             else:
-                #print 'new'
                 create_new_geothing(the_geothing, the_location, geosite)
                 nc += 1
     message = 'OK. updated %s, new %s' % (uc, nc)
@@ -380,7 +371,7 @@ def main():
 
     start = time()
     for k, v in OPENSITES.items():
-        print 'OPENSITE', k
+        print('OPENSITE', k)
         geosite = Geosite.objects.get(code=k)
         for rec in v.get('RECTANGLES'):
             process(rec, geosite, v)
@@ -402,7 +393,7 @@ def main():
     log('map_opencaching', message)
 
     elapsed = time() - start
-    print "Elapsed time -->", elapsed
+    print("Elapsed time -->", elapsed)
 
 if __name__ == '__main__':
     main()

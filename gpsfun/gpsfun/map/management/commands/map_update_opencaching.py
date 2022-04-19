@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 NAME
      map_update_shukach_caches.py
@@ -10,55 +9,21 @@ DESCRIPTION
 
 import json
 import re
+from datetime import datetime
 import requests
-from datetime import datetime, date, timedelta
+
 from django.core.management.base import BaseCommand
-from gpsfun.main.models import log, UPDATE_TYPE
-from gpsfun.main.db_utils import sql2table, sql2val, execute_query, get_cursor
+
+from gpsfun.main.models import log
+from gpsfun.main.db_utils import sql2val
 from gpsfun.main.GeoMap.models import GEOCACHING_ONMAP_TYPES
-from gpsfun.main.GeoMap.models import (
-    Geothing, Geosite, Location, BlockNeedBeDivided)
+from gpsfun.main.GeoMap.models import (Geothing, Geosite, BlockNeedBeDivided)
 from gpsfun.DjHDGutils.dbutils import get_object_or_none
-from lxml import etree as ET
-from gpsfun.geocaching_su_stat.utils import (
-    LOGIN_DATA, logged, get_caches
-)
-from  gpsfun.main.utils import (
-    update_geothing, create_new_geothing, TheGeothing, TheLocation, get_degree)
+from gpsfun.main.utils import (
+    update_geothing, create_new_geothing, TheGeothing, TheLocation)
 
 
 OPENSITES = {
-    # 'OCUS': {
-    # 'MY_CONSUMER_KEY': 'WwPNF3Z4qZhRsad6Uz4D',
-    # 'RECTANGLES': [
-    #(-90, 0, 0, 180),
-    #(-90, -180, 0, 0),
-    #(0, 0, 90, 180),
-    #(0, -180, 45, -90),
-    #(45, -180, 90, -90),
-
-    #(0, -90, 25, -45),
-
-    #(25, -90, 35, -70),
-
-    #(35, -90, 40, -80),
-    #(40, -90, 45, -80),
-    #(35, -80, 40, -70),
-    #(40, -80, 45, -70),
-
-    #(25, -70, 35, -45),
-    #(35, -70, 45, -45),
-
-    #(0, -45, 25, 0),
-    #(25, -45, 45, 0),
-
-    #(45, -90, 90, 0),
-    # ],
-    # 'FIELDS': 'code|name|location|type|status|url|owner|date_created',
-    # 'url_pattern': 'http://opencaching.us/okapi/services/caches/shortcuts/search_and_retrieve?consumer_key=%s&search_method=services/caches/search/bbox&search_params={"bbox":"%s","limit":"500"}&retr_method=services/caches/geocaches&retr_params={"fields":"%s"}&wrap=true',
-    # 'log_key': 'map_ocus_caches',
-    # 'code_re': 'OU([\dA-F]+)$',
-    # },
 
     'OCNL': {
         'MY_CONSUMER_KEY': '6kCMkHVLXGpyZKBmqqHm',
@@ -443,25 +408,24 @@ OCPL_TYPES = {
 
 
 def process(rectangle, geosite, params, run_index):
-    # print(geosite.name)
-    bbox = [str(x) for x in  rectangle]
-    url = params.get('url_pattern') % (params['MY_CONSUMER_KEY'],
-                                       '|'.join(bbox),
-                                       params['FIELDS'])
-    # print(url)
+    """ process """
+    bbox = [str(x) for x in rectangle]
+    url = params.get('url_pattern') % (
+        params['MY_CONSUMER_KEY'],
+        '|'.join(bbox),
+        params['FIELDS'])
 
     try:
         with requests.Session() as session:
             data = session.get(url).content
-        # print('GOT')
-    except Exception as e:
-        print('exception', e)
+    except Exception as exception:
+        print('exception', exception)
         return
 
     caches_data = json.loads(data)
     caches = caches_data.get('results')
     count = len(caches or [])
-    # print('count', count)
+
     more_data = caches_data.get('more')
     if more_data or count > 450:
         BlockNeedBeDivided.objects.create(
@@ -473,12 +437,12 @@ def process(rectangle, geosite, params, run_index):
     if not count:
         return
 
-    k = 0
-    uc = 0
-    nc = 0
+    counter = 0
+    ucounter = 0
+    ncounter = 0
 
     for code, cache in caches.items():
-        k += 1
+        counter += 1
         the_geothing = TheGeothing()
         the_location = TheLocation()
         locations = cache.get('location').split('|')
@@ -496,8 +460,8 @@ def process(rectangle, geosite, params, run_index):
         cache_url = cache.get('url')
         if not cache_url:
             continue
-        p = re.compile(params['code_re'])
-        dgs = p.findall(cache_url)
+        preg = re.compile(params['code_re'])
+        dgs = preg.findall(cache_url)
         if not dgs:
             continue
         the_geothing.pid = int(dgs[0], 16)
@@ -509,38 +473,35 @@ def process(rectangle, geosite, params, run_index):
             date_created = date_created[:10]
             parts = date_created.split('-')
             if parts and len(parts) == 3:
-                dt = datetime(int(parts[0]), int(parts[1]), int(parts[2]))
-                the_geothing.created_date = dt
+                dtime = datetime(int(parts[0]), int(parts[1]), int(parts[2]))
+                the_geothing.created_date = dtime
 
         if the_geothing.type_code in GEOCACHING_ONMAP_TYPES:
             geothing = get_object_or_none(Geothing, pid=the_geothing.pid, geosite=geosite)
-            #print
-            #print geothing
-            if geothing is not None:
-                #print 'update'
-                uc += update_geothing(geothing, the_geothing, the_location) or 0
-            else:
-                #print 'new'
-                create_new_geothing(the_geothing, the_location, geosite)
-                nc += 1
 
-    message = 'OK. updated %s, new %s' % (uc, nc)
+            if geothing is not None:
+                ucounter += update_geothing(geothing, the_geothing, the_location) or 0
+            else:
+                create_new_geothing(the_geothing, the_location, geosite)
+                ncounter += 1
+
+    message = f'OK. updated {ucounter}, new {ncounter}'
     log(params.get('log_key'), message)
 
 
 class Command(BaseCommand):
+    """ command """
     help = 'Updates list of caches from shukach.com'
 
     def handle(self, *args, **options):
         run_index = BlockNeedBeDivided.next_index()
-        for k, v in OPENSITES.items():
-            print('OPENSITE', k)
-            geosite = Geosite.objects.get(code=k)
-            for rec in v.get('RECTANGLES'):
-                process(rec, geosite, v, run_index)
-                # print(k, rec)
+        for key, value in OPENSITES.items():
+            print('OPENSITE', key)
+            geosite = Geosite.objects.get(code=key)
+            for rec in value.get('RECTANGLES'):
+                process(rec, geosite, value, run_index)
 
-            log(v.get('log_key'), 'OK')
+            log(value.get('log_key'), 'OK')
 
         blocks = BlockNeedBeDivided.objects.filter(
             idx=run_index).order_by('geosite__id')
@@ -559,10 +520,9 @@ class Command(BaseCommand):
             having cnt > 1
             ) as tbl
             """
-        dc = sql2val(sql)
-        message = 'doubles %s' % dc
+        dcount = sql2val(sql)
+        message = f'doubles {dcount}'
         log('map_opencaching', message)
         print(message)
 
         return 'List of caches from opencaching has updated'
-

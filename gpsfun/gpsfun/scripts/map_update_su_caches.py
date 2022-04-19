@@ -11,7 +11,7 @@ from BeautifulSoup import BeautifulSoup
 #from gpsfun.main.GeoCachSU.models import GEOCACHING_SU_ONMAP_TYPES
 from gpsfun.main.GeoMap.models import GEOCACHING_ONMAP_TYPES
 from gpsfun.main.GeoMap.models import Geothing, Geosite, Location
-from gpsfun.main.models import log 
+from gpsfun.main.models import log
 from lxml import etree as ET
 import sys
 import os
@@ -50,13 +50,13 @@ def create_new_geothing(the_geothing, the_location, geosite):
     geothing.name = the_geothing.name
     geothing.created_date = the_geothing.created_date
     geothing.author = the_geothing.author
-    print 'NEW', geothing.pid
+    print('NEW', geothing.pid)
     geothing.save()
 
 def update_geothing(geothing, the_geothing, the_location):
-    def int_minutes(m):       
+    def int_minutes(m):
         return int(round(m*1000))
-    
+
     changed = False
     if geothing.code != the_geothing.code:
         changed = True
@@ -69,11 +69,11 @@ def update_geothing(geothing, the_geothing, the_location):
         geothing.name = the_geothing.name
     if geothing.author != the_geothing.author:
         changed = True
-        geothing.author = the_geothing.author        
+        geothing.author = the_geothing.author
     if geothing.code != the_geothing.code:
         changed = True
         geothing.code = the_geothing.code
-        
+
     location_changed = False
     if int(geothing.location.NS_degree*1000000) != int(the_location.NS_degree*1000000):
         location_changed = True
@@ -87,7 +87,7 @@ def update_geothing(geothing, the_geothing, the_location):
     #if int_minutes(geothing.location.EW_minute) != int_minutes(the_location.EW_minute):
         #location_changed = True
         #geothing.location.EW_minute = the_location.EW_minute
-    
+
     if location_changed:
         geothing.location.save()
         geothing.country_code = None
@@ -96,10 +96,10 @@ def update_geothing(geothing, the_geothing, the_location):
         geothing.oblast_name = None
 
     if changed or location_changed:
-        print 'SAVED', geothing.pid
+        print('SAVED', geothing.pid)
         geothing.save()
-    
-        
+
+
 def Dephi_date_to_python_date(d):
     days = int(d)
     hours = int(round((d - days)*24))
@@ -108,26 +108,26 @@ def Dephi_date_to_python_date(d):
 
 def main():
     LOAD_CACHES = True
-    
-    start = time() 
-    
-    yplib.setUp()
+
+    start = time()
+
+    yplib.set_up()
     yplib.set_debugging(False)
-    
-    
+
+
     r = yplib.post2('http://www.geocaching.su/?pn=108',
             (('Log_In','Log_In'), ('email', 'galdor@ukr.net'), ('passwd','zaebalixakeryvas'), ('longterm', '1')))
-    
+
     soup=yplib.soup()
 
     a = soup.find('a', attrs={'class':"profilelink"}, text='galdor')
     if not a:
-        print 'Authorization failed'
+        print('Authorization failed')
         return False
-    
+
     r = yplib.get('http://www.geocaching.su/site/popup/selex.php')
-    soup=yplib.soup()   
-    
+    soup=yplib.soup()
+
     chbox_list = soup.findAll('input', type='checkbox')
     regions = []
 
@@ -143,16 +143,16 @@ def main():
     r = yplib.post2('http://www.geocaching.su/site/popup/export.php',  data)
     soup=yplib.soup()
     wpt = soup.text.split('\n')
-     
+
     WPT_CODE = 1
     WPT_LAT = 2
     WPT_LON = 3
     WPT_TITLE = 10
     WPT_DATE = 4
-    
+
     geosite = Geosite.objects.get(code='GC_SU')
 
-    print len(wpt), 'points'
+    print(len(wpt), 'points')
     k = 0
     for point in wpt:
         k += 1
@@ -163,12 +163,11 @@ def main():
 
             lat_degree = float(fields[WPT_LAT])
             the_location.NS_degree = lat_degree
-            #the_location.NS_minute = (abs(lat_degree) - abs(the_location.NS_degree)) * 60
-            lon_degree = float(fields[WPT_LON])
-            the_location.EW_degree = lon_degree            
-            #the_location.EW_minute = (abs(lon_degree) - abs(the_location.EW_degree)) * 60
 
-            p = re.compile('(\D+)(\d+)') 
+            lon_degree = float(fields[WPT_LON])
+            the_location.EW_degree = lon_degree
+
+            p = re.compile('(\D+)(\d+)')
             dgs = p.findall(fields[WPT_CODE])
             if dgs:
                 code_data = dgs[0]
@@ -176,7 +175,7 @@ def main():
                 the_geothing.pid = int(code_data[1])
                 the_geothing.type_code = code_data[0]
 
-            p = re.compile(u'(.+)от(.+)') 
+            p = re.compile(u'(.+)от(.+)')
             dgs = p.findall(fields[WPT_TITLE])
             if dgs:
                 title = dgs[0]
@@ -186,7 +185,7 @@ def main():
             d = float(fields[WPT_DATE])
 
             the_geothing.created_date = Dephi_date_to_python_date(d)
-            
+
             if the_geothing.type_code in GEOCACHING_ONMAP_TYPES:
                 geothing = get_object_or_none(Geothing, pid=the_geothing.pid, geosite=geosite)
                 if geothing is not None:
@@ -196,7 +195,7 @@ def main():
 
     log('map_gcsu_caches', 'OK')
     elapsed = time() - start
-    print "Elapsed time -->", elapsed
+    print("Elapsed time -->", elapsed)
 
 if __name__ == '__main__':
     main()

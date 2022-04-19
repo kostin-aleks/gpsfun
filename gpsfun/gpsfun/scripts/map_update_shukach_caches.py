@@ -28,7 +28,7 @@ def main():
 
     geosite = Geosite.objects.get(code='SHUKACH')
 
-    yplib.setUp()
+    yplib.set_up()
     yplib.set_debugging(False)
 
     r = yplib.post2('http://www.shukach.com/ru/karta?destination=karta',
@@ -45,15 +45,12 @@ def main():
     all_points_count = 0
     for k in range(50):
         ids = range(k*1000, (k+1)*1000)
-        #print k*1000, (k+1)*1000
         ids_str = ','.join([str(id) for id in ids])
         r = yplib.post2('http://www.shukach.com/export_wpt',
                 (('wptnids', ids_str), ))
 
         wpt = yplib.cmd.show()
-
         wpt = wpt.split('\n')
-        #print len(wpt)
         if len(wpt) < 6:
             continue
         for point in wpt:
@@ -120,7 +117,6 @@ def main():
         gt.author != t.author OR
         gt.type_code != t.type_code)
     """.format(shukach_id)
-    #print sql
     updated_things = exec_sql(sql)
 
     sql = """
@@ -194,7 +190,7 @@ def main():
     print(message)
     log('map_shukach', message)
     elapsed = time() - start
-    print "Elapsed time -->", elapsed
+    print("Elapsed time -->", elapsed)
 
     return True
 

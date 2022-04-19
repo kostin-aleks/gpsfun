@@ -50,7 +50,7 @@ def main():
 
     start = time()
 
-    yplib.setUp()
+    yplib.set_up()
     yplib.set_debugging(False)
 
 
@@ -62,20 +62,20 @@ def main():
 
     a = soup.find('a', attrs={'class': "profilelink"}, text='galdor')
     if not a:
-        print 'Authorization failed'
+        print('Authorization failed')
         return False
     print
-    print 'BEGIN'
+    print('BEGIN')
     if LOAD_CREATED_CACHE_LOGS:
         LogCreateCach.objects.all().delete()
-        print 'delete create logs'
+        print('delete create logs')
         cachers = Geocacher.objects.all()
-        print cachers.count()
+        print(cachers.count())
         t = re.compile('\?pn\=101\&cid=(\d+)')
         t1 = re.compile(u'создан\s+(\d\d\.\d\d\.\d\d\d\d)')
         for cacher in cachers:
             if cacher.uid:
-                print cacher.pid, cacher.uid
+                print(cacher.pid, cacher.uid)
                 url = 'http://www.geocaching.su/site/popup/userstat.php?s=1&uid=%s' % cacher.uid
                 try:
                     yplib.get(url)
@@ -84,15 +84,12 @@ def main():
                 soup = yplib.soup()
                 tbl = soup.find('table', attrs={'class': 'pages'})
                 if tbl:
-                    #print tbl
                     rows = tbl.findAll('tr')
-                    #print len(rows)
                     for row in rows:
                         cach_pid = created_date = None
                         coauthor = False
                         cell = row.find('td')
                         if cell:
-                            #print cell
                             a_list = cell.findAll('a')
                             for a in a_list:
                                 cach_pid = None
@@ -101,7 +98,7 @@ def main():
                                     cach_pid = int(parts[0])
 
                             txt = cell.text
-                            print cacher.pid, cach_pid, txt.encode('utf8')
+                            print(cacher.pid, cach_pid, txt.encode('utf8'))
                             if u'(соавтор)' in txt:
                                 coauthor = True
                             found = t1.findall(txt)
@@ -115,7 +112,7 @@ def main():
                                 the_log.created_date = created_date
                                 the_log.coauthor = coauthor
                                 the_log.save()
-                                print 'saved'
+                                print('saved')
 
     if LOAD_SEEK_CACHE_LOGS:
         LogSeekCach.objects.all().delete()
@@ -128,7 +125,7 @@ def main():
         fh = open('cant_open_userstat.txt', 'w')
         for cacher in cachers:
             if cacher.uid:
-                print cacher.pid, cacher.uid
+                print(cacher.pid, cacher.uid)
                 url = 'http://www.geocaching.su/site/popup/userstat.php?s=2&uid=%s' % cacher.uid
 
                 loaded = False
@@ -142,7 +139,7 @@ def main():
                     except BrowserStateError:
                         cnter += 1
                 if not loaded:
-                    print 'cannot go to %s' % url
+                    print('cannot go to %s' % url)
                     fh.write(url)
 
                 tbl = soup.find('table', attrs={'class': 'pages'})
@@ -164,7 +161,7 @@ def main():
                             if found:
                                 g = found[0]
                                 grade = int_or_none(g)
-                            print cacher.pid, cach_pid, txt.encode('utf8')
+                            print(cacher.pid, cach_pid, txt.encode('utf8'))
                             found = t2.findall(txt)
                             if found:
                                 found_date = found[0]
@@ -176,7 +173,7 @@ def main():
                                 the_log.found_date = found_date
                                 the_log.grade = grade
                                 the_log.save()
-                                print 'saved'
+                                print('saved')
         fh.close()
 
     if LOAD_RECOMMEND_CACHE_LOGS:
@@ -186,7 +183,7 @@ def main():
 
         for cacher in cachers:
             if cacher.uid:
-                print cacher.pid, cacher.uid
+                print(cacher.pid, cacher.uid)
                 url = 'http://www.geocaching.su/site/popup/userstat.php?s=3&uid=%s' % cacher.uid
                 yplib.get(url)
                 soup = yplib.soup()
@@ -205,13 +202,13 @@ def main():
                                     cach_pid = int(parts[0])
 
                             txt = cell.text
-                            print cacher.pid, cach_pid, txt.encode('utf8')
+                            print(cacher.pid, cach_pid, txt.encode('utf8'))
                             if cach_pid:
                                 the_log = LogRecommendCach(
                                     cacher_pid=cacher.pid,
                                     cach_pid=cach_pid)
                                 the_log.save()
-                                print 'saved'
+                                print('saved')
 
     if LOAD_PHOTOALBUM_LOGS:
         LogPhotoAlbum.objects.all().delete()
@@ -220,7 +217,7 @@ def main():
 
         for cacher in cachers:
             if cacher.uid:
-                print cacher.pid, cacher.uid
+                print(cacher.pid, cacher.uid)
                 url = 'http://www.geocaching.su/site/popup/userstat.php?s=4&uid=%s' % cacher.uid
                 yplib.get(url)
                 soup = yplib.soup()
@@ -239,15 +236,15 @@ def main():
                                     cach_pid = int(parts[0])
 
                             txt = cell.text
-                            print cacher.pid, cach_pid, txt.encode('utf8')
+                            print(cacher.pid, cach_pid, txt.encode('utf8'))
                             if cach_pid:
                                 the_log = LogPhotoAlbum(
                                     cacher_pid=cacher.pid, cach_pid=cach_pid)
                                 the_log.save()
-                                print 'saved'
+                                print('saved')
 
     elapsed = time() - start
-    print "Elapsed time -->", elapsed
+    print("Elapsed time -->", elapsed)
     switch_on_status_updated()
     log('gcsu_logs', 'OK')
 

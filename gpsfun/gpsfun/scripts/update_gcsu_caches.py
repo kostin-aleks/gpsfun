@@ -322,7 +322,7 @@ def check_cach(cach_pid):
 def main():
     start = time()
 
-    yplib.setUp()
+    yplib.set_up()
     yplib.set_debugging(False)
     r = yplib.post2('http://www.geocaching.su/?pn=108',
             (('Log_In','Log_In'), ('email', 'galdor@ukr.net'), ('passwd','zaebalixakeryvas'), ('longterm', '1')))

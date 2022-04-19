@@ -37,7 +37,7 @@ def ocde_timestamp():
 def main():
     start = time()
 
-    yplib.setUp()
+    yplib.set_up()
     yplib.set_debugging(False)
 
     geosite = Geosite.objects.get(code='OCDE')
@@ -71,7 +71,7 @@ def main():
         try:
             root = ET.XML(xml)
         except Exception as e:
-            print 'PARSING ERROR', country, e
+            print('PARSING ERROR', country, e)
             continue
 
         # session id
@@ -159,7 +159,7 @@ def main():
 
     message = 'OK. updated %s, new %s' % (uc, nc)
     log('map_ocde_caches', message)
-    print message
+    print(message)
     sql = """
     UPDATE `variables`
     SET `value`='%s'
@@ -168,7 +168,7 @@ def main():
     execute_query(sql)
 
     elapsed = time() - start
-    print "Elapsed time -->", elapsed
+    print("Elapsed time -->", elapsed)
 
 if __name__ == '__main__':
     main()

@@ -10,108 +10,6 @@ import re
 from BeautifulSoup import BeautifulSoup
 from geocaching_su_crawler.Geoname.models import GeoRUSSubject
 
-    
-
-#def nonempty_cell(cell):
-    #r = True
-    #if not cell or cell=='&nbsp;':
-        #r = False
-    #return r
-    
-#def text_or_none(cell):
-    #r = None
-    #if nonempty_cell(cell):
-        #r = cell.strip()
-        #if type(r) != type(u' '):
-            #r = unicode(r, 'utf8')
-    #return r
-
-#def char_or_none(cell):
-    #r = None
-    #if nonempty_cell(cell):
-        #r = cell.strip()
-        #if type(r) != type(u' '):
-            #r = unicode(r, 'utf8')
-        #r = r[:1]
-    #return r
-
-#def strdate_or_none(cell):
-    #def year_from_text(s):
-        #r = None
-        #p = re.compile('\d+')
-        #dgs = p.findall(s)
-        #if dgs and len(dgs):
-            #r = int(dgs[0])
-            #if r < 1000:
-                #r = 1900
-        #return r
-    
-    #dmonths = {
-        #'января': 1,
-        #'февраля': 2,
-        #'марта': 3,
-        #'апреля': 4,
-        #'мая': 5,
-        #'июня': 6,
-        #'июля': 7,
-        #'августа': 8,
-        #'сентября': 9,
-        #'октября': 10,
-        #'ноября': 11,
-        #'декабря': 12,
-    #}
-    #r = None
-    #if nonempty_cell(cell):
-        #parts = cell.split()
-        #print cell, parts
-        #if len(parts) > 2:
-            #year = year_from_text(parts[2])
-            #if year:
-                #try:
-                    #r = datetime(year, dmonths[parts[1]], int(parts[0]))
-                #except ValueError:
-                    #r = None
-    #return r
-
-#def date_or_none(cell):
-    #r = None
-    #if nonempty_cell(cell):
-        #parts = cell.split('.')
-        #if len(parts) > 2:
-            #try:
-                #r = datetime(int(parts[2][:4]), int(parts[1]), int(parts[0]))
-            #except ValueError:
-                #r = None
-    #return r
-
-#def sex_or_none(cell):
-    #r = None
-    #if nonempty_cell(cell):
-        #r = unicode(cell, 'utf8')[0]
-    #return r
-
-#def int_or_none(cell):
-    #r = None
-    #if nonempty_cell(cell):
-        #r = int(cell)
-    #return r
-
-#def float_or_none(cell):
-    #r = None
-    #if nonempty_cell(cell):
-        #try:
-            #r = float(cell)
-        #except:
-            #r = None
-    #return r
-
-#def nottag(txt):
-    #if not txt:
-        #return True
-    #t = re.compile('\<.+\>')
-    #items = t.findall(txt)
-
-    #return len(items) == 0
 
 def check_cach(cach):
     def get_coordinates(cell):
@@ -123,12 +21,12 @@ def check_cach(cach):
         NS = parts[0]
         parts = t4.findall(coordinates)
         EW = parts[0]
-        
+
         return ns_degree, ns_minute, ew_degree, ew_minute, NS, EW
-    
+
     def get_type(cell):
         return cell.text
-    
+
     def get_class(cell):
         class_ = None
         if cell:
@@ -140,7 +38,7 @@ def check_cach(cach):
                     items.append(txt)
             class_ = ';'.join(items)
         return class_
-    
+
     def get_mestnost(cell):
         oblast = country = None
         parts = cell.contents
@@ -148,23 +46,23 @@ def check_cach(cach):
             country = parts[0]
         if len(parts) > 2:
             oblast = parts[2]
-        return country, oblast 
-    
+        return country, oblast
+
     def get_dostupnost(cell):
         parts = cell.contents
         dostupnost = parts[0].split(':')[1].strip()
         mestnost = parts[2].split(':')[1].strip()
         return dostupnost, mestnost
-    
+
     def get_town(cell):
         return cell.text
-        
+
     def get_grade(cell):
         grade = None
         if cell.img:
             grade = cell.img.get('title')
         return grade
-    
+
     def get_attributes(element):
         attr = None
         items = []
@@ -173,13 +71,13 @@ def check_cach(cach):
             if 'images/attrib/' in img.get('src'):
                 items.append(img.get('title'))
             attr = ';'.join(items)
-        return attr 
-    
+        return attr
+
     url = 'http://www.geocaching.su/?pn=101&cid=%d'%int(cach.pid)
     try:
         yplib.get(url)
     except:
-        print 'exception'
+        print('exception')
         return False
     soup=yplib.soup()
     h = soup.find('h1', {'class':'hdr'})
@@ -189,7 +87,7 @@ def check_cach(cach):
     t3 = re.compile('([N,S]\s\d+\&\#176\;\s[\d\.]+.)')
     t4 = re.compile('([E,W]\s\d+\&\#176\;\s[\d\.]+.)')
     t5 = re.compile('WinPopup\(\'profile\.php\?pid\=(\d+)')
-    
+
     name = None
     items = t.findall(h.text)
     if items:
@@ -199,16 +97,16 @@ def check_cach(cach):
     if items:
         full_code = items[0]
         type_code, pid = full_code.split('/')
-    
+
     tbl = soup.find('table', attrs={'cellpadding':3, 'width':160})
     rows = tbl.findAll('tr')
-    
+
     ns_degree = ns_minute = ew_degree = ew_minute = NS = EW = None
     country = oblast = town = None
     dostupnost = mestnost = None
     cach_type = cach_class = None
     grade = attr = None
-    
+
     act = None
     for row in rows:
         tds = row.findAll('td')
@@ -216,7 +114,7 @@ def check_cach(cach):
         td = None
         if tds:
             td = tds[0]
-        
+
         cell = None
         if act:
             if ths:
@@ -234,7 +132,7 @@ def check_cach(cach):
             if act == 'grade':
                 grade = get_grade(cell)
             act = None
-        
+
         if td and td.text.startswith(u'Тип:'):
             cach_type = get_type(tds[1])
             act = None
@@ -254,7 +152,7 @@ def check_cach(cach):
         if td and td.text.startswith(u'АТРИБУТЫ'):
             attr = get_attributes(tbl)
             act = None
-    
+
     created_by = created_date = changed_date = coauthors = None
     div = soup.findAll('div', attrs={'style':'padding: 5px; font-family: Verdana; font-weight: bold;'})[0]
     a = div.a
@@ -268,9 +166,7 @@ def check_cach(cach):
     parts = div.contents
     for p in parts:
         txt = p.string
-        #if txt:
-            #print txt.encode('utf8'), type(txt)
-            
+
         if txt and nottag(txt):
             txt = txt.string.strip()
             if txt.startswith(u'Создан:'):
@@ -292,13 +188,11 @@ def check_cach(cach):
 
             if txt.startswith(u'Компаньоны:'):
                 coauthors = 'yes'
-                
+
     the_cach = TheCach()
     the_cach.pid = cach.pid
     the_cach.code = '%s%s' % (type_code, the_cach.pid)
-    #print    
-    #print cach.pid
-    #print '|%s|'%the_cach.code.encode('utf8')
+
     the_cach.name = text_or_none(name)
     the_cach.cach_type = text_or_none(cach_type)
     the_cach.cach_class = text_or_none(cach_class)
@@ -319,24 +213,24 @@ def check_cach(cach):
     the_cach.created_date = created_date
     the_cach.changed_date = changed_date
     the_cach.coauthors = coauthors
-    
-    print the_cach.name.encode('utf8')
+
+    print(the_cach.name.encode('utf8'))
     if True:
         cach.__dict__.update(the_cach.__dict__)
-        print 'save', cach.pid
+        print('save', cach.pid)
         cach.save()
-    
+
     return True
 
 def main():
     LOAD_ = True
-    
-    start = time() 
-   
-    yplib.setUp()
+
+    start = time()
+
+    yplib.set_up()
     yplib.set_debugging(False)
-    
-    
+
+
     if LOAD_:
         GeoRUSSubject.objects.all().delete()
         yplib.get('http://ru.wikipedia.org/wiki/%D0%9A%D0%BE%D0%B4%D1%8B_%D1%81%D1%83%D0%B1%D1%8A%D0%B5%D0%BA%D1%82%D0%BE%D0%B2_%D0%A0%D0%BE%D1%81%D1%81%D0%B8%D0%B9%D1%81%D0%BA%D0%BE%D0%B9_%D0%A4%D0%B5%D0%B4%D0%B5%D1%80%D0%B0%D1%86%D0%B8%D0%B8')
@@ -345,7 +239,7 @@ def main():
         rows = tbl.findAll('tr')
         for row in rows:
             cells = row.findAll('td')
-            print cells
+            print(cells)
             if cells:
                 subject = GeoRUSSubject(country_iso='RU', geoname_id=0)
                 cell = cells[0]
@@ -356,11 +250,11 @@ def main():
                     subject.code = cells[2].text
                     subject.gai_code = cells[3].text
                     subject.iso_3166_2_code = cells[4].text
-                    
+
                     subject.save()
 
     elapsed = time() - start
-    print "Elapsed time -->", elapsed
+    print("Elapsed time -->", elapsed)
 
 if __name__ == '__main__':
     main()

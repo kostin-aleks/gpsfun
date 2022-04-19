@@ -6,5 +6,3 @@ def atoi(value, default=None):
     except (ValueError, TypeError):
         rc = default
     return rc
-            
-

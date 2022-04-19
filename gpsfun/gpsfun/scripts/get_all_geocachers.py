@@ -1,22 +1,25 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+"""
+Get all geocashers from site geocashing.su
+"""
 
-from django.db import connection
-import unittest
-import djyptestutils as yplib
 from time import time
 from datetime import datetime
 import re
+
+import django
+from django.db import connection
+
+import djyptestutils as yplib
 from gpsfun.DjHDGutils.misc import atoi
-from bs4 import BeautifulSoup
 from gpsfun.main.GeoCachSU.models import Geocacher, Cach
 from gpsfun.main.models import switch_off_status_updated, switch_on_status_updated, log
-#from _mechanize_dist import BrowserStateError
-import django
+
 django.setup()
 
 
 class Cacher:
+    """ Geocasher data and methods """
     pid = None
     uid = None
     nickname = None
@@ -39,34 +42,36 @@ class Cacher:
     forum_posts = None
 
     def __eq__(self, other) :
-        r = self.__dict__ == other.__dict__
-        if not r:
+        result = self.__dict__ == other.__dict__
+        if not result:
             print(self.__dict__)
             print(other.__dict__)
-        return r
+        return result
 
-def equal(f, s):
-    return f.pid == s.pid and\
-        f.nickname == s.nickname and\
-        f.name == s.name and\
-        f.birstday == s.birstday and\
-        f.sex == s.sex and\
-        f.country == s.country and\
-        f.town == s.town and\
-        f.oblast == s.oblast and\
-        f.phone == s.phone and\
-        f.icq == s.icq and\
-        f.web == s.web and\
-        f.gps == s.gps and\
-        f.created_caches == s.created_caches and\
-        f.found_caches == s.found_caches and\
-        f.photo_albums == s.photo_albums and\
-        f.register_date == s.register_date and\
-        f.last_login == s.last_login and\
-        f.forum_posts == s.forum_posts
+def equal(first, second):
+    """ are equal two geocachers ? """
+    return first.pid == second.pid and\
+        first.nickname == second.nickname and\
+        first.name == second.name and\
+        first.birstday == second.birstday and\
+        first.sex == second.sex and\
+        first.country == second.country and\
+        first.town == second.town and\
+        first.oblast == second.oblast and\
+        first.phone == second.phone and\
+        first.icq == second.icq and\
+        first.web == second.web and\
+        first.gps == second.gps and\
+        first.created_caches == second.created_caches and\
+        first.found_caches == second.found_caches and\
+        first.photo_albums == second.photo_albums and\
+        first.register_date == second.register_date and\
+        first.last_login == second.last_login and\
+        first.forum_posts == second.forum_posts
 
 
 def check_id_list(user_list):
+    """ check list of id """
     sql = """
     INSERT INTO geocacher
     (pid, uid, nickname, name, birstday, sex,
@@ -80,79 +85,79 @@ def check_id_list(user_list):
     values = []
     for user in user_list:
         sql_values = geocacher_format_insert_string(user.get('id'))
-        #geocacher, ok = Geocacher.objects.get_or_create(pid=user['id'])
-        #check_user_profile(geocacher)
-        #print sql_values
         if sql_values and len(sql_values) > 2:
             values.append(sql_values)
-    if len(values):
+    if values:
         sql += ',\n'.join(values)
-        #print
-        #print sql
-        #print
 
         cursor = connection.cursor()
         cursor.execute(sql)
 
 def check_cach_list(item_list):
+    """ check caches list """
     for item in item_list:
-        cach, ok = Cach.objects.get_or_create(pid=item['id'], code=item['code'])
+        cach, created = Cach.objects.get_or_create(pid=item['id'], code=item['code'])
         check_cach(cach)
 
 
 def nonempty_cell(cell):
-    r = True
+    """ is cell not empty ? """
+    result = True
     if not cell or cell=='&nbsp;':
-        r = False
-    return r
+        result = False
+    return result
 
 def text_or_none(cell):
-    r = None
+    """ get cell text or None """
+    result = None
     if nonempty_cell(cell):
-        r = cell.strip()
-        if type(r) != type(u' '):
-            r = unicode(r, 'utf8')
-    return r
+        result = cell.strip()
+        if not isinstance(result, str):
+            result = unicode(result, 'utf8')
+    return result
 
 def text_field(cell):
+    """ get text or NULL """
     cell = text_or_none(cell)
     if cell:
         cell = re.escape(cell)
-        return "'{}'".format(cell.encode('utf-8'))
-    else:
-        return 'NULL'
+        return f"'{cell.encode('utf-8')}'"
+    return 'NULL'
 
 def date_field(cell):
-    if type(cell) in (type(u''), type('')):
+    """ get date or NULL """
+    if isinstance(cell, str):
         cell = strdate_or_none(cell)
         if cell:
-            return "'{}-{}-{}'".format(cell.year, cell.month, cell.day)
+            return f"'{cell.year}-{cell.month}-{cell.day}'"
     return 'NULL'
 
 def int_field(cell):
+    """ get int or NULL """
     cell = atoi(cell)
     if cell:
         return str(cell)
-    else:
-        return 'NULL'
+    return 'NULL'
 
 def sex_field(cell):
+    """ get sex or NULL """
     cell = sex_or_none(cell)
     if cell:
-        return "'{}'".format(cell)
-    else:
-        return 'NULL'
+        return f"'{cell}'"
+    return 'NULL'
 
 def strdate_or_none(cell):
-    def year_from_text(s):
-        r = None
-        p = re.compile('\d+')
-        dgs = p.findall(s)
+    """ get date or NULL """
+    def year_from_text(string):
+        """ get year """
+        year = None
+        item = re.compile('\d+')
+        dgs = item.findall(string)
         if dgs and len(dgs):
-            r = int(dgs[0])
-            if r < 1000:
-                r = 1900
-        return r
+            year = int(dgs[0])
+            if year < 1000:
+                year = 1900
+        return year
 
     dmonths = {
         'января': 1,
@@ -168,74 +173,79 @@ def strdate_or_none(cell):
         'ноября': 11,
         'декабря': 12,
     }
-    r = None
+    result = None
     if nonempty_cell(cell):
         parts = cell.split('.')
         if len(parts) > 2:
             year = parts[2]
             if year:
                 try:
-                    r = datetime(int(year), int(parts[1]), int(parts[0]))
+                    result = datetime(int(year), int(parts[1]), int(parts[0]))
                 except ValueError:
-                    r = None
+                    result = None
         else:
             parts = cell.split()
             if len(parts) == 3:
                 year = year_from_text(parts[2])
                 if year:
                     try:
-                        r = datetime(int(year), dmonths[parts[1]], int(parts[0]))
+                        result = datetime(int(year), dmonths[parts[1]], int(parts[0]))
                     except ValueError:
-                        r = None
-    return r
+                        result = None
+    return result
 
 def date_or_none(cell):
-    r = None
+    """ get date or None """
+    result = None
     if nonempty_cell(cell):
         parts = cell.split('.')
         if len(parts) > 2:
             try:
-                r = datetime(int(parts[2][:4]), int(parts[1]), int(parts[0]))
+                result = datetime(int(parts[2][:4]), int(parts[1]), int(parts[0]))
             except ValueError:
-                r = None
-    return r
+                result = None
+    return result
 
 def sex_or_none(cell):
-    r = None
+    """ get sex or None """
+    result = None
     if nonempty_cell(cell):
-        r = unicode(cell, 'utf8')[0]
-        if r == u'м':
-            r = 'M'
+        result = unicode(cell, 'utf8')[0]
+        if result == 'м':
+            result = 'M'
         else:
-            r = 'F'
-    return r
+            result = 'F'
+    return result
 
 def int_or_none(cell):
-    r = None
+    """ get int or None """
+    result = None
     if nonempty_cell(cell):
-        r = int(cell)
-    return r
+        result = int(cell)
+    return result
 
 def get_uid(tbl):
+    """ get uid or None """
     uid = None
     a_list = tbl.findAll('a')
-    for a in a_list:
-        href = a['href']
+    for anchor in a_list:
+        href = anchor['href']
         if href.startswith('javascript:indstat('):
-            p = re.compile('javascript:indstat\((\d+)\,\d+\)')
-            dgs = p.findall(href)
+            item = re.compile('javascript:indstat\((\d+)\,\d+\)')
+            dgs = item.findall(href)
             if len(dgs):
                 uid = int(dgs[0])
                 break
     return uid
 
 def geocacher_format_insert_string(pid):
+    """ geocacher format insert string """
     # try open profile
     fields = str(pid)
-    url = 'http://www.geocaching.su/profile.php?pid={}'.format(pid)
+    url = f'http://www.geocaching.su/profile.php?pid={pid}'
     loaded = False
     cnter = 0
-    fh = open('cant_open_profile.txt', 'w')
+    fhandler = open('cant_open_profile.txt', 'w')
 
     while not loaded and cnter < 100:
         try:
@@ -245,11 +255,11 @@ def geocacher_format_insert_string(pid):
             cnter += 1
 
     if not loaded:
-        print('cannot go to %s' % url)
-        fh.write(url)
+        print(f'cannot go to {url}')
+        fhandler.write(url)
         return False
 
-    fh.close()
+    fhandler.close()
 
     # processing profile
     soup=yplib.soup()
@@ -270,78 +280,69 @@ def geocacher_format_insert_string(pid):
             if len(data_cells):
                 data_cell = data_cells[-1]
                 data = data_cell.text
-            if title.startswith(u'Псевдоним:'):
+            if title.startswith('Псевдоним:'):
                 theuser['nickname'] = data
                 continue
-            if title.startswith(u'Страна:'):
+            if title.startswith('Страна:'):
                 theuser['country'] = data
                 continue
-            if title.startswith(u'Область:'):
+            if title.startswith('Область:'):
                 theuser['oblast'] = data
                 continue
-            if title.startswith(u'Нас.пункт'):
+            if title.startswith('Нас.пункт'):
                 theuser['town'] = data
                 continue
-            if title.startswith(u'Создал тайников:'):
+            if title.startswith('Создал тайников:'):
                 theuser['created'] = data
                 continue
-            if title.startswith(u'Нашел тайников:'):
+            if title.startswith('Нашел тайников:'):
                 theuser['found'] = data
                 continue
-            if title.startswith(u'Рекомендовал тайников:'):
+            if title.startswith('Рекомендовал тайников:'):
                 theuser['recommended'] = data
                 continue
-            if title.startswith(u'Фотоальбомы:'):
+            if title.startswith('Фотоальбомы:'):
                 theuser['photo_albums'] = data
                 continue
-            if title.startswith(u'Был на сайте'):
+            if title.startswith('Был на сайте'):
                 theuser['last_visited'] = data
                 continue
-            if title.startswith(u'Дата регистрации:'):
+            if title.startswith('Дата регистрации:'):
                 theuser['registered'] = data
                 continue
-            if title.startswith(u'Сообщений в форумах:'):
+            if title.startswith('Сообщений в форумах:'):
                 theuser['forum_posts'] = data
 
-    #print theuser
-
     uid = get_uid(tbl)
-    fields += ',{}'.format(int_field(uid))  #uid
-    # pid uid nickname name birstday sex country oblast town phone icq web created_caches found_caches photo_albums register_date last_login forum_posts
-    fields += ',{}'.format(text_field(theuser.get('nickname') or ''))  #nickname
-    fields += ',{}'.format(text_field(all_cells[2]))  #name
-    fields += ',{}'.format(date_field(all_cells[3]))  #birstday
-    fields += ',{}'.format(sex_field(all_cells[4]))   #sex
-    fields += ',{}'.format(text_field(theuser.get('country') or ''))  #country
-    fields += ',{}'.format(text_field(theuser.get('oblast') or ''))  #oblast
+    fields += f',{int_field(uid)}'
+    # pid uid nickname name birstday sex country oblast town phone icq web created_caches
+    # found_caches photo_albums register_date last_login forum_posts
+    fields += f",{text_field(theuser.get('nickname') or '')}"  # nickname
+    fields += f",{text_field(all_cells[2])}"  # name
+    fields += f',{date_field(all_cells[3])}'  # birstday
+    fields += f',{sex_field(all_cells[4])}'  # sex
+    fields += f",{text_field(theuser.get('country') or '')}"  # country
+    fields += f",{text_field(theuser.get('oblast') or '')}"  # oblast
 
-    fields += ',{}'.format(text_field(theuser.get('town') or ''))  #town
-    fields += ',{}'.format(text_field(all_cells[9]))  #phone
+    fields += f",{text_field(theuser.get('town') or '')}"  # town
+    fields += f",{text_field(all_cells[9])}"  # phone
 
-    fields += ',{}'.format(int_field(theuser.get('created') or 0))  #created_caches
-    fields += ',{}'.format(int_field(theuser.get('found') or 0))  #found_caches
-    fields += ',{}'.format(int_field(theuser.get('photo_albums') or 0))  #photo_albums
-    #register_date = None
-    #last_login = None
-    #forum_posts = None
-    #if len(all_cells) > 23:
-        #register_date = date_or_none(all_cells[-3])
-        #if register_date is None:
-            #register_date = date_or_none(all_cells[-2])
-        #last_login = date_or_none(all_cells[-2])
-        #forum_posts = int_or_none(all_cells[-1])
-    #import pdb; pdb.set_trace()
-    fields += ',{}'.format(date_field(theuser.get('registered') or ''))  #register_date
-    fields += ',{}'.format(date_field(theuser.get('last_visited') or ''))     #last_login
-    fields += ',{}'.format(int_field(theuser.get('forum_posts') or 0))     #forum_posts
+    fields += f",{int_field(theuser.get('created') or 0)}"  # created_caches
+    fields += f",{int_field(theuser.get('found') or 0)}"  # found_caches
+    fields += f",{int_field(theuser.get('photo_albums') or 0)}"  # photo_albums
 
-    return "({})".format(fields).replace('%', '%%')
+    fields += f",{date_field(theuser.get('registered') or '')}"  # register_date
+    fields += f",{date_field(theuser.get('last_visited') or '')}"  # last_login
+    fields += f",{int_field(theuser.get('forum_posts') or 0)}"  # forum_posts
+
+    return f"({fields})".replace('%', '%%')
 
 def check_user_profile(geocacher):
-    url = 'http://www.geocaching.su/profile.php?pid=%s'%geocacher.pid
+    """ check user profile """
+    url = f'http://www.geocaching.su/profile.php?pid={geocacher.pid}'
     loaded = False
     cnter = 0
-    fh = open('cant_open_profile.txt', 'w')
+    fhandler = open('cant_open_profile.txt', 'w')
     while not loaded and cnter < 100:
         try:
             yplib.get(url)
@@ -349,9 +350,9 @@ def check_user_profile(geocacher):
         except BrowserStateError:
             cnter += 1
 
-    fh.close()
+    fhandler.close()
     if not loaded:
-        print('cannot go to %s' % url)
+        print(f'cannot go to {url}')
         fh.write(url)
         return False
 
@@ -379,8 +380,7 @@ def check_user_profile(geocacher):
     if user.icq and not user.icq.isdigit():
         user.icq = None
     user.web = text_or_none(all_cells[11])
-    gps = text_or_none(all_cells[15])
-    user.gps = None#gps[:255].encode if gps else None
+    user.gps = None
     user.created_caches = int_or_none(all_cells[18])
     user.found_caches = int_or_none(all_cells[19])
     user.photo_albums = int_or_none(all_cells[21])
@@ -400,11 +400,12 @@ def check_user_profile(geocacher):
 
 
 def main():
+    """ main procedure """
+    load_geocachers = False
+    load_absent_geocachers = False
+
     if not switch_off_status_updated():
         return False
-
-    LOAD_GEOCACHERS = False
-    LOAD_ABSENT_GEOCACHERS = False
 
     start = time()
 
@@ -412,57 +413,50 @@ def main():
 
     cursor.execute('select * from geocacher')
 
-    yplib.setUp()
+    yplib.set_up()
     yplib.set_debugging(False)
 
 
-    r = yplib.post2('http://www.geocaching.su/?pn=108',
-            (('Log_In','Log_In'), ('email', 'galdor@ukr.net'), ('passwd','zaebalixakeryvas'), ('longterm', '1')))
+    yplib.post2('http://www.geocaching.su/?pn=108',
+            (('Log_In', 'Log_In'), ('email', 'galdor@ukr.net'), ('passwd', 'zaebalixakeryvas'), ('longterm', '1')))
 
     soup=yplib.soup()
 
-    a = soup.find('a', attrs={'class':"profilelink"}, text='galdor')
-    if not a:
+    anchor = soup.find('a', attrs={'class': "profilelink"}, text='galdor')
+    if not anchor:
         print('Authorization failed')
         return False
 
-    if LOAD_GEOCACHERS:
+    if load_geocachers:
         Geocacher.objects.all().delete()
         cntr_list = []
         all_id = []
-        for p in range(2500):
-            print('page', p + 1)
-            #if p < 0:
-                #continue
+        for page in range(2500):
+            print('page', page + 1)
 
             user_list = []
-            r = yplib.post2('http://www.geocaching.su/?pn=108',
-                (('sort','1'), ('page', str(p)),
-                 ('in_page','100'), ('updown', '1')))
+            yplib.post2('http://www.geocaching.su/?pn=108',
+                (('sort', '1'), ('page', str(page)),
+                 ('in_page', '100'), ('updown', '1')))
             soup=yplib.soup()
             a_list = soup.findAll('a', {'class':"profilelink"})
-            t = re.compile('\?pid=(\d+)')
-            for a in a_list[:-1]:
-                if a.get('onclick'):
-                    #print p.findall(a['onclick']), a.text.encode('utf8')
-                    user_id = t.findall(a['onclick'])[0]
-                    login = a.text.encode('utf8')
-                    if not (user_id in all_id):
+            tag = re.compile('\?pid=(\d+)')
+            for anchor in a_list[:-1]:
+                if anchor.get('onclick'):
+                    user_id = tag.findall(anchor['onclick'])[0]
+                    login = anchor.text.encode('utf8')
+                    if user_id not in all_id:
                         user_list.append({'id': user_id, 'login': login})
                         all_id.append(user_id)
-            #user_list = user_list[:-1]
+
             if user_list == cntr_list:
                 break
-            else:
-                cntr_list = user_list
-                #print len(user_list)
-                #return
-                check_id_list(user_list)
-                #break
-                #check_id_list([{'id': 15957, 'login': u'Кривич'}])
-            #break
 
-    if LOAD_ABSENT_GEOCACHERS:
+            cntr_list = user_list
+            check_id_list(user_list)
+
+
+    if load_absent_geocachers:
         pid_list = (469, 406, 1224, 4400, 11910,  4456, 13439,  7707, 8887, 3156, 8094)
         user_list = [{'id': pid, 'login': u''} for pid in pid_list]
 
@@ -472,6 +466,7 @@ def main():
     print("Elapsed time -->", elapsed)
     switch_on_status_updated()
     log('gcsu_geocachers', 'OK')
+    return True
 
 if __name__ == '__main__':
     main()

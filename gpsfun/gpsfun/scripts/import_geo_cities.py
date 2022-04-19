@@ -25,8 +25,8 @@ def date_or_none(cell):
     return r
 
 def main():
-    start = time() 
-    
+    start = time()
+
     GeoCity.objects.all().delete()
     file = codecs.open("/tmp/cities1000.txt", "r", "utf-8")
 
@@ -51,7 +51,7 @@ def main():
                            population=atoi(items[14]),
                            elevation=atoi(items[15]),
                            gtopo30=atoi(items[16]),
-                           timezone=items[17], 
+                           timezone=items[17],
                            moddate=date_or_none(items[18])
                            )
         try:
@@ -59,10 +59,9 @@ def main():
         except:
             geo_city.alternatenames = ''
             geo_city.save()
-        #print geo_city.geonameid, geo_city.name,  geo_city.moddate
 
     elapsed = time() - start
-    print "Elapsed time -->", elapsed
+    print("Elapsed time -->", elapsed)
 
 if __name__ == '__main__':
     main()

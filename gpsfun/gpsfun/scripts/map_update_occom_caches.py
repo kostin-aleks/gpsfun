@@ -10,8 +10,7 @@ from gpsfun.main.GeoName.models import GeoCountry
 import urllib2
 import json
 from DjHDGutils.dbutils import get_object_or_none
-#from  gpsfun.main.utils import update_geothing, \
-      #create_new_geothing, TheGeothing, TheLocation
+
 
 MY_KEY = 'D47WtT9HJydnSS3t'
 RECTANGLES = [
@@ -95,7 +94,6 @@ class TheLocation:
     EW_minute = None
 
 def create_new_geothing(the_geothing, the_location, geosite):
-    #print geosite.id
     geothing = Geothing(geosite=geosite)
     l = Location()
     l.NS_degree = the_location.NS_degree
@@ -112,7 +110,7 @@ def create_new_geothing(the_geothing, the_location, geosite):
     geothing.author = the_geothing.get('author')
     geothing.country_name = the_geothing.get('country_name')
     geothing.country_code = the_geothing.get('country_code')
-    print 'NEW', geothing.code
+    print('NEW', geothing.code)
     geothing.save()
 
 def update_geothing(geothing, the_geothing, the_location):
@@ -152,23 +150,23 @@ def update_geothing(geothing, the_geothing, the_location):
         geothing.oblast_name = None
 
     if changed or location_changed:
-        print 'SAVED', geothing.code
+        print('SAVED', geothing.code)
         geothing.save()
         return 1
 
 
 def process(rectangle, geosite, uc, nc):
-    print 'process'
-    print rectangle
-    print geosite
-    print uc, nc
+    print('process')
+    print(rectangle)
+    print(geosite)
+    print(uc, nc)
     bbox = [str(x) for x in  rectangle]
-    #print bbox
+
     url = url_pattern % (MY_KEY, ','.join(bbox))
-    print url
+    print(url)
     response = urllib2.urlopen(url)
     data = response.read()
-    #print data
+
     caches = json.loads(data)
     for cache in caches:
         name = cache.get('name','')
@@ -200,8 +198,8 @@ def process(rectangle, geosite, uc, nc):
             cache['country_name'] = region.get('country')
             cache['country_code'] = iso_by_country_name(cache['country_name'])
         if not code or not cache.get('pid'):
-            print 'ERROR: NO CODE'
-            print cache
+            print('ERROR: NO CODE')
+            print(cache)
             continue
 
         geothing = get_object_or_none(Geothing, pid=cache.get('pid'), geosite=geosite)
@@ -225,9 +223,9 @@ def main():
 
     message = 'OK. updated %s, new %s' % (uc, nc)
     log('map_occom_caches', message)
-    print message
+    print(message)
     elapsed = time() - start
-    print "Elapsed time -->", elapsed
+    print("Elapsed time -->", elapsed)
 
 if __name__ == '__main__':
     main()

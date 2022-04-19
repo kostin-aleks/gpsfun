@@ -27,18 +27,18 @@ OCCZ_TYPES = {
     u'matematick\xe1': 'MT',
 }
 
-def main():   
-    start = time() 
-    
-    yplib.setUp()
+def main():
+    start = time()
+
+    yplib.set_up()
     yplib.set_debugging(False)
-    
+
     geosite = Geosite.objects.get(code='OCCZ')
-    
+
     statuses = []
     types = []
     oc_count = 0
-    
+
     k = 0
     uc = 0
     nc = 0
@@ -59,7 +59,7 @@ def main():
             latitude = None
             longitude = None
             status = None
-            created_date_str = ''            
+            created_date_str = ''
             k += 1
             if cache.tag == 'cache':
                 the_geothing = TheGeothing()
@@ -88,7 +88,7 @@ def main():
                     if param.tag == 'waypoint':
                         the_geothing.code = param.text
                         if the_geothing.code:
-                            oc_count += 1                                 
+                            oc_count += 1
                     if param.tag == 'hidden':
                         created_date_str = param.text
                         parts = strptime(created_date_str, '%d.%m.%Y')
@@ -97,7 +97,7 @@ def main():
                         the_geothing.created_date = dt
 
                 if latitude and longitude:
-                    
+
                     the_location.NS_degree = get_degree(latitude)
                     the_location.EW_degree = get_degree(longitude)
                     if the_geothing.code and the_geothing.pid and \
@@ -109,16 +109,16 @@ def main():
                             create_new_geothing(the_geothing, the_location, geosite)
                             nc += 1
 
-    message = 'OK. updated %s, new %s' % (uc, nc)    
+    message = 'OK. updated %s, new %s' % (uc, nc)
     log('map_occz_caches', message)
-    print message
+    print(message)
 
     print
-    print types
-    print statuses
+    print(types)
+    print(statuses)
 
     elapsed = time() - start
-    print "Elapsed time -->", elapsed
+    print("Elapsed time -->", elapsed)
 
 if __name__ == '__main__':
     main()

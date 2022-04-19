@@ -146,7 +146,7 @@ def check_geocacher(pid):
 def main():
     start = time()
 
-    yplib.setUp()
+    yplib.set_up()
     yplib.set_debugging(False)
 
     r = yplib.post2('http://www.geocaching.su/?pn=108',

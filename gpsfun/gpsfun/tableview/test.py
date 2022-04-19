@@ -13,7 +13,7 @@ class Table1(table.TableView):
     class Meta:
         permanent = ('id', 'name')
         sortable = ('id', 'name', 'k2')
-        
+
 
     def get_source(self):
         return QSDataSource(Dealer.objects.all())
@@ -21,17 +21,11 @@ class Table1(table.TableView):
     def custom_filter(qs):
         return qs
 
-
-
-
 def test1():
     t1 = Table1()
     t1.show_column('k2')
     t1.set_sort('name', False)
-    print t1.as_html()
-
-
-    
+    print(t1.as_html())
 
 if __name__ == '__main__':
     test1()

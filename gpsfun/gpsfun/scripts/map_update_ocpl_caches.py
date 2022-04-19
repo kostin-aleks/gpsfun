@@ -32,7 +32,7 @@ OCPL_TYPES = {
     'Other': 'OT',
     'Moving': 'MO',
     'Event': 'EV',
-    'Webcam': 'WC',    
+    'Webcam': 'WC',
     }
 
 class TheGeothing:
@@ -64,12 +64,12 @@ def create_new_geothing(the_geothing, the_location, geosite):
     geothing.name = the_geothing.name
     geothing.created_date = the_geothing.created_date
     geothing.author = the_geothing.author
-    print 'NEW', geothing.pid
+    print('NEW', geothing.pid)
     geothing.save()
 
-def int_minutes(m):       
+def int_minutes(m):
         return int(round(m*1000))
-    
+
 def location_was_changed(location, the_location):
     location_changed = False
     if int(location.NS_degree*1000000) != int(the_location.NS_degree*1000000):
@@ -77,9 +77,9 @@ def location_was_changed(location, the_location):
     if int(location.EW_degree*1000000) != int(the_location.EW_degree*1000000):
         location_changed = True
     return location_changed
-  
-    
-def update_geothing(geothing, the_geothing, the_location):    
+
+
+def update_geothing(geothing, the_geothing, the_location):
     changed = False
     if geothing.code != the_geothing.code:
         changed = True
@@ -92,11 +92,11 @@ def update_geothing(geothing, the_geothing, the_location):
         geothing.name = the_geothing.name
     if geothing.author != the_geothing.author:
         changed = True
-        geothing.author = the_geothing.author        
+        geothing.author = the_geothing.author
     if geothing.code != the_geothing.code:
         changed = True
         geothing.code = the_geothing.code
-        
+
     location_changed = False
     if int(geothing.location.NS_degree*1000000) != int(the_location.NS_degree*1000000):
         location_changed = True
@@ -104,13 +104,7 @@ def update_geothing(geothing, the_geothing, the_location):
     if int(geothing.location.EW_degree*1000000) != int(the_location.EW_degree*1000000):
         location_changed = True
         geothing.location.EW_degree = the_location.EW_degree
-    #if int_minutes(geothing.location.NS_minute) != int_minutes(the_location.NS_minute):
-        #location_changed = True
-        #geothing.location.NS_minute = the_location.NS_minute
-    #if int_minutes(geothing.location.EW_minute) != int_minutes(the_location.EW_minute):
-        #location_changed = True
-        #geothing.location.EW_minute = the_location.EW_minute
-    
+
     if location_changed:
         geothing.location.save()
         geothing.country_code = None
@@ -119,10 +113,10 @@ def update_geothing(geothing, the_geothing, the_location):
         geothing.oblast_name = None
 
     if changed or location_changed:
-        print 'SAVED', geothing.pid
+        print('SAVED', geothing.pid)
         geothing.save()
-    
-        
+
+
 def Dephi_date_to_python_date(d):
     days = int(d)
     hours = int(round((d - days)*24))
@@ -131,34 +125,28 @@ def Dephi_date_to_python_date(d):
 
 def main():
     LOAD_CACHES = True
-    
-    start = time() 
-    
-    yplib.setUp()
+
+    start = time()
+
+    yplib.set_up()
     yplib.set_debugging(False)
-    
+
     # log in
     r = yplib.post2('http://opencaching.pl/login.php',
             (('LogMeIn','zaloguj'), ('email', 'kurianin'), ('password','gjhjkjy'), ('action', 'login'), ('target', 'index.php')))
-    
+
     soup=yplib.soup()
 
     a = soup.find('a', text='kurianin')
     if not a:
-        print 'Authorization failed'
+        print('Authorization failed')
         return False
-    print 'OK'
+    print('OK')
 
-    ## search page
-    #r = yplib.get('http://opencaching.pl/search.php')
-    #soup = yplib.soup()   
-    
     # get wpt file
     r = yplib.get('http://opencaching.pl/search.php?searchto=searchbyname&showresult=1&expert=0&output=HTML&sort=bycreated&f_inactive=1&f_ignored=1&f_userfound=1&f_userowner=1&f_watched=0&f_geokret=0&country=PL&region=&cachetype=1111111110&cache_attribs=&cache_attribs_not=&cachesize_1=1&cachesize_2=1&cachesize_3=1&cachesize_4=1&cachesize_5=1&cachesize_6=1&cachesize_7=1&cachevote_1=-3&cachevote_2=3.000&cachenovote=1&cachedifficulty_1=1&cachedifficulty_2=5&cacheterrain_1=1&cacheterrain_2=5&cacherating=0&cachename=%25&cachename=')
     soup = yplib.soup(cp='utf8')
     link_to_wpt = ''
-
-    #the_div = soup.find('div', {'class':"content2-pagetitle"})
 
     wpt_link = re.compile('ocpl\d+\.wpt\?.+count\=max.*')
     a_list = soup.findAll('a', {'class':"links", 'title': "Oziexplorer .wpt"})
@@ -167,16 +155,16 @@ def main():
             if a.get('href') and wpt_link.match(a.get('href')):
                 link_to_wpt = a.get('href')
                 break
-    print link_to_wpt
-    
+    print(link_to_wpt)
+
     if link_to_wpt:
         r = yplib.get(link_to_wpt)
         soup = yplib.soup(cp='utf8')
         wpt = soup.text.split('\n')
     else:
-        print 'oblom'
+        print('oblom')
         return
-    
+
     WPT_CODE = 10
     WPT_LAT = 2
     WPT_LON = 3
@@ -185,10 +173,10 @@ def main():
     MY_CONSUMER_KEY = 'fky3LF9xvWz9y7Gs3tZ6'
     FIELDS = 'code|name|location|type|status|url|owner|date_created'
     geocach_api_request = 'http://opencaching.pl/okapi/services/caches/geocache?cache_code=%s&consumer_key=%s&fields=%s'
-    
+
     geosite = Geosite.objects.get(code='OCPL')
-    print geosite
-    print len(wpt), 'points'
+    print(geosite)
+    print(len(wpt), 'points')
     k = 0
     uc = 0
     nc = 0
@@ -199,7 +187,7 @@ def main():
             the_geothing = TheGeothing()
             the_geothing.pid=1
             the_location = TheLocation()
-            
+
             lat_degree = float(fields[WPT_LAT])
             the_location.NS_degree = lat_degree
             #the_location.NS_minute = (abs(lat_degree) - abs(the_location.NS_degree)) * 60
@@ -220,18 +208,17 @@ def main():
                         continue
 
                 url = geocach_api_request % (cache_code, MY_CONSUMER_KEY, FIELDS)
-                try:                    
+                try:
                     response = urllib2.urlopen(url)
                     json_str = response.read()
                     cache_data = json.loads(json_str)
                     if cache_data.get('status') != 'Available':
                         continue
-                    #print cache_data.get('type')
+
                     the_geothing.type_code = OCPL_TYPES.get(cache_data.get('type'))
-                    #print the_geothing.type_code
                     cache_url = cache_data.get('url')
                     if not cache_url:
-                        continue 
+                        continue
                     p = re.compile(u'OP([\dA-F]+)$')
                     dgs = p.findall(cache_url)
                     the_geothing.pid = int(dgs[0], 16)
@@ -239,7 +226,7 @@ def main():
                     if cache_data.get('owner'):
                         owner_name = cache_data.get('owner').get('username')
                     the_geothing.author = owner_name
-                    
+
                     date_created = cache_data.get('date_created')
                     if date_created:
                         date_created = date_created[:10]
@@ -250,10 +237,9 @@ def main():
 
                 except:
                     print
-                    print 'exception.'
-                    print url
-                    print cache_data
-                    #break
+                    print('exception.')
+                    print(url)
+                    print(cache_data)
                     continue
 
             if the_geothing.type_code in GEOCACHING_ONMAP_TYPES:
@@ -264,23 +250,22 @@ def main():
                 else:
                     create_new_geothing(the_geothing, the_location, geosite)
                     nc += 1
-            #break
 
     sql = """
-    select COUNT(*)  
+    select COUNT(*)
     FROM
     (
-    select g.code as code, count(id) as cnt 
-    from geothing g 
+    select g.code as code, count(id) as cnt
+    from geothing g
     group by g.code
     having cnt > 1
-    ) as tbl 
+    ) as tbl
     """
     dc = sql2val(sql)
-    message = 'OK. updated %s, new %s, doubles %s' % (uc, nc, dc)    
+    message = 'OK. updated %s, new %s, doubles %s' % (uc, nc, dc)
     log('map_ocpl_caches', message)
     elapsed = time() - start
-    print "Elapsed time -->", elapsed
+    print("Elapsed time -->", elapsed)
 
 if __name__ == '__main__':
     main()

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 NAME
      map_update_su_caches.py
@@ -9,22 +8,23 @@ DESCRIPTION
 """
 
 import re
+from datetime import datetime
 import requests
-from datetime import datetime, date, timedelta
-from django.core.management.base import BaseCommand
-from gpsfun.main.models import log, UPDATE_TYPE
-from gpsfun.main.GeoMap.models import GEOCACHING_ONMAP_TYPES
-from gpsfun.main.GeoMap.models import Geothing, Geosite, Location
-from gpsfun.DjHDGutils.dbutils import get_object_or_none
 from lxml import etree as ET
-from gpsfun.geocaching_su_stat.utils import (
-    LOGIN_DATA, logged, get_caches
-)
-from  gpsfun.main.utils import (
-    update_geothing, create_new_geothing, TheGeothing, TheLocation, get_degree)
+
+from django.core.management.base import BaseCommand
+
+from gpsfun.main.models import log
+from gpsfun.main.GeoMap.models import GEOCACHING_ONMAP_TYPES
+from gpsfun.main.GeoMap.models import Geothing, Geosite
+from gpsfun.DjHDGutils.dbutils import get_object_or_none
+from gpsfun.geocaching_su_stat.utils import LOGIN_DATA
+from gpsfun.main.utils import (
+    update_geothing, create_new_geothing, TheGeothing, TheLocation)
 
 
 class Command(BaseCommand):
+    """ command """
     help = 'Updates list of caches from geocaching.su'
 
     def handle(self, *args, **options):
@@ -32,13 +32,11 @@ class Command(BaseCommand):
         with requests.Session() as session:
             xml = session.get(url, data=LOGIN_DATA).content
 
-        # print(xml)
-
         try:
             sxml = ET.XML(xml)
-        except Exception as e:
-            print(type(e))
-            print(e)
+        except Exception as exception:
+            print(type(exception))
+            print(exception)
             return
 
         cnt_new = 0
@@ -72,8 +70,8 @@ class Command(BaseCommand):
                             the_geothing.created_date = datetime(
                                 int(date_[0]), int(date_[1]), int(date_[2]))
                 if the_geothing.code:
-                    p = re.compile('(\D+)(\d+)')
-                    dgs = p.findall(the_geothing.code)
+                    preg = re.compile('(\D+)(\d+)')
+                    dgs = preg.findall(the_geothing.code)
                     if dgs:
                         code_data = dgs[0]
                         the_geothing.pid = int(code_data[1])
@@ -89,9 +87,8 @@ class Command(BaseCommand):
                     create_new_geothing(the_geothing, the_location, geosite)
                     cnt_new += 1
 
-        message = 'OK %s/%s' % (cnt_new, cnt_upd)
+        message = f'OK {cnt_new}/{cnt_upd}'
         log('map_gcsu_caches', message)
         print(message)
 
         return 'List of caches from geocaching.su has updated'
-

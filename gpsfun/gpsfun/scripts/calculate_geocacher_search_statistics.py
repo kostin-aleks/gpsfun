@@ -53,7 +53,7 @@ def main():
     execute_query(sql)
 
     elapsed = time() - start
-    print "Elapsed time -->", elapsed
+    print("Elapsed time -->", elapsed)
     log('gcsu_rating', 'OK')
 
 if __name__ == '__main__':

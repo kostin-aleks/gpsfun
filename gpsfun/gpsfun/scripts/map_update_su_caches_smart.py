@@ -7,7 +7,7 @@ from datetime import datetime, date, timedelta
 import re
 from gpsfun.main.GeoMap.models import GEOCACHING_ONMAP_TYPES
 from gpsfun.main.GeoMap.models import Geothing, Geosite, Location
-from gpsfun.main.models import log 
+from gpsfun.main.models import log
 from lxml import etree as ET
 import urllib2
 from DjHDGutils.dbutils import get_object_or_none
@@ -16,31 +16,31 @@ from  gpsfun.main.utils import update_geothing, \
 
 def main():
     LOAD_CACHES = True
-    
-    start = time() 
-    
-    yplib.setUp()
+
+    start = time()
+
+    yplib.set_up()
     yplib.set_debugging(False)
-    
+
     url = 'http://www.geocaching.su/rss/geokrety/api.php?interval=1y&ctypes=1,2,3,7&changed=1'
-    
+
     f = urllib2.urlopen(url)
     xml = f.read()
     xml = xml
-    
+
     try:
         sxml = ET.XML(xml)
     except Exception as e:
-        print type(e)
-        print e
+        print(type(e))
+        print(e)
         return
-    
+
     cnt_new = 0
     cnt_upd = 0
-    caches = sxml.getchildren()     
-    
+    caches = sxml.getchildren()
+
     geosite = Geosite.objects.get(code='GC_SU')
-    
+
     for cache in caches:
         if cache.tag == 'cache':
             the_geothing = TheGeothing()
@@ -56,14 +56,14 @@ def main():
                     lat_degree = float(tag_.get('lat'))
                     the_location.NS_degree = lat_degree
                     lon_degree = float(tag_.get('lon'))
-                    the_location.EW_degree = lon_degree                    
+                    the_location.EW_degree = lon_degree
                 if tag_.tag == 'cdate':
                     date_str = tag_.text
                     date_ = date_str.split('-')
                     if len(date_) == 3:
                         the_geothing.created_date = datetime(int(date_[0]), int(date_[1]), int(date_[2]))
             if  the_geothing.code:
-                p = re.compile('(\D+)(\d+)') 
+                p = re.compile('(\D+)(\d+)')
                 dgs = p.findall(the_geothing.code)
                 if dgs:
                     code_data = dgs[0]
@@ -81,9 +81,9 @@ def main():
 
     message = 'OK %s/%s'%(cnt_new, cnt_upd)
     log('map_gcsu_caches', message)
-    print message
+    print(message)
     elapsed = time() - start
-    print "Elapsed time -->", elapsed
+    print("Elapsed time -->", elapsed)
 
 if __name__ == '__main__':
     main()
