@@ -1,11 +1,15 @@
+""" decorators for application geocaching_su_stat """
+
 from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext_lazy as _
 from django.urls import reverse
-from gpsfun.main.views import updating, update
 from django.contrib import messages
+
+from gpsfun.main.views import updating, update
 
 
 def it_isnt_updating(func):
+    """ decorator it_isnt_updating """
     def wrapper(*args, **kwargs):
         # first argument of view allways is request
         if not updating():
@@ -17,6 +21,7 @@ def it_isnt_updating(func):
 
 
 def geocacher_su(func):
+    """ decorator geocacher_su """
     def wrapper(*args, **kwargs):
         # first argument of view allways is request
         request = args[0]

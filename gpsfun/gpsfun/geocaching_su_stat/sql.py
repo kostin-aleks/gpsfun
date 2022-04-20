@@ -1,3 +1,5 @@
+""" sql queries """
+
 RAWSQL = {
     'all_types_by_author': """
     select distinct c.type_code

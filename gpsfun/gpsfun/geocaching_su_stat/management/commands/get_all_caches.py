@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 NAME
      get_all_caches.py
@@ -17,17 +16,18 @@ from gpsfun.geocaching_su_stat.utils import (
 
 
 class Command(BaseCommand):
+    """ Command """
     help = 'Loads list of all caches'
 
     def handle(self, *args, **options):
         with requests.Session() as session:
-            post = session.post(
+            session.post(
                 'https://geocaching.su',
                 data=LOGIN_DATA
             )
 
-            r = session.get('https://geocaching.su')
-            if not logged(r.text):
+            response = session.get('https://geocaching.su')
+            if not logged(response.text):
                 print('Authorization failed')
             else:
                 get_caches()

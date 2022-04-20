@@ -1,14 +1,27 @@
+"""
+utils for application geocaching_su_stat
+"""
+
 from pprint import pprint
 import operator
 import re
-import requests
 from datetime import datetime
+import requests
 from bs4 import BeautifulSoup
 from gpsfun.DjHDGutils.dbutils import get_object_or_none
 from gpsfun.main.GeoCachSU.models import Geocacher, Cach
 from gpsfun.main.utils import (
     date_or_none, sex_or_none, strdate_or_none, utf8)
 
+
+CELL_COUNT = 10
+CODE = 2
+LATITUDE = 3
+LAT_MINUTES = 4
+LONGITUDE = 5
+LON_MINUTES = 6
+CREATED = 7
+NAME = -1
 
 LOGIN_DATA = {
     'Log_In': 'Log_In',
@@ -21,14 +34,16 @@ USER_NAME = 'galdor'
 
 
 def logged(text):
+    """ is user logged ? """
     soup = BeautifulSoup(text, 'html.parser')
-    a = soup.findAll(
+    anchor = soup.findAll(
         'a', class_='profilelink', text='galdor')
 
-    return a is not None
+    return anchor is not None
 
 
 def get_user_profile(uid, text):
+    """ get user profile """
     geocacher = None
     soup = BeautifulSoup(text, 'lxml')
 
@@ -112,9 +127,10 @@ def get_user_profile(uid, text):
 
 
 def get_subdiv_data(latitude, longitude):
+    """ get data from subdiv """
 
     with requests.Session() as session:
-        r = session.get(
+        response = session.get(
             'http://api.geonames.org/countrySubdivision',
             params={
                 'lat': latitude,
@@ -122,8 +138,8 @@ def get_subdiv_data(latitude, longitude):
                 'username': 'galdor'
             }
         )
-        pprint(r.text)
-        soup = BeautifulSoup(r.text, 'lxml')
+        pprint(response.text)
+        soup = BeautifulSoup(response.text, 'lxml')
 
         data = soup.geonames.countrysubdivision
         if data:
@@ -134,17 +150,18 @@ def get_subdiv_data(latitude, longitude):
                 'sub_id': data.admincode1.text if data.admincode1 else None,
                 'sub_name': data.adminname1.text if data.adminname1 else None
             }
-        else:
-            data = soup.status
-            if 'hourly limit' in data.get('message', ''):
-                return {'status': 'limit'}
+
+        data = soup.status
+        if 'hourly limit' in data.get('message', ''):
+            return {'status': 'limit'}
         return {}
 
 
 def get_country_data(latitude, longitude):
+    """ get country data by geopoint """
 
     with requests.Session() as session:
-        r = session.get(
+        response = session.get(
             'http://api.geonames.org/countryCode',
             params={
                 'lat': latitude,
@@ -152,8 +169,8 @@ def get_country_data(latitude, longitude):
                 'username': 'galdor'
             }
         )
-        print('response:', r.text)
-        iso = r.text.strip()
+        print('response:', response.text)
+        iso = response.text.strip()
 
         if iso and len(iso) == 2:
             return {
@@ -164,16 +181,17 @@ def get_country_data(latitude, longitude):
 
 
 def get_form_fields(text):
-    POINTS_FIELD = 'point[]'
+    """ get form fields """
+    points_field = 'point[]'
     soup = BeautifulSoup(text, 'lxml')
     form = soup.find('form')
-    post_data = {POINTS_FIELD: []}
+    post_data = {points_field: []}
     if form:
         inputs = form.find_all('input')
         for input_ in inputs:
             if input_.get('name') and input_.get('value'):
-                if input_['name'] == POINTS_FIELD:
-                    post_data[POINTS_FIELD].append(input_['value'])
+                if input_['name'] == points_field:
+                    post_data[points_field].append(input_['value'])
                 else:
                     post_data[input_['name']] = input_['value']
         del post_data['translit']
@@ -184,88 +202,75 @@ def get_form_fields(text):
 
 
 def get_caches(last_max_cid=None):
-
-    CELL_COUNT = 10
-    CODE = 2
-    LATITUDE = 3
-    LAT_MINUTES = 4
-    LONGITUDE = 5
-    LON_MINUTES = 6
-    CREATED = 7
-    NAME = -1
-
-    cache_urls = []
+    """ get caches """
     rows = []
     with requests.Session() as session:
-        post = session.post(
+        session.post(
             'https://geocaching.su',
             data=LOGIN_DATA,
         )
 
-        r = session.get('https://geocaching.su')
-        if not logged(r.text):
+        response = session.get('https://geocaching.su')
+        if not logged(response.text):
             print('Authorization failed')
         else:
-            r = session.get(
+            response = session.get(
                 'http://www.geocaching.su/site/popup/selex.php',
             )
-            post_data = get_form_fields(r.text)
+            post_data = get_form_fields(response.text)
 
-            r = session.post(
+            response = session.post(
                 'https://geocaching.su/site/popup/export.php',
                 data=post_data
             )
-            rows = r.text.split('\r\n')
+            rows = response.text.split('\r\n')
 
     for row in rows:
-        c = {}
+        dcache = {}
         items = row.split(',')
         if len(items) == CELL_COUNT:
             if items[0] == 'WP' and items[1] == 'DMX':
                 code = items[CODE]
-                c['type_code'] = re.search(r"^[A-Z]+", code).group(0)
-                c['cid'] = re.search(r"\d+", code).group(0)
-                c['code'] = code
+                dcache['type_code'] = re.search(r"^[A-Z]+", code).group(0)
+                dcache['cid'] = re.search(r"\d+", code).group(0)
+                dcache['code'] = code
 
-                c['latitude'] = int(items[LATITUDE])
-                c['lat_minutes'] = float(items[LAT_MINUTES])
-                c['longitude'] = int(items[LONGITUDE])
-                c['lon_minutes'] = float(items[LON_MINUTES])
+                dcache['latitude'] = int(items[LATITUDE])
+                dcache['lat_minutes'] = float(items[LAT_MINUTES])
+                dcache['longitude'] = int(items[LONGITUDE])
+                dcache['lon_minutes'] = float(items[LON_MINUTES])
 
-                c['created'] = items[CREATED]
+                dcache['created'] = items[CREATED]
 
                 text = items[NAME]
                 words = text.split('от')
-                c['author'] = words[-1].strip()
-                c['name'] = ' от '.join(words[:-1])
-                c['name'] = c['name'].strip()
+                dcache['author'] = words[-1].strip()
+                dcache['name'] = ' от '.join(words[:-1])
+                dcache['name'] = dcache['name'].strip()
 
-                if last_max_cid is None or (int(c['cid'] or 0) > last_max_cid):
-                    print('added', c)
+                if last_max_cid is None or (int(dcache['cid'] or 0) > last_max_cid):
+                    print('added', dcache)
                     cache, created = Cach.objects.get_or_create(
-                        pid=c['cid'],
+                        pid=dcache['cid'],
                     )
-                    cache.type_code = c['type_code']
-                    cache.code=c['code']
-                    dt = datetime.strptime(c['created'], '%m/%d/%Y')
-                    cache.created_date = dt
-                    cache.latitude = float(c['latitude']) + c['lat_minutes'] / 60.0
+                    cache.type_code = dcache['type_code']
+                    cache.code = dcache['code']
+                    dtime = datetime.strptime(dcache['created'], '%m/%d/%Y')
+                    cache.created_date = dtime
+                    cache.latitude = float(dcache['latitude']) + dcache['lat_minutes'] / 60.0
                     cache.longitude = float(
-                        c['longitude']) + c['lon_minutes'] / 60.0
+                        dcache['longitude']) + dcache['lon_minutes'] / 60.0
 
-                    cache.name = c['name']
+                    cache.name = dcache['name']
 
                     cache.author = get_object_or_none(
-                        Geocacher, nickname=c['author'])
-
-                    #if cache.country_code is None:
-                        #cache.country_code = get_country_code(
-                            #cache.latitude, cache.longitude)
+                        Geocacher, nickname=dcache['author'])
 
                     cache.save()
 
 
 def get_caches_data(uid, text):
+    """ get caches """
     data = []
 
     soup = BeautifulSoup(text, 'lxml')
@@ -309,6 +314,7 @@ def get_caches_data(uid, text):
 
 
 def get_geocachers_uids(text):
+    """ get list of geocachers id """
     uids = []
 
     soup = BeautifulSoup(text, 'lxml')
@@ -336,6 +342,7 @@ def get_geocachers_uids(text):
 
 
 def set_country_code(uid, country):
+    """ set country code """
     geocacher = Geocacher.objects.filter(uid=uid).first()
     if geocacher and geocacher.country_iso3 is None and country:
         if country == 'Россия':
@@ -353,7 +360,8 @@ def set_country_code(uid, country):
 
 
 def set_oblast_code(uid, oblast):
-    OBLAST = {
+    """ set oblast code """
+    d_oblast = {
         'Абхазия': ['GEO', '02'],
         'Австрия': ['AUT', '777'],
         'Аджария': ['GEO', '04'],
@@ -486,14 +494,15 @@ def set_oblast_code(uid, oblast):
 
     geocacher = Geocacher.objects.filter(uid=uid).first()
     if geocacher and geocacher.admin_code is None and oblast:
-        o = OBLAST.get(oblast)
-        if o:
-            geocacher.country_iso3 = o[0]
-            geocacher.admin_code = o[1]
+        data = d_oblast.get(oblast)
+        if data:
+            geocacher.country_iso3 = data[0]
+            geocacher.admin_code = data[1]
             geocacher.save()
 
 
 def get_found_caches_countries(uid, text):
+    """ get list of countries where caches are found """
     countries = []
     soup = BeautifulSoup(text, 'lxml')
 
@@ -505,20 +514,22 @@ def get_found_caches_countries(uid, text):
             if cell:
                 match = re.search(r"(\(\d+.+\))", cell.text)
                 if match:
-                    s = match.group(1)
-                    items = s.split(',')
+                    string = match.group(1)
+                    items = string.split(',')
                     if len(items):
                         country = items[-2].strip()
                         countries.append(country)
-    d = {}
+    data = {}
     for country in countries:
-        d[country] = (d.get(country) or 0) + 1
-    sorted_d = sorted(d.items(), key=operator.itemgetter(1), reverse=True)
+        data[country] = (data.get(country) or 0) + 1
+    sorted_d = sorted(data.items(), key=operator.itemgetter(1), reverse=True)
     if sorted_d and sorted_d is list and sorted_d[0]:
-            return sorted_d[0][0]
+        return sorted_d[0][0]
+    return None
 
 
 def get_found_caches_oblast(uid, text):
+    """ get list of oblast where caches are found """
     oblasti = []
     soup = BeautifulSoup(text, 'lxml')
 
@@ -530,32 +541,36 @@ def get_found_caches_oblast(uid, text):
             if cell:
                 match = re.search(r"\((\d+\.\d+\.\d+\,\s+[^)]+)\)", cell.text)
                 if match:
-                    s = match.group(1)
-                    items = s.split(',')
+                    string = match.group(1)
+                    items = string.split(',')
                     if len(items):
                         oblast = items[-1].strip()
                         oblasti.append(oblast)
-    d = {}
+    data = {}
     for oblast in oblasti:
-        d[oblast] = (d.get(oblast) or 0) + 1
-    sorted_d = sorted(d.items(), key=operator.itemgetter(1), reverse=True)
+        data[oblast] = (data.get(oblast) or 0) + 1
+    sorted_d = sorted(data.items(), key=operator.itemgetter(1), reverse=True)
     if sorted_d and sorted_d is list and sorted_d[0]:
         return sorted_d[0][0]
+    return None
 
 
 def get_author(text):
+    """ get author """
     soup = BeautifulSoup(text, 'lxml')
     for div in soup.find_all('div'):
-        t = div.text.strip()
-        if t.startswith('Автор: '):
+        txt = div.text.strip()
+        if txt.startswith('Автор: '):
             anchor = div.find('a')
             href = anchor.get('onclick')
             match = re.search(r"profile.php\?uid\=(\d+)", href)
             if match:
                 return match.groups(1)[0]
+    return None
 
 
 def get_country(text):
+    """ get country """
     soup = BeautifulSoup(text, 'lxml')
     header_idx = -1
     for tbl in soup.find_all('table', cellpadding="3", width="160"):
@@ -571,10 +586,8 @@ def get_country(text):
         if header_idx > -1:
             row = rows[header_idx + 3]
             cell = row.find('th')
-            s = [x.strip() for x in cell.find_all(text=True, recursive=False)]
+            string = [x.strip() for x in cell.find_all(text=True, recursive=False)]
             return {
-                'country': s[0] if len(s) else '',
-                'region': s[1] if len(s) > 1 else '',
+                'country': string[0] if len(string) else '',
+                'region': string[1] if len(string) > 1 else '',
             }
-
-

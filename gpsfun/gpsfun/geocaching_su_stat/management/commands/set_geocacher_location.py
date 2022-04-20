@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 NAME
      set_geocacher_location.py
@@ -18,6 +17,7 @@ from gpsfun.geocaching_su_stat.utils import get_subdiv_data
 
 
 class Command(BaseCommand):
+    """ Command """
     help = 'Set geocachers location for all geocachers'
 
     def handle(self, *args, **options):
@@ -29,11 +29,11 @@ class Command(BaseCommand):
                     geocacher.latitude, geocacher.longitude)
                 print(country)
                 if country and country.get('status') == 'ok':
-                    c = get_object_or_none(
+                    gcountry = get_object_or_none(
                         GeoCountry, iso=country.get('country_id'))
-                    if c is not None:
-                        geocacher.country_iso3 = c.iso3
-                        geocacher.country = c.name
+                    if gcountry is not None:
+                        geocacher.country_iso3 = gcountry.iso3
+                        geocacher.country = gcountry.name
                         geocacher.admin_code = country['sub_id']
                         geocacher.oblast = country['sub_name']
                         geocacher.save()
@@ -43,4 +43,3 @@ class Command(BaseCommand):
         log(UPDATE_TYPE.set_geocachers_locations, 'OK')
 
         return 'Location of geocachers has updated'
-

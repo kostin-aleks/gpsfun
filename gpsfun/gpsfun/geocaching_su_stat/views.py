@@ -1,9 +1,17 @@
-# coding: utf-8
+"""
+views for application geocaching_su_stat
+"""
+
 import time
 import itertools
-import django_filters
 from datetime import datetime, date
+import django_filters
 from lxml import etree
+
+from pygooglechart import SimpleLineChart, StackedHorizontalBarChart
+from pygooglechart import Axis
+from quickchart import QuickChart
+
 from django.urls import reverse
 from django import forms
 from django.conf import settings
@@ -14,13 +22,13 @@ from django.template import RequestContext
 from django.db.models import Max
 from django.views.decorators.cache import cache_page
 from django.utils.html import format_html
+from django.utils.translation import ugettext_lazy as _
 
 import django_tables2 as tables
 from django_tables2.config import RequestConfig
 
 from gpsfun.tableview import table, widgets, datasource, controller
 from gpsfun.DjHDGutils.dbutils import iter_sql
-from django.utils.translation import ugettext_lazy as _
 from gpsfun.DjHDGutils.forms import RequestForm
 from gpsfun.DjHDGutils.dbutils import get_object_or_none
 from gpsfun.DjHDGutils.ajax import accept_ajax
@@ -37,11 +45,6 @@ from gpsfun.main.GeoName.models import GeoCountry, GeoCountryAdminSubject, \
 from gpsfun.main.models import LogUpdate
 from gpsfun.main.db_utils import sql2list, sql2val
 from gpsfun.geocaching_su_stat.decorators import  it_isnt_updating, geocacher_su
-
-from pygooglechart import SimpleLineChart, StackedHorizontalBarChart
-from pygooglechart import Axis, PieChart3D
-from quickchart import QuickChart
-
 from gpsfun.main.utils import get_degree
 from gpsfun.geocaching_su_stat.sql import RAWSQL
 
@@ -53,28 +56,33 @@ MONTH_SHORT_NAMES = [
 
 
 def geocaching_su_cach_url(pid):
-    return "http://www.geocaching.su/?pn=101&cid=%s" % pid
+    """ cache url """
+    return f"http://www.geocaching.su/?pn=101&cid={pid}"
 
 
 def geocaching_su_geocacher_url(pid):
-    return "http://www.geocaching.su/profile.php?pid=%s" % pid
+    """ geocacher url """
+    return f"http://www.geocaching.su/profile.php?pid={pid}"
 
 
 class GPSFunTableController(controller.TableController):
+    """ Table controller """
     kind = None
 
     def filter_description(self):
+        """ description """
         def valid_keys(afilter, kind):
-            r = False
+            """ valid keys """
             if kind == 'geocacher_rate':
                 if 'country' in afilter and 'subject' in afilter:
-                    r = True
+                    return True
             if kind == 'cache_rate':
                 if 'country' in afilter and 'cach_type' in afilter:
-                    r = True
-            return r
+                    return True
+            return False
 
         def country_description(country):
+            """ country description """
             by_country = {'title': _('Country'), 'value': _("All")}
             if country and country != 'ALL':
                 geocountry = geocountry_by_code(country)
@@ -85,6 +93,7 @@ class GPSFunTableController(controller.TableController):
             return by_country
 
         def subject_description(admin_subject, country):
+            """ subject description """
             by_subject = {'title': _('Admin Subject'), 'value': _("All")}
             if admin_subject and admin_subject != 'ALL':
                 geoadmin_subject = get_object_or_none(
@@ -102,7 +111,7 @@ class GPSFunTableController(controller.TableController):
         if not valid_keys(self.filter, self.kind):
             return None
 
-        d = []
+        description = []
         if self.kind == 'cache_rate':
             selected_values = self.filter.get('cach_type')
             if selected_values == ['']:
@@ -121,23 +130,25 @@ class GPSFunTableController(controller.TableController):
             if len(types) == 0:
                 types = [_("Any")]
             if types:
-                d.append({
+                description.append({
                     'title': _('Cach Type'),
                     'value': types,
                     'type': 'list'})
             country = self.filter.get('country')
-            d.append(country_description(country))
-            d.append(subject_description(self.filter.get('subject'), country))
+            description.append(country_description(country))
+            description.append(subject_description(self.filter.get('subject'), country))
 
         if self.kind == 'geocacher_rate':
             country = self.filter.get('country')
-            d.append(country_description(country))
-            d.append(subject_description(self.filter.get('subject'), country))
+            description.append(country_description(country))
+            description.append(subject_description(self.filter.get('subject'), country))
 
-        return d
+        return description
 
 
 class RankingFilter(RequestForm):
+    """ Ranking Filter """
+    country_ = None
     cach_type = forms.MultipleChoiceField(
         required=False,
         label=_('Cach Type'),
@@ -153,22 +164,26 @@ class RankingFilter(RequestForm):
         widget=forms.Select(attrs={'id': 'ratefilter_subjects'}))
 
     def init(self):
-        self._country = self.initial.get('country')
-        if self._country is None:
-            self._country = self.data.get('country')
+        """ init """
+        self.country_ = self.initial.get('country')
+        if self.country_ is None:
+            self.country_ = self.data.get('country')
 
         populate_cach_type(
             self.fields['cach_type'], self._request, add_empty=True)
 
-        populate_countries_iso3(self.fields['country'],
-                              self._request, add_empty=True)
-        populate_subjects(self.fields['subject'],
-                          self._request,
-                          add_empty=True,
-                          selected_country_iso=self._country)
+        populate_countries_iso3(
+            self.fields['country'], self._request, add_empty=True)
+        populate_subjects(
+            self.fields['subject'],
+            self._request,
+            add_empty=True,
+            selected_country_iso=self.country_)
 
 
 class RateFilter(RequestForm):
+    """ Rate Filter """
+    country_ = None
     country = forms.ChoiceField(
         required=False,
         label=_('Country'),
@@ -180,31 +195,37 @@ class RateFilter(RequestForm):
         widget=forms.Select(attrs={'id': 'ratefilter_subjects'}))
 
     def init(self):
-        self._country = self.initial.get('country')
-        if self._country is None:
-            self._country = self.data.get('country')
+        """ init """
+        self.country_ = self.initial.get('country')
+        if self.country_ is None:
+            self.country_ = self.data.get('country')
 
-        populate_country_iso3(self.fields['country'],
-                              self._request, add_empty=True)
-        populate_subjects(self.fields['subject'],
-                          self._request,
-                          add_empty=True,
-                          selected_country_iso=self._country)
+        populate_country_iso3(
+            self.fields['country'], self._request, add_empty=True)
+        populate_subjects(
+            self.fields['subject'],
+            self._request,
+            add_empty=True,
+            selected_country_iso=self.country_)
 
     def set_country(self, country):
-        self._country = country
-        populate_subjects(self.fields['subject'],
-                          self._request,
-                          selected_country_iso=self._country)
+        """ set country """
+        self.country_ = country
+        populate_subjects(
+            self.fields['subject'],
+            self._request,
+            selected_country_iso=self.country_)
 
 
 class BaseRankTable(table.TableView):
+    """ Base Rank Table """
     _filter = None
 
     def apply_filter(self, filter, qs):
+        """ apply filter """
         self._filter = {}
-        for k, v in filter.iteritems():
-            self._filter[k] = v
+        for key, value in filter.iteritems():
+            self._filter[key] = value
         selected_values = filter.get('cach_type') or []
         if selected_values and ('REAL' in selected_values) \
            and ('UNREAL' in selected_values):
@@ -213,7 +234,7 @@ class BaseRankTable(table.TableView):
             pass
         else:
             selected_values = distinct_types_list(selected_values)
-            if len(selected_values):
+            if selected_values:
                 qs.filter(cach__type_code__in=selected_values)
 
         country = filter.get('country')
@@ -232,52 +253,62 @@ class BaseRankTable(table.TableView):
                           cach__admin_code=subject)
 
     def filtered(self):
-        r = False
+        """ filtered or not """
         if hasattr(self, '_filter'):
-            r = self._filter is not None
-        return r
+            return self._filter is not None
+        return False
 
 
 class RankByList(BaseRankTable):
-    pid = widgets.HrefWidget('ID',
-                             width="55px",
-                             refname='cach__code',
-                             reverse='geocaching-su-cach-view',
-                             reverse_column='cach_pid')
+    """ Rank By List Table """
+    pid = widgets.HrefWidget(
+        'ID',
+        width="55px",
+        refname='cach__code',
+        reverse='geocaching-su-cach-view',
+        reverse_column='cach_pid')
     cach_name = widgets.LabelWidget(_('Cach'), refname='cach__name')
     created = widgets.LabelWidget(_('Created'), refname='cach__created_date')
-    author = widgets.HrefWidget(_('Author'),
-                                refname='geocacher__nickname',
-                                reverse='geocaching-su-geocacher-view',
-                                reverse_column='geocacher__pid')
-    recommend_count = widgets.LabelWidget(_('Recommendations'),
-                                          refname='recommend_count')
+    author = widgets.HrefWidget(
+        _('Author'),
+        refname='geocacher__nickname',
+        reverse='geocaching-su-geocacher-view',
+        reverse_column='geocacher__pid')
+    recommend_count = widgets.LabelWidget(
+        _('Recommendations'),
+        refname='recommend_count')
     grade = widgets.LabelWidget(_('Grade'), refname='cach__grade')
 
 
 class RankByComputedList(RankByList):
+    """ Table RankByComputedList """
     found_count = widgets.LabelWidget(_('Found'), refname='found_count')
     rank = widgets.LabelWidget(_('Rank'), refname='rank')
 
     class Meta:
         use_keyboard = True
         global_profile = True
-        permanent = ('pid', 'cach_name', 'author', 'created',
-                     'recommend_count', 'found_count', 'rank', 'grade')
+        permanent = (
+            'pid', 'cach_name', 'author', 'created',
+            'recommend_count', 'found_count', 'rank', 'grade')
         search = ('cach__name', 'geocacher__nickname', 'cach__code')
         filter_form = RankingFilter
 
     def render_rank(self, table, row_index, row, value):
-        return '%.0f' % value if value else ''
+        """ render field rank """
+        return f'{value:.0f}' if value else ''
 
     def render_grade(self, table, row_index, row, value):
-        return '%.2f' % value if value else None
+        """ render field grade """
+        return f'{value:.2f}' if value else None
 
     def render_created(self, table, row_index, row, value):
+        """ render field created """
         return value.strftime("%d.%m.%Y") if value else ''
 
 
 class RankByFoundList(RankByList):
+    """ Table RankByFoundList """
     found_count = widgets.LabelWidget(_('Found'), refname='found_count')
     points = widgets.LabelWidget(_('Points'), refname='points')
 
@@ -290,34 +321,43 @@ class RankByFoundList(RankByList):
         filter_form = RankingFilter
 
     def render_created(self, table, row_index, row, value):
+        """ render field created """
         return value.strftime("%d.%m.%Y") if value else ''
 
     def render_points(self, table, row_index, row, value):
+        """ render field points """
         return round(value, 1) if value else 0
 
 
 class RankByRecommendedList(RankByList):
+    """ Table RankByRecommendedList """
 
     class Meta:
         use_keyboard = True
         global_profile = True
-        permanent = ('pid', 'cach_name', 'author', 'created',
-                     'recommend_count', 'grade')
+        permanent = (
+            'pid', 'cach_name', 'author', 'created',
+            'recommend_count', 'grade')
         search = ('cach__name', 'geocacher__nickname', 'cach__code')
         filter_form = RankingFilter
 
     def render_grade(self, table, row_index, row, value):
-        return '%.2f' % (value or 0)
+        """ render field grade """
+        value = value or 0
+        return '{value:.2f}'
 
     def render_created(self, table, row_index, row, value):
+        """ render field created """
         return value.strftime("%d.%m.%Y") if value else ''
 
 
 class GeocacherRateList(table.TableView):
-    nickname = widgets.HrefWidget(_('Nickname'),
-                                  refname='geocacher__nickname',
-                                  reverse='geocaching-su-geocacher-view',
-                                  reverse_column='geocacher__pid')
+    """ Table GeocacherRateList """
+    nickname = widgets.HrefWidget(
+        _('Nickname'),
+        refname='geocacher__nickname',
+        reverse='geocaching-su-geocacher-view',
+        reverse_column='geocacher__pid')
     country = widgets.LabelWidget(_('Country'), refname='country')
     region = widgets.LabelWidget(_('Region'), refname='region')
     registered = widgets.LabelWidget(_('Registered'),
@@ -331,17 +371,19 @@ class GeocacherRateList(table.TableView):
     class Meta:
         use_keyboard = True
         global_profile = True
-        permanent = ('nickname', 'country', 'region', 'registered',
-                     'created_count', 'found_count', 'av_grade',
-                     'av_his_cach_grade')
+        permanent = (
+            'nickname', 'country', 'region', 'registered',
+            'created_count', 'found_count', 'av_grade',
+            'av_his_cach_grade')
         search = ('geocacher__nickname',)
         sortable = ('created_count', 'found_count')
         filter_form = RateFilter
 
     def apply_filter(self, filter, qs):
+        """ apply_filter """
         self._filter = {}
-        for k, v in filter.iteritems():
-            self._filter[k] = v
+        for key, value in filter.iteritems():
+            self._filter[key] = value
 
         country = filter.get('country', '')
         if country and country != "ALL":
@@ -350,56 +392,69 @@ class GeocacherRateList(table.TableView):
         subject = filter.get('subject','')
         if subject and subject != 'ALL':
             if subject == '777':
-                qs.filter(geocacher__country_iso3=country,
-                          geocacher__admin_code__isnull=True)
+                qs.filter(
+                    geocacher__country_iso3=country,
+                    geocacher__admin_code__isnull=True)
             else:
-                qs.filter(geocacher__country_iso3=country,
-                          geocacher__admin_code=subject)
+                qs.filter(
+                    geocacher__country_iso3=country,
+                    geocacher__admin_code=subject)
 
     def filtered(self):
-        r = False
+        """ filtered or not """
         if '_filter' in self:
-            r = self._filter is not None
-        return r
+            return self._filter is not None
+        return False
 
     def render_av_grade(self, table, row_index, row, value):
-        return '%.1f' % (value or 0)
+        """ render field av_grade """
+        value = value or 0
+        return f'{value:.1f}'
 
     def render_av_his_cach_grade(self, table, row_index, row, value):
-        return '%.1f' % (value or 0)
+        """ render field av_his_cach_grade """
+        value = value or 0
+        return f'{value:.1f}'
 
     def render_registered(self, table, row_index, row, value):
+        """ render field registered """
         return value.strftime("%Y") if value else ''
 
     def render_country(self, table, row_index, row, value):
+        """ render field country """
         return _(value) if value else ''
 
     def render_region(self, table, row_index, row, value):
+        """ render field region """
         return _(value) if value else ''
 
 
 class GeocacherRankListBase(table.TableView):
-    nickname = widgets.HrefWidget(_('Nickname'),
-                                  refname='geocacher__nickname',
-                                  reverse='geocaching-su-geocacher-view',
-                                  reverse_column='geocacher__pid')
+    """ Table GeocacherRankListBase """
+    nickname = widgets.HrefWidget(
+        _('Nickname'),
+        refname='geocacher__nickname',
+        reverse='geocaching-su-geocacher-view',
+        reverse_column='geocacher__pid')
     country = widgets.LabelWidget(_('Country'), refname='country')
     region = widgets.LabelWidget(_('Region'), refname='region')
-    registered = widgets.LabelWidget(_('Registered'),
-                                     refname='geocacher__register_date')
+    registered = widgets.LabelWidget(
+        _('Registered'), refname='geocacher__register_date')
     created_count = None
     found_count = None
 
     class Meta:
         use_keyboard = True
         global_profile = True
-        permanent = ('nickname', 'country', 'region', 'registered',
-                     'created_count', 'found_count')
+        permanent = (
+            'nickname', 'country', 'region', 'registered',
+            'created_count', 'found_count')
         search = ('geocacher__nickname',)
         sortable = ('created_count', 'found_count')
         filter_form = RateFilter
 
     def apply_filter(self, filter, qs):
+        """ apply filter """
         self._filter = None
 
         country = filter.get('country')
@@ -410,83 +465,98 @@ class GeocacherRankListBase(table.TableView):
         subject = filter.get('subject', '')
         if subject and subject != 'ALL':
             if subject == '777':
-                qs.filter(geocacher__country_iso3=country,
-                          geocacher__admin_code__isnull=True)
+                qs.filter(
+                    geocacher__country_iso3=country,
+                    geocacher__admin_code__isnull=True)
             else:
-                qs.filter(geocacher__country_iso3=country,
-                          geocacher__admin_code=subject)
+                qs.filter(
+                    geocacher__country_iso3=country,
+                    geocacher__admin_code=subject)
             self._filter = filter
 
     def filtered(self):
-        r = False
+        """ filtered or not """
         if '_filter' in self:
-            r = self._filter is not None
-        return r
+            return self._filter is not None
+        return False
 
     def render_registered(self, table, row_index, row, value):
+        """ render field registered """
         return value.strftime("%Y") if value else ''
 
     def render_country(self, table, row_index, row, value):
+        """ render field country """
         return _(value) if value else ''
 
     def render_region(self, table, row_index, row, value):
+        """ render field region """
         return _(value) if value else ''
 
 
 class GeocacherVirtRankList(GeocacherRankListBase):
-    created_count = widgets.LabelWidget(_('Created by'),
-                                        refname='vi_created_count')
+    """ Table GeocacherVirtRankList """
+    created_count = widgets.LabelWidget(
+        _('Created by'), refname='vi_created_count')
     found_count = widgets.LabelWidget(_('Found'), refname='vi_found_count')
 
 
 class GeocacherTradRankList(GeocacherRankListBase):
-    created_count = widgets.LabelWidget(_('Created by'),
-                                        refname='tr_created_count')
+    """ Table  GeocacherTradRankList """
+    created_count = widgets.LabelWidget(
+        _('Created by'), refname='tr_created_count')
     found_count = widgets.LabelWidget(_('Found'), refname='tr_found_count')
 
 
 class GeocacherCurrYearRateList(GeocacherRankListBase):
-    created_count = widgets.LabelWidget(_('Created by'),
-                                        refname='curr_created_count')
+    """ Table GeocacherCurrYearRankList """
+    created_count = widgets.LabelWidget(
+        _('Created by'), refname='curr_created_count')
     found_count = widgets.LabelWidget(_('Found'), refname='curr_found_count')
 
 
 class GeocacherCurrYearVirtRankList(GeocacherRankListBase):
-    created_count = widgets.LabelWidget(_('Created by'),
-                                        refname='vi_curr_created_count')
+    """ Table GeocacherCurrYearVirtRankList """
+    created_count = widgets.LabelWidget(
+        _('Created by'), refname='vi_curr_created_count')
     found_count = widgets.LabelWidget(_('Found'), refname='vi_curr_found_count')
 
 
 class GeocacherCurrYearTradRankList(GeocacherRankListBase):
-    created_count = widgets.LabelWidget(_('Created by'),
-                                        refname='tr_curr_created_count')
+    """ Table GeocacherCurrYearTradRankList """
+    created_count = widgets.LabelWidget(
+        _('Created by'), refname='tr_curr_created_count')
     found_count = widgets.LabelWidget(_('Found'), refname='tr_curr_found_count')
 
 
 class GeocacherLastYearRateList(GeocacherRankListBase):
-    created_count = widgets.LabelWidget(_('Created by'),
-                                        refname='last_created_count')
+    """ Table GeocacherLastYearRankList """
+    created_count = widgets.LabelWidget(
+        _('Created by'), refname='last_created_count')
     found_count = widgets.LabelWidget(_('Found'), refname='last_found_count')
 
 
 class GeocacherLastYearVirtRankList(GeocacherRankListBase):
-    created_count = widgets.LabelWidget(_('Created by'),
-                                        refname='vi_last_created_count')
+    """ Table GeocacherLastYearVirtRankList """
+    created_count = widgets.LabelWidget(
+        _('Created by'), refname='vi_last_created_count')
     found_count = widgets.LabelWidget(_('Found'), refname='vi_last_found_count')
 
 
 class GeocacherLastYearTradRankList(GeocacherRankListBase):
-    created_count = widgets.LabelWidget(_('Created by'),
-                                        refname='tr_last_created_count')
-    found_count = widgets.LabelWidget(_('Found'),
-                                      refname='tr_last_found_count')
+    """ Table GeocacherLastYearTradRankList """
+    created_count = widgets.LabelWidget(
+        _('Created by'), refname='tr_last_created_count')
+    found_count = widgets.LabelWidget(
+        _('Found'), refname='tr_last_found_count')
 
 
 class GeocacherSearchRankListBase(table.TableView):
-    nickname = widgets.HrefWidget(_('Nickname'),
-                                  refname='geocacher__nickname',
-                                  reverse='geocaching-su-geocacher-view',
-                                  reverse_column='geocacher__pid')
+    """ Table GeocacherSearchRankListBase """
+    nickname = widgets.HrefWidget(
+        _('Nickname'),
+        refname='geocacher__nickname',
+        reverse='geocaching-su-geocacher-view',
+        reverse_column='geocacher__pid')
     country = widgets.LabelWidget(_('Country'), refname='country')
     region = widgets.LabelWidget(_('Region'), refname='region')
     points = widgets.LabelWidget(_('Points'), refname='points')
@@ -499,6 +569,7 @@ class GeocacherSearchRankListBase(table.TableView):
         filter_form = RateFilter
 
     def apply_filter(self, filter, qs):
+        """ apply_filter """
         self._filter = None
 
         country = filter.get('country')
@@ -509,31 +580,37 @@ class GeocacherSearchRankListBase(table.TableView):
         subject = filter.get('subject', '')
         if subject and subject != 'ALL':
             if subject == '777':
-                qs.filter(geocacher__country_iso3=country,
-                          geocacher__admin_code__isnull=True)
+                qs.filter(
+                    geocacher__country_iso3=country,
+                    geocacher__admin_code__isnull=True)
             else:
-                qs.filter(geocacher__country_iso3=country,
-                          geocacher__admin_code=subject)
+                qs.filter(
+                    geocacher__country_iso3=country,
+                    geocacher__admin_code=subject)
             self._filter = filter
 
     def filtered(self):
-        r = False
+        """ filtered or not """
         if '_filter' in self:
-            r = self._filter is not None
-        return r
+            return self._filter is not None
+        return False
 
     def render_country(self, table, row_index, row, value):
+        """ render field country """
         return _(value) if value else ''
 
     def render_region(self, table, row_index, row, value):
+        """ render field region """
         return _(value) if value else ''
 
 
 class GeocacherSearchRankListYear(table.TableView):
-    nickname = widgets.HrefWidget(_('Nickname'),
-                                  refname='geocacher__nickname',
-                                  reverse='geocaching-su-geocacher-view',
-                                  reverse_column='geocacher__pid')
+    """ Table GeocacherSearchRankListYear """
+    nickname = widgets.HrefWidget(
+        _('Nickname'),
+        refname='geocacher__nickname',
+        reverse='geocaching-su-geocacher-view',
+        reverse_column='geocacher__pid')
     country = widgets.LabelWidget(_('Country'), refname='country')
     region = widgets.LabelWidget(_('Region'), refname='region')
     points = widgets.LabelWidget(_('Points'), refname='year_points')
@@ -546,6 +623,7 @@ class GeocacherSearchRankListYear(table.TableView):
         filter_form = RateFilter
 
     def apply_filter(self, filter, qs):
+        """ apply filter """
         self._filter = None
 
         country = filter.get('country')
@@ -556,27 +634,32 @@ class GeocacherSearchRankListYear(table.TableView):
         subject = filter.get('subject', '')
         if subject and subject != 'ALL':
             if subject == '777':
-                qs.filter(geocacher__country_iso3=country,
-                          geocacher__admin_code__isnull=True)
+                qs.filter(
+                    geocacher__country_iso3=country,
+                    geocacher__admin_code__isnull=True)
             else:
-                qs.filter(geocacher__country_iso3=country,
-                          geocacher__admin_code=subject)
+                qs.filter(
+                    geocacher__country_iso3=country,
+                    geocacher__admin_code=subject)
             self._filter = filter
 
     def filtered(self):
-        r = False
+        """ filtered or not """
         if '_filter' in self:
-            r = self._filter is not None
-        return r
+            return self._filter is not None
+        return False
 
     def render_country(self, table, row_index, row, value):
+        """ render field country """
         return _(value) if value else ''
 
     def render_region(self, table, row_index, row, value):
+        """ render field region """
         return _(value) if value else ''
 
 
 def get_base_count(request):
+    """ get base count """
     page = int(request.GET.get('page') or 0)
     if page:
         return (page - 1) * settings.ROW_PER_PAGE
@@ -584,6 +667,7 @@ def get_base_count(request):
 
 
 class CacheTable(tables.Table):
+    """ Cache Table """
     counter = tables.Column(
         verbose_name="#", empty_values=(), orderable=False)
     pid = tables.Column(accessor='cach_pid', verbose_name=_("pid"))
@@ -602,60 +686,71 @@ class CacheTable(tables.Table):
         attrs = {'class': 'table'}
 
     def render_created(self, value):
+        """ render field created """
         return value.strftime('%Y-%m-%d')
 
     def render_counter(self):
+        """ render field counter """
         self.row_counter = getattr(
             self, 'row_counter', itertools.count(self.page.start_index()))
         return next(self.row_counter)
 
     def render_grade(self, value):
-        return '{0:.1f}'.format(value)
+        """ render field grade """
+        return f'{value:.1f}'
 
     def render_country(self, value):
+        """ render field country """
         country = GeoCountry.objects.filter(iso=value).first()
         return _(country.name) if country else None
 
     def render_pid(self, value):
+        """ render field pid """
         return format_html(
             '<a href="{}">{}</a>',
-            'https://geocaching.su/?pn=101&cid={}'.format(value), value)
+            f'https://geocaching.su/?pn=101&cid={value}', value)
 
 
 class CacheRecommendsTable(CacheTable):
+    """ Table CacheRecommends """
     recommend_count = tables.Column(verbose_name=_('Recommendations'))
 
 
 class CacheFoundTable(CacheTable):
+    """ Table CacheFound """
     found_count = tables.Column(verbose_name=_('Found'))
 
 
 class CacheIndexTable(CacheTable):
+    """ Table CacheIndex """
     found_count = tables.Column(verbose_name=_('Found'))
     recommend_count = tables.Column(verbose_name=_('Recommendations'))
     rank = tables.Column(verbose_name=_('Rating'))
 
     def render_rank(self, value):
-        return '{0:.1f}'.format(value)
+        """ render field rank """
+        return f'{value:.1f}'
 
 
 @it_isnt_updating
 def cach_rate_by_recommend(request):
+    """ get list of caches rated by recommendations """
     order_by = '-recommend_count'
-    qs = CachStat.objects.all().order_by(order_by)
+    qset = CachStat.objects.all().order_by(order_by)
 
-    f = CacheStatFilter(request.GET, queryset=qs)
+    filtr = CacheStatFilter(request.GET, queryset=qset)
 
-    table = CacheRecommendsTable(f.qs)
+    the_table = CacheRecommendsTable(filtr.qs)
     RequestConfig(
-        request, paginate={"per_page": 100}).configure(table)
+        request, paginate={"per_page": 100}).configure(the_table)
     return render(
         request,
         'Geocaching_su/dt2-cach_rank_by_recommend.html',
-        {'table': table, 'filter': f})
+        {'table': the_table, 'filter': filtr})
 
 
 class CacheStatFilter(django_filters.FilterSet):
+    """ Filter CacheStat """
     cach__country_code = django_filters.ChoiceFilter(
         lookup_expr='iexact',
         choices=countries_iso,
@@ -674,55 +769,59 @@ class CacheStatFilter(django_filters.FilterSet):
 
 @it_isnt_updating
 def cach_rate_by_found(request):
+    """ get list of caches rated by found """
     order_by = '-found_count'
-    qs = CachStat.objects.all().order_by(order_by)
+    qset = CachStat.objects.all().order_by(order_by)
 
-    f = CacheStatFilter(request.GET, queryset=qs)
+    filtr = CacheStatFilter(request.GET, queryset=qset)
 
-    table = CacheFoundTable(f.qs)
+    the_table = CacheFoundTable(filtr.qs)
     RequestConfig(
-        request, paginate={"per_page": 100}).configure(table)
+        request, paginate={"per_page": 100}).configure(the_table)
     return render(
         request,
         'Geocaching_su/dt2-cach_rank_by_found.html',
-        {'table': table, 'filter': f})
+        {'table': the_table, 'filter': filtr})
 
 
 @it_isnt_updating
 def cach_rate_by_index(request):
+    """ get list of caches rated by special index """
     order_by = '-rank'
-    qs = CachStat.objects.all().order_by(order_by)
+    qset = CachStat.objects.all().order_by(order_by)
 
-    f = CacheStatFilter(request.GET, queryset=qs)
+    filtr = CacheStatFilter(request.GET, queryset=qset)
 
-    table = CacheIndexTable(f.qs)
+    the_table = CacheIndexTable(filtr.qs)
     RequestConfig(
-        request, paginate={"per_page": 100}).configure(table)
+        request, paginate={"per_page": 100}).configure(the_table)
     return render(
         request,
         'Geocaching_su/dt2-cache_rank_by_index.html',
-        {'table': table, 'filter': f})
+        {'table': the_table, 'filter': filtr})
 
 
 @it_isnt_updating
-def activity_table(request, qs, TableClass, title, table_slug, additional_meta=True):
-    source = datasource.QSDataSource(qs)
+def activity_table(request, qset, table_class, title, table_slug, additional_meta=True):
+    """ get list of geocachers with activity data """
+    source = datasource.QSDataSource(qset)
 
-    table = TableClass(table_slug)
+    the_table = table_class(table_slug)
     if additional_meta:
-        table.use_keyboard = True
-        table.global_profile = True
-        table.permanent = ('nickname', 'country', 'region', 'registered',
-                           'created_count', 'found_count')
-        table.search = ('geocacher__nickname',)
-        table.sortable = ('created_count', 'found_count')
-        table.filter_form = RateFilter
+        the_table.use_keyboard = True
+        the_table.global_profile = True
+        the_table.permanent = (
+            'nickname', 'country', 'region', 'registered',
+            'created_count', 'found_count')
+        the_table.search = ('geocacher__nickname',)
+        the_table.sortable = ('created_count', 'found_count')
+        the_table.filter_form = RateFilter
 
-    cnt = get_controller(table, source, request, settings.ROW_PER_PAGE)
+    cnt = get_controller(the_table, source, request, settings.ROW_PER_PAGE)
 
-    rc = cnt.process_request()
-    if rc:
-        return rc
+    result = cnt.process_request()
+    if result:
+        return result
 
     return render(
         request,
@@ -734,6 +833,7 @@ def activity_table(request, qs, TableClass, title, table_slug, additional_meta=T
 
 
 class GeocacherStatFilter(django_filters.FilterSet):
+    """ Filter Geocacher Stat """
     geocacher__country_iso3 = django_filters.ChoiceFilter(
         lookup_expr='iexact',
         choices=countries_iso3,
@@ -746,6 +846,7 @@ class GeocacherStatFilter(django_filters.FilterSet):
 
 
 class GeocacherTable(tables.Table):
+    """ Table Geocacher """
     counter = tables.Column(verbose_name="#", empty_values=(), orderable=False)
     nickname = tables.Column(verbose_name=_("Nickname"),
                              accessor='geocacher__nickname')
@@ -755,20 +856,25 @@ class GeocacherTable(tables.Table):
         verbose_name=_("Register date"), accessor='geocacher__register_date')
 
     def render_registered(self, value):
+        """ render field registered """
         return value.strftime('%Y')
 
     def render_counter(self):
+        """ render field counter """
         self.row_counter = getattr(
             self, 'row_counter', itertools.count(self.page.start_index()))
         return next(self.row_counter)
 
     def render_country(self, value):
+        """ render field country """
         return _(value) if value else ''
 
     def render_region(self, value):
+        """ render field region """
         return _(value) if value else ''
 
     def render_nickname(self, value):
+        """ render field nick """
         return format_html(
             '<a href="{}">{}</a>',
             reverse('gcsu-profile', args=[value]), value)
@@ -778,6 +884,7 @@ class GeocacherTable(tables.Table):
 
 
 class GeocacherRateTable(GeocacherTable):
+    """ Table Geocacher Rate """
     found_count = tables.Column(verbose_name=_("Found"),)
     created_count = tables.Column(verbose_name=_("Created"),)
     av_grade = tables.Column(verbose_name=_('Average grade'))
@@ -785,53 +892,66 @@ class GeocacherRateTable(GeocacherTable):
         verbose_name=_('Av. grade of his caches'))
 
     def render_av_grade(self, value):
-        return '%.1f' % (value or 0)
+        """ render field av_grade """
+        value = value or 0
+        return f'{value:.1f}'
 
     def render_av_his_cach_grade(self, value):
-        return '%.1f' % (value or 0)
+        """ render field  av_his_cach_grade """
+        value = value or 0
+        return f'{value:.1f}'
 
 
 class GeocacherRateCurrYearTable(GeocacherTable):
+    """ Table Geocacher Rate Current Year """
     curr_found_count = tables.Column(verbose_name=_('Found'))
     curr_created_count = tables.Column(verbose_name=_('Created'))
 
 
 class GeocacherRateLastYearTable(GeocacherTable):
+    """ Table Geocacher Rate Last Year """
     last_found_count = tables.Column(verbose_name=_('Found'))
     last_created_count = tables.Column(verbose_name=_('Created'))
 
 
 class GeocacherRateUnrealTable(GeocacherTable):
+    """ Table Geocacher Rate Unreal """
     vi_found_count = tables.Column(verbose_name=_('Found'))
     vi_created_count = tables.Column(verbose_name=_('Created'))
 
 
 class GeocacherRateUnrealCurrYearTable(GeocacherTable):
+    """ Table Geocacher Rate Unreal Current Year """
     vi_curr_found_count = tables.Column(verbose_name=_('Found'))
     vi_curr_created_count = tables.Column(verbose_name=_('Created'))
 
 
 class GeocacherRateUnrealLastYearTable(GeocacherTable):
+    """ Table Geocacher Rate Unreal Last Year """
     vi_last_found_count = tables.Column(verbose_name=_('Found'))
     vi_last_created_count = tables.Column(verbose_name=_('Created'))
 
 
 class GeocacherRateRealTable(GeocacherTable):
+    """ Table Geocacher Rate Real """
     tr_found_count = tables.Column(verbose_name=_('Found'))
     tr_created_count = tables.Column(verbose_name=_('Created'))
 
 
 class GeocacherRateRealCurrYearTable(GeocacherTable):
+    """ Table Geocacher Rate Real Current Year """
     tr_curr_found_count = tables.Column(verbose_name=_('Found'))
     tr_curr_created_count = tables.Column(verbose_name=_('Created'))
 
 
 class GeocacherRateRealLastYearTable(GeocacherTable):
+    """ Table Geocacher Rate Real Last Year """
     tr_last_found_count = tables.Column(verbose_name=_('Found'))
     tr_last_created_count = tables.Column(verbose_name=_('Created'))
 
 
 class GeocacherSearchTable(tables.Table):
+    """ Table Geocacher Search """
     counter = tables.Column(verbose_name="#", empty_values=(), orderable=False)
     nickname = tables.Column(verbose_name=_(
         "Nickname"), accessor='geocacher__nickname')
@@ -842,17 +962,21 @@ class GeocacherSearchTable(tables.Table):
     points = tables.Column(verbose_name=_("Points"), accessor='points')
 
     def render_registered(self, value):
+        """ render field registered """
         return value.strftime('%Y')
 
     def render_counter(self):
+        """ render field counter """
         self.row_counter = getattr(
             self, 'row_counter', itertools.count(self.page.start_index()))
         return next(self.row_counter)
 
     def render_country(self, value):
+        """ render country """
         return _(value) if value else ''
 
     def render_region(self, value):
+        """ render field region """
         return _(value) if value else ''
 
     class Meta:
@@ -860,303 +984,240 @@ class GeocacherSearchTable(tables.Table):
 
 
 class GeocacherSearchYearTable(GeocacherSearchTable):
+    """ Table GeocacherSearchYear """
     points = tables.Column(verbose_name=_('Points'), accessor='year_points')
 
 
 @it_isnt_updating
 def geocacher_rate(request):
-    qs = GeocacherStat.objects.all().order_by('-created_count', '-found_count')
+    """
+    get list of geocachers by rate
+    """
+    qset = GeocacherStat.objects.all().order_by('-created_count', '-found_count')
 
-    f = GeocacherStatFilter(request.GET, queryset=qs)
+    filtr = GeocacherStatFilter(request.GET, queryset=qset)
 
-    table = GeocacherRateTable(f.qs)
+    the_table = GeocacherRateTable(filtr.qs)
     RequestConfig(
-        request, paginate={"per_page": settings.ROW_PER_PAGE}).configure(table)
+        request, paginate={"per_page": settings.ROW_PER_PAGE}).configure(the_table)
 
     return render(
         request,
         'Geocaching_su/dt2-geocacher_list.html',
         {
-            'table': table,
-            'filter': f,
+            'table': the_table,
+            'filter': filtr,
             'title': _("All caches"),
             'curr_year': datetime.now().year,
             'last_year': datetime.now().year - 1})
 
 
-#@it_isnt_updating
-#def geocacher_rate_unreal(request):
-    #qs = GeocacherStat.objects.all().order_by('-vi_created_count', '-vi_found_count')
-
-    #return activity_table(
-        #request, qs,
-        #GeocacherVirtRankList,
-        #_("Unreal caches"),
-        #'cach_search')
-
 @it_isnt_updating
 def geocacher_rate_unreal(request):
-    qs = GeocacherStat.objects.all().order_by(
+    """
+    get list of geocachers by rate unreal
+    """
+    qset = GeocacherStat.objects.all().order_by(
         '-vi_created_count', '-vi_found_count')
     title = _("Unreal caches")
 
-    f = GeocacherStatFilter(request.GET, queryset=qs)
+    filtr = GeocacherStatFilter(request.GET, queryset=qset)
 
-    table = GeocacherRateUnrealTable(f.qs)
+    the_table = GeocacherRateUnrealTable(filtr.qs)
     RequestConfig(
-        request, paginate={"per_page": settings.ROW_PER_PAGE}).configure(table)
+        request, paginate={"per_page": settings.ROW_PER_PAGE}).configure(the_table)
 
-    return render(request,
-                  'Geocaching_su/dt2-geocacher_list.html',
-                  {
-                      'table': table,
-                      'filter': f,
-                      'title': title,
-                      'curr_year': datetime.now().year,
-                      'last_year': datetime.now().year - 1
-                   })
+    return render(
+        request,
+        'Geocaching_su/dt2-geocacher_list.html',
+        {
+            'table': the_table,
+            'filter': filtr,
+            'title': title,
+            'curr_year': datetime.now().year,
+            'last_year': datetime.now().year - 1
+         })
 
-
-#@it_isnt_updating
-#def geocacher_rate_real(request):
-    #qs = GeocacherStat.objects.all().order_by('-tr_created_count', '-tr_found_count')
-
-    #return activity_table(request, qs,
-                          #GeocacherTradRankList,
-                          #_("Real caches"),
-                          #'cach_search')
 
 @it_isnt_updating
 def geocacher_rate_real(request):
-    qs = GeocacherStat.objects.all().order_by(
+    """
+    get list of geocachers by rate real
+    """
+    qset = GeocacherStat.objects.all().order_by(
         '-tr_created_count', '-tr_found_count')
     title = _("Real caches")
 
-    f = GeocacherStatFilter(request.GET, queryset=qs)
+    filtr = GeocacherStatFilter(request.GET, queryset=qset)
 
-    table = GeocacherRateRealTable(f.qs)
+    the_table = GeocacherRateRealTable(filtr.qs)
     RequestConfig(
-        request, paginate={"per_page": settings.ROW_PER_PAGE}).configure(table)
+        request, paginate={"per_page": settings.ROW_PER_PAGE}).configure(the_table)
 
-    return render(request,
-                  'Geocaching_su/dt2-geocacher_list.html',
-                  {
-                      'table': table,
-                      'filter': f,
-                      'title': title,
-                      'curr_year': datetime.now().year,
-                      'last_year': datetime.now().year - 1
-                   })
-
-
-#@it_isnt_updating
-#def geocacher_rate_current(request):
-    #qs = GeocacherStat.objects.all().order_by('-curr_created_count', '-curr_found_count')
-    #title = _("%s. All caches") % datetime.now().year
-    #return activity_table(request, qs,
-                          #GeocacherCurrYearRateList,
-                          #title,
-                          #'cach_search')
+    return render(
+        request,
+        'Geocaching_su/dt2-geocacher_list.html',
+        {
+            'table': the_table,
+            'filter': filtr,
+            'title': title,
+            'curr_year': datetime.now().year,
+            'last_year': datetime.now().year - 1
+         })
 
 
 @it_isnt_updating
 def geocacher_rate_current(request):
-    qs = GeocacherStat.objects.all().order_by(
+    """
+    get list of geocachers by rate current
+    """
+    qset = GeocacherStat.objects.all().order_by(
         '-curr_created_count', '-curr_found_count')
     title = _("%s. All caches") % datetime.now().year
 
-    f = GeocacherStatFilter(request.GET, queryset=qs)
+    filtr = GeocacherStatFilter(request.GET, queryset=qset)
 
-    table = GeocacherRateCurrYearTable(f.qs)
+    the_table = GeocacherRateCurrYearTable(filtr.qs)
     RequestConfig(
-        request, paginate={"per_page": settings.ROW_PER_PAGE}).configure(table)
+        request, paginate={"per_page": settings.ROW_PER_PAGE}).configure(the_table)
 
-    return render(request,
-                  'Geocaching_su/dt2-geocacher_list.html',
-                  {
-                      'table': table,
-                      'filter': f,
-                      'title': title,
-                      'curr_year': datetime.now().year,
-                      'last_year': datetime.now().year - 1
-                   })
+    return render(
+        request,
+        'Geocaching_su/dt2-geocacher_list.html',
+        {
+            'table': the_table,
+            'filter': filtr,
+            'title': title,
+            'curr_year': datetime.now().year,
+            'last_year': datetime.now().year - 1
+         })
 
 
 @it_isnt_updating
 def geocacher_rate_last(request):
-    qs = GeocacherStat.objects.all().order_by(
+    """
+    get list of geocachers by rate last year
+    """
+    qset = GeocacherStat.objects.all().order_by(
         '-last_created_count', '-last_found_count')
     title = _("%s. All caches") % (datetime.now().year - 1)
 
-    f = GeocacherStatFilter(request.GET, queryset=qs)
+    filtr = GeocacherStatFilter(request.GET, queryset=qset)
 
-    table = GeocacherRateLastYearTable(f.qs)
+    the_table = GeocacherRateLastYearTable(filtr.qs)
     RequestConfig(
-        request, paginate={"per_page": settings.ROW_PER_PAGE}).configure(table)
+        request, paginate={"per_page": settings.ROW_PER_PAGE}).configure(the_table)
 
-    return render(request,
-                  'Geocaching_su/dt2-geocacher_list.html',
-                  {
-                      'table': table,
-                      'filter': f,
-                      'title': title,
-                      'curr_year': datetime.now().year,
-                      'last_year': datetime.now().year - 1
-                   })
-
-
-#@it_isnt_updating
-#def geocacher_rate_unreal_current(request):
-    #qs = GeocacherStat.objects.all().order_by('-vi_curr_created_count', '-vi_curr_found_count')
-    #title = _("%s. Unreal caches") % datetime.now().year
-    #return activity_table(request, qs,
-                          #GeocacherCurrYearVirtRankList,
-                          #title,
-                          #'cach_search')
+    return render(
+        request,
+        'Geocaching_su/dt2-geocacher_list.html',
+        {
+            'table': the_table,
+            'filter': filtr,
+            'title': title,
+            'curr_year': datetime.now().year,
+            'last_year': datetime.now().year - 1
+         })
 
 
 @it_isnt_updating
 def geocacher_rate_unreal_current(request):
-    qs = GeocacherStat.objects.all().order_by(
+    """
+    get list of geocachers by rate current unreal
+    """
+    qset = GeocacherStat.objects.all().order_by(
         '-vi_curr_created_count', '-vi_curr_found_count')
     title = _("%s. Unreal caches") % datetime.now().year
 
-    f = GeocacherStatFilter(request.GET, queryset=qs)
+    filtr = GeocacherStatFilter(request.GET, queryset=qset)
 
-    table = GeocacherRateUnrealCurrYearTable(f.qs)
+    the_table = GeocacherRateUnrealCurrYearTable(filtr.qs)
     RequestConfig(
-        request, paginate={"per_page": settings.ROW_PER_PAGE}).configure(table)
+        request, paginate={"per_page": settings.ROW_PER_PAGE}).configure(the_table)
 
-    return render(request,
-                  'Geocaching_su/dt2-geocacher_list.html',
-                  {
-                      'table': table,
-                      'filter': f,
-                      'title': title,
-                      'curr_year': datetime.now().year,
-                      'last_year': datetime.now().year - 1
-                   })
+    return render(
+        request,
+        'Geocaching_su/dt2-geocacher_list.html',
+        {
+            'table': the_table,
+            'filter': filtr,
+            'title': title,
+            'curr_year': datetime.now().year,
+            'last_year': datetime.now().year - 1
+         })
 
-
-#@it_isnt_updating
-#def geocacher_rate_real_current(request):
-    #qs = GeocacherStat.objects.all().order_by('-tr_curr_created_count', '-tr_curr_found_count')
-    #title = _("%s. Real caches") % datetime.now().year
-    #return activity_table(request, qs,
-                          #GeocacherCurrYearTradRankList,
-                          #title,
-                          #'cach_search')
-
-@it_isnt_updating
-def geocacher_rate_real_current(request):
-    qs = GeocacherStat.objects.all().order_by(
-        '-tr_curr_created_count', '-tr_curr_found_count')
-    title = _("%s. Real caches") % datetime.now().year
-
-    f = GeocacherStatFilter(request.GET, queryset=qs)
-
-    table = GeocacherRateRealCurrYearTable(f.qs)
-    RequestConfig(
-        request, paginate={"per_page": settings.ROW_PER_PAGE}).configure(table)
-
-    return render(request,
-                  'Geocaching_su/dt2-geocacher_list.html',
-                  {
-                      'table': table,
-                      'filter': f,
-                      'title': title,
-                      'curr_year': datetime.now().year,
-                      'last_year': datetime.now().year - 1
-                   })
-
-
-#@it_isnt_updating
-#def geocacher_rate_last(request):
-    #qs = GeocacherStat.objects.all().order_by('-last_created_count', '-last_found_count')
-    #title = _("%s. All caches") % (datetime.now().year-1)
-    #return activity_table(request, qs,
-                          #GeocacherLastYearRateList,
-                          #title,
-                          #'cach_search')
-
-
-#@it_isnt_updating
-#def geocacher_rate_unreal_last(request):
-    #qs = GeocacherStat.objects.all().order_by('-vi_last_created_count', '-vi_last_found_count')
-    #title =  _("%s. Unreal caches") % (datetime.now().year-1)
-    #return activity_table(request, qs,
-                          #GeocacherLastYearVirtRankList,
-                          #title,
 
 @it_isnt_updating
 def geocacher_rate_unreal_last(request):
-    qs = GeocacherStat.objects.all().order_by(
+    """
+    get list of geocachers by rate last year unreal
+    """
+    qset = GeocacherStat.objects.all().order_by(
         '-vi_last_created_count', '-vi_last_found_count')
     title = _("%s. Unreal caches") % (datetime.now().year - 1)
 
-    f = GeocacherStatFilter(request.GET, queryset=qs)
+    filtr = GeocacherStatFilter(request.GET, queryset=qset)
 
-    table = GeocacherRateUnrealLastYearTable(f.qs)
+    the_table = GeocacherRateUnrealLastYearTable(filtr.qs)
     RequestConfig(
-        request, paginate={"per_page": settings.ROW_PER_PAGE}).configure(table)
+        request, paginate={"per_page": settings.ROW_PER_PAGE}).configure(the_table)
 
-    return render(request,
-                  'Geocaching_su/dt2-geocacher_list.html',
-                  {
-                      'table': table,
-                      'filter': f,
-                      'title': title,
-                      'curr_year': datetime.now().year,
-                      'last_year': datetime.now().year - 1
-                   })
+    return render(
+        request,
+        'Geocaching_su/dt2-geocacher_list.html',
+        {
+            'table': the_table,
+            'filter': filtr,
+            'title': title,
+            'curr_year': datetime.now().year,
+            'last_year': datetime.now().year - 1
+         })
 
-
-#@it_isnt_updating
-#def geocacher_rate_real_last(request):
-    #qs = GeocacherStat.objects.all().order_by('-tr_last_created_count', '-tr_last_found_count')
-    #title =  _("%s. Real caches") % (datetime.now().year-1)
-    #return activity_table(request, qs,
-                          #GeocacherLastYearTradRankList,
-                          #title,
-                          #'cach_search')
 
 @it_isnt_updating
 def geocacher_rate_real_last(request):
-    qs = GeocacherStat.objects.all().order_by(
+    """
+    get list of geocachers by rate last year real
+    """
+    qset = GeocacherStat.objects.all().order_by(
         '-tr_last_created_count', '-tr_last_found_count')
     title = _("%s. Real caches") % (datetime.now().year - 1)
 
-    f = GeocacherStatFilter(request.GET, queryset=qs)
+    filtr = GeocacherStatFilter(request.GET, queryset=qset)
 
-    table = GeocacherRateRealLastYearTable(f.qs)
+    the_table = GeocacherRateRealLastYearTable(filtr.qs)
     RequestConfig(
-        request, paginate={"per_page": settings.ROW_PER_PAGE}).configure(table)
+        request, paginate={"per_page": settings.ROW_PER_PAGE}).configure(the_table)
 
-    return render(request,
-                  'Geocaching_su/dt2-geocacher_list.html',
-                  {
-                      'table': table,
-                      'filter': f,
-                      'title': title,
-                      'curr_year': datetime.now().year,
-                      'last_year': datetime.now().year - 1
-                   })
+    return render(
+        request,
+        'Geocaching_su/dt2-geocacher_list.html',
+        {
+            'table': the_table,
+            'filter': filtr,
+            'title': title,
+            'curr_year': datetime.now().year,
+            'last_year': datetime.now().year - 1
+         })
 
 
 @it_isnt_updating
 def cach_view(request, cach_pid):
+    """ redirect to cache """
     url = geocaching_su_cach_url(cach_pid)
     return HttpResponseRedirect(url)
 
 
 @it_isnt_updating
 def geocacher_view(request, geocacher_uid):
+    """ redirect to geocacher """
     url = geocaching_su_geocacher_url(geocacher_uid)
     return HttpResponseRedirect(url)
 
 
 @it_isnt_updating
 def geocaching_su(request):
+    """ geocaching generak statistic """
     sql = """
     SELECT c.iso,
     POW((SELECT COUNT(gc.id) FROM geocacher gc WHERE gc.country_iso3=c.iso3),1) as geocachers,
@@ -1177,21 +1238,21 @@ def geocaching_su(request):
     return render(
         request,
         'Geocaching_su/geocaching_su_index.html',
-        {'countries': countries,
-        'update_date': update_date.get("last_date"),
-         })
+        {
+            'countries': countries,
+            'update_date': update_date.get("last_date")})
 
 
 def find_item_by_year(items, year):
-    r = None
+    """ find item by year """
     for item in items:
         if item.get('year') == year:
             return item
-    return r
 
 
 @it_isnt_updating
 def geocaching_su_cach_stat(request):
+    """ geocaching caches statistics """
     cach_count = Cach.objects.all().count()
 
     sql = """
@@ -1202,11 +1263,11 @@ def geocaching_su_cach_stat(request):
     cach_table = []
 
     for item in iter_sql(sql):
-        cach_table.append({'type': item[0],
-                           'description': GEOCACHING_SU_CACH_TYPES.get(item[0], ''),
-                           'count': item[1],
-                           'percent': float(item[1]) / cach_count*100})
-
+        cach_table.append({
+            'type': item[0],
+            'description': GEOCACHING_SU_CACH_TYPES.get(item[0], ''),
+            'count': item[1],
+            'percent': float(item[1]) / cach_count * 100})
     return render(
         request,
         'Geocaching_su/cache_stat.html',
@@ -1219,11 +1280,13 @@ def geocaching_su_cach_stat(request):
 
 @it_isnt_updating
 def geocaching_su_cache_statistics(request):
+    """ redirect to geocaching statistics """
     return HttpResponseRedirect(reverse('geocaching-su-cach-stat'))
 
 
 @it_isnt_updating
 def geocaching_su_geocacher_stat_countries(request):
+    """ geocaching statistics geocachers by countries """
     geocacher_count = Geocacher.objects.all().count()
     active_count = Geocacher.objects.all().filter(found_caches__gt=0).count()
 
@@ -1238,10 +1301,10 @@ def geocaching_su_geocacher_stat_countries(request):
 
     for item in iter_sql(sql):
         country = item[0] if item[0] else _("Undefined")
-        geocacher_table.append({'country': country,
-                                'count': item[1],
-                                'percent': float(item[1]) / geocacher_count*100})
-
+        geocacher_table.append({
+            'country': country,
+            'count': item[1],
+            'percent': float(item[1]) / geocacher_count * 100})
     sql = """
     SELECT gc.name, COUNT(*) as cnt
     FROM geocacher g
@@ -1254,33 +1317,33 @@ def geocaching_su_geocacher_stat_countries(request):
 
     for item in iter_sql(sql):
         country = item[0] if item[0] else _("Undefined")
-        active_table.append({'country': country,
-                             'count': item[1],
-                             'percent': float(item[1]) / active_count*100})
-
+        active_table.append({
+            'country': country,
+            'count': item[1],
+            'percent': float(item[1]) / active_count * 100})
     return render(
         request,
         'Geocaching_su/geocacher_stat_countries.html',
-        {'geocacher_count': geocacher_count,
-        'active_count': active_count,
-        'geocacher_table': geocacher_table,
-        'active_table': active_table})
+        {
+            'geocacher_count': geocacher_count,
+            'active_count': active_count,
+            'geocacher_table': geocacher_table,
+            'active_table': active_table})
 
 
 @it_isnt_updating
 def geocaching_su_geocacher_stat(request):
+    """ redirect to geocachers statistic """
     return HttpResponseRedirect(reverse('geocacher-activity'))
 
 
-def activity_per_month(last_years=None):
-    return activity_per_month(last_years)
-
-
 def activity_creating_per_month(last_years=None):
+    """ activity creating per month """
     return activity_per_month(last_years, creation=True)
 
 
 def caches_per_year():
+    """ caches per year """
     def row_by_year(data, year):
         if not data or not year:
             return None
@@ -1306,10 +1369,9 @@ def caches_per_year():
     if year2 < year_:
         year_ = year2
 
-
     data_table = []
-    for y in range(curr_year-year_+1):
-                data_table.append({'year': y + year_, 'real': 0, 'unreal': 0})
+    for year in range(curr_year - year_ + 1):
+        data_table.append({'year': year + year_, 'real': 0, 'unreal': 0})
 
     sql = """
     SELECT YEAR(created_date), COUNT(*) as cnt
@@ -1341,6 +1403,7 @@ def caches_per_year():
 
 @it_isnt_updating
 def geocacher_activity(request):
+    """ geocacher activity """
     all_found = LogSeekCach.objects.all().count()
     all_created = LogCreateCach.objects.all().count()
 
@@ -1350,14 +1413,16 @@ def geocacher_activity(request):
     return render(
         request,
         'Geocaching_su/geocacher_activity.html',
-        {'data_table': data_table,
-        'all_found': all_found,
-        'all_created': all_created})
+        {
+            'data_table': data_table,
+            'all_found': all_found,
+            'all_created': all_created})
 
 
 @it_isnt_updating
 @cache_page(60 * 60 * 8)
 def geocaching_su_cach_stat_pie(request):
+    """ pie chart for caches statistics """
     sql = """
     SELECT type_code, COUNT(*) as cnt
     FROM cach
@@ -1372,9 +1437,9 @@ def geocaching_su_cach_stat_pie(request):
 @it_isnt_updating
 @geocacher_su
 def geocaching_su_personal_found_cache_pie(request, geocacher_uid):
+    """ pie chart for found caches """
     chart = get_personal_caches_bar(
-        request, geocacher_uid,
-        RAWSQL['geocacher_found_caches_by_type'])
+        request, RAWSQL['geocacher_found_caches_by_type'])
 
     return HttpResponseRedirect(chart.get_url())
 
@@ -1382,8 +1447,9 @@ def geocaching_su_personal_found_cache_pie(request, geocacher_uid):
 @it_isnt_updating
 @geocacher_su
 def geocaching_su_personal_created_cache_pie(request, geocacher_uid):
+    """ pie chart for created cache """
     chart = get_personal_caches_bar(
-        request, geocacher_uid, RAWSQL['geocacher_created_caches_by_type'])
+        request, RAWSQL['geocacher_created_caches_by_type'])
 
     return HttpResponseRedirect(chart.get_url())
 
@@ -1391,31 +1457,33 @@ def geocaching_su_personal_created_cache_pie(request, geocacher_uid):
 @it_isnt_updating
 @geocacher_su
 def gcsu_personal_found_current_chart(request):
+    """ chart for personal found caches, current year """
     nickname = get_nickname(request)
     geocacher = get_object_or_404(Geocacher, nickname=nickname)
     year_ = date.today().year - 1
 
-    sql = """
+    sql = f"""
     SELECT MONTH(found_date) as month_, COUNT(l.id) as cnt
     FROM log_seek_cach as l
-    WHERE l.cacher_uid=%s AND YEAR(l.found_date)=%s
+    WHERE l.cacher_uid={geocacher.uid} AND YEAR(l.found_date)={year_}
     GROUP BY MONTH(found_date)
-    """ % (geocacher.uid, year_)
+    """
 
     months = {}
     for item in iter_sql(sql):
         months[item[0]] = item[1]
     data = []
     legend = []
-    for m in range(12):
-        data.append(months.get(m + 1) or 0)
-        legend.append(str(m + 1))
+    for month in range(12):
+        data.append(months.get(month + 1) or 0)
+        legend.append(str(month + 1))
 
     width = 400
     height = 160
 
-    chart = StackedHorizontalBarChart(width, height,
-                                      x_range=(1, 12))
+    chart = StackedHorizontalBarChart(
+        width, height,
+        x_range=(1, 12))
     chart.set_bar_width(10)
     chart.set_colours(['00ff00', 'ff0000'])
     chart.add_data(data)
@@ -1426,6 +1494,7 @@ def gcsu_personal_found_current_chart(request):
 @it_isnt_updating
 @cache_page(60 * 60 * 8)
 def geocaching_su_cach_pertype_stat_chart(request):
+    """ chart for caches per type """
     data_table = caches_per_year()
 
     data_real = []
@@ -1444,7 +1513,7 @@ def geocaching_su_cach_pertype_stat_chart(request):
             dmax = row['unreal']
 
     chart = create_chart(
-        100, 200, 200, data_real, data_unreal, legend, None, dmax, name1=_('real'), name2=_('virtual'))
+        data_real, data_unreal, legend, dmax, name1=_('real'), name2=_('virtual'))
 
     return HttpResponseRedirect(chart.get_url())
 
@@ -1452,10 +1521,11 @@ def geocaching_su_cach_pertype_stat_chart(request):
 @it_isnt_updating
 @cache_page(60 * 60 * 8)
 def geocaching_su_cache_per_type_chart(request):
-    color1 = '#f89d53'
-    color2= '#c56a20'
-    linecolor1= '#987'
-    linecolor2= '#876'
+    """ chart for caches per type """
+    # color1 = '#f89d53'
+    # color2= '#c56a20'
+    # linecolor1= '#987'
+    # linecolor2= '#876'
 
     chart= QuickChart()
     chart.width = 700
@@ -1528,6 +1598,7 @@ def geocaching_su_cache_per_type_chart(request):
 @it_isnt_updating
 @cache_page(60 * 60 * 8)
 def geocaching_su_cach_stat_chart(request):
+    """ chart for caches statistics """
     sql = """
     SELECT YEAR(created_date) as year_, COUNT(*)
     FROM cach
@@ -1572,6 +1643,7 @@ def geocaching_su_cach_stat_chart(request):
 @it_isnt_updating
 @cache_page(60 * 60 * 8)
 def geocaching_su_geocacher_activity_chart(request):
+    """ chart for activity of geocachers """
     data_table = activity_per_month(last_years=6)
 
     dataf = []
@@ -1583,7 +1655,7 @@ def geocaching_su_geocacher_activity_chart(request):
         datac.append(row['created'])
         dataf.append(row['found'])
         legend.append(row['month'])
-        if not len(legend_y) or (legend_y[-1] != row['year']):
+        if not legend_y or (legend_y[-1] != row['year']):
             legend_y.append(row['year'])
         if dmax < row['created']:
             dmax = row['created']
@@ -1591,8 +1663,7 @@ def geocaching_su_geocacher_activity_chart(request):
             dmax = row['found']
 
     chart = create_chart(
-        1000, 1000, 1000, dataf, datac, legend, legend_y, dmax,
-        name1=_('found'), name2=_('created')
+        dataf, datac, legend, name1=_('found'), name2=_('created')
     )
 
     return HttpResponseRedirect(chart.get_url())
@@ -1601,6 +1672,7 @@ def geocaching_su_geocacher_activity_chart(request):
 @it_isnt_updating
 @cache_page(60 * 60 * 8)
 def geocaching_su_geocacher_activity_creating_chart(request):
+    """ chart for activity of geocachers, creating """
     data_table = activity_creating_per_month(last_years=6)
 
     dataf = []
@@ -1612,7 +1684,7 @@ def geocaching_su_geocacher_activity_creating_chart(request):
         datac.append(row['virt'])
         dataf.append(row['trad'])
         legend.append(row['month'])
-        if not len(legend_y) or (legend_y[-1] != row['year']):
+        if not legend_y or (legend_y[-1] != row['year']):
             legend_y.append(row['year'])
         if dmax < row['trad']:
             dmax = row['trad']
@@ -1620,8 +1692,7 @@ def geocaching_su_geocacher_activity_creating_chart(request):
             dmax = row['virt']
 
     chart = create_chart(
-        100, 100, 100, dataf, datac, legend, legend_y, dmax,
-        name1=_('traditional'), name2=_('virtual')
+        dataf, datac, legend, name1=_('traditional'), name2=_('virtual')
     )
 
     return HttpResponseRedirect(chart.get_url())
@@ -1630,23 +1701,10 @@ def geocaching_su_geocacher_activity_creating_chart(request):
 @it_isnt_updating
 @cache_page(60 * 60 * 8)
 def geocaching_su_geocacher_stat_chart(request):
+    """ chart for geocachers statistic """
     width = 600
     height = 300
     labels = []
-
-    #sql = """
-    #SELECT YEAR(register_date) as year_, COUNT(*)
-    #FROM geocacher
-    #WHERE  YEAR(register_date) <= YEAR(NOW())
-    #GROUP BY year_
-    #"""
-    #data = []
-
-    #summ = 0
-    # for item in iter_sql(sql):
-        #summ += item[1]
-        # data.append(summ)
-        # labels.append(item[0])
 
     data = []
     sql = """
@@ -1687,18 +1745,19 @@ def geocaching_su_geocacher_stat_chart(request):
 @it_isnt_updating
 @cache_page(60 * 60 * 8)
 def geocaching_su_geocacher_stat_pie(request, only_active=False):
+    """ pie chart for geocachers statistics """
     only_active_filter = ''
     if only_active:
         only_active_filter = 'WHERE g.found_caches > 0 '
 
-    sql = """
+    sql = f"""
     SELECT gc.name, COUNT(*) as cnt
     FROM geocacher g
     LEFT JOIN geo_country gc ON g.country_iso3=gc.iso3
-    %s
+    {only_active_filter}
     GROUP BY gc.name
     HAVING cnt > 99
-    """ % only_active_filter
+    """
     data = []
     labels = []
 
@@ -1707,14 +1766,14 @@ def geocaching_su_geocacher_stat_pie(request, only_active=False):
         data.append(item[1])
         labels.append(country)
 
-    sql = """
+    sql = f"""
     SELECT gc.name, COUNT(*) as cnt
     FROM geocacher g
     LEFT JOIN geo_country gc ON g.country_iso3=gc.iso3
-    %s
+    {only_active_filter}
     GROUP BY gc.name
     HAVING cnt < 100
-    """ % only_active_filter
+    """
     summ = 0
     for item in iter_sql(sql):
         summ += item[1]
@@ -1763,6 +1822,7 @@ def geocaching_su_geocacher_stat_pie(request, only_active=False):
 @it_isnt_updating
 @cache_page(60 * 60 * 8)
 def geocaching_su_chart(request):
+    """ geocaching chart """
     # Set the vertical range from 0 to 50
     max_y = 50
     chart = SimpleLineChart(200, 125, y_range=[0, max_y])
@@ -1805,70 +1865,71 @@ def geocaching_su_chart(request):
 @it_isnt_updating
 @accept_ajax
 def cache_info(request):
-    rc = {'status': 'ERR',
-          }
+    """ get cache information """
+    responce = {'status': 'ERR'}
     pid = request.GET.get('cache_pid')
     cache = get_object_or_none(Cach, pid=pid)
     if not cache:
-        return rc
-    rc['content'] = render_to_string('Geocaching_su/cache_info.html',
-                                     RequestContext(request,
-                                                    {'cache': cache,
-                                                     }))
-    rc['status'] = 'OK'
+        return responce
+    responce['content'] = render_to_string(
+        'Geocaching_su/cache_info.html',
+        RequestContext(
+            request,
+            {'cache': cache}))
+    responce['status'] = 'OK'
 
-    return rc
+    return responce
 
 
 @it_isnt_updating
 @accept_ajax
 def change_country(request):
-    rc = {'status': 'ERR',
-          }
+    """ change country """
+    responce = {'status': 'ERR'}
     country_code = request.GET.get('country')
     request.session['country'] = country_code
     request.session['region'] = []
     if not country_code:
-        return rc
+        return responce
     country = get_object_or_none(GeoCountry, iso=country_code)
     address = 'Ukraine, Kharkov'
     if country:
-        address = '%s,%s' % (country.name, country.capital)
+        address = f'{country.name},{country.capital}'
     regions = GeoCountryAdminSubject.objects.filter(country_iso=country_code)
     regions = regions.values('code', 'name').order_by('name')
-    rc['regions'] = list(regions)
+    responce['regions'] = list(regions)
 
-    rc['regions'] = [('ALL', _('all')), ] + \
-                    sorted(rc['regions'], key=lambda x: x['name'])
-    rc['address'] = address
-    rc['status'] = 'OK'
+    responce['regions'] = [('ALL', _('all')), ] + \
+        sorted(responce['regions'], key=lambda x: x['name'])
+    responce['address'] = address
+    responce['status'] = 'OK'
 
-    return rc
+    return responce
 
 
 @it_isnt_updating
 @accept_ajax
 def filter_change_subjects(request):
-    rc = {'status': 'ERR',
-          }
+    """ change regions """
+    responce = {'status': 'ERR'}
     country_code = request.GET.get('country')
     if not country_code:
-        return rc
+        return responce
     country = get_object_or_none(GeoCountry, iso3=country_code)
     regions = GeoCountryAdminSubject.objects.filter(country_iso=country.iso)
     regions = regions.values('code', 'name').order_by('name')
-    rc['regions'] = list(regions)
-    rc['regions'] = sorted(rc['regions'], key=lambda x: x['name'])
-    rc['status'] = 'OK'
+    responce['regions'] = list(regions)
+    responce['regions'] = sorted(responce['regions'], key=lambda x: x['name'])
+    responce['status'] = 'OK'
 
-    return rc
+    return responce
 
 
 @it_isnt_updating
 @accept_ajax
 def region_caches(request):
-    rc = {'status': 'ERR',
-          }
+    """ list of region caches """
+    responce = {'status': 'ERR'}
     country_code = request.GET.get('country')
     request.session['country'] = country_code
     region_ids = request.GET.getlist('region')
@@ -1878,7 +1939,7 @@ def region_caches(request):
     related_ids = request.GET.getlist('related')
     request.session['related'] = related_ids
     if not country_code:
-        return rc
+        return responce
 
     caches = get_caches(
         request, country_code, region_ids, type_ids, related_ids)
@@ -1900,19 +1961,22 @@ def region_caches(request):
             lng_min = cache.longitude_degree
         if lng_max is None or cache.longitude_degree > lng_max:
             lng_max = cache.longitude_degree
-    rc['caches'] = cache_list
-    rc['rect'] = {'lat_min': lat_min or '',
-                  'lat_max': lat_max or '',
-                  'lng_min': lng_min or '',
-                  'lng_max': lng_max or ''
-                  }
-    rc['status'] = 'OK'
 
-    return rc
+    responce['caches'] = cache_list
+    responce['rect'] = {
+        'lat_min': lat_min or '',
+        'lat_max': lat_max or '',
+        'lng_min': lng_min or '',
+        'lng_max': lng_max or ''
+    }
+    responce['status'] = 'OK'
+
+    return responce
 
 
 @it_isnt_updating
 def selected_caches(request):
+    """ selected caches """
     country_code = request.session.get('country')
     region_ids = request.session.get('region')
     type_ids = request.session.get('type')
@@ -1925,20 +1989,22 @@ def selected_caches(request):
 
 @it_isnt_updating
 def map_import_caches_wpt(request):
+    """ import caches as WPT file """
     return  HttpResponse('')
     caches = selected_caches(request)
 
     response_text = render_to_string('caches.wpt', {'caches': caches})
     response = HttpResponse(response_text)
-    response['Content-Type'] = u'text'
-    response['Content-Disposition'] = u'attachment; filename = geocaches_%d.wpt' % int(time.time())
-    response['Content-Length'] = unicode(len(response_text))
+    response['Content-Type'] = 'text'
+    response['Content-Disposition'] = f'attachment; filename = geocaches_{int(time.time())}.wpt'
+    response['Content-Length'] = str(len(response_text))
 
     return response
 
 
 @it_isnt_updating
 def map_import_caches_kml(request):
+    """ import caches as KML file """
     return  HttpResponse('')
 
     def style_by_type(type_):
@@ -1980,7 +2046,7 @@ def map_import_caches_kml(request):
 
     for cache in caches:
         placemark_tree = etree.SubElement(folder_tree, 'Placemark')
-        desc_tree = etree.SubElement(pl999acemark_tree, 'description')
+        desc_tree = etree.SubElement(placemark_tree, 'description')
         desc_tree.text = """
         <a href="%(url)s">Cache %(code)s details</a><br />
         Created by %(author)s<br />&nbsp;<br />
@@ -2011,16 +2077,13 @@ def map_import_caches_kml(request):
         style_tree.text = style_by_type(cache.type_code)
         point_tree = etree.SubElement(placemark_tree, 'Point')
         coord_tree = etree.SubElement(point_tree, 'coordinates')
-        coord_tree.text = '%s,%s' % (
-            cache.longitude_degree, cache.latitude_degree)
+        coord_tree.text = f'{cache.longitude_degree},{cache.latitude_degree}'
 
-    response_text = '%s%s' % (
-        '<?xml version="1.0" encoding="utf-8"?>',
-        etree.tostring(root_tree).decode("utf-8"))
+    response_text = f'<?xml version="1.0" encoding="utf-8"?>{etree.tostring(root_tree).decode("utf-8")}'
     response = HttpResponse(response_text)
-    response['Content-Type'] = u'text/xml'
-    response['Content-Disposition'] = u'attachment; filename = geocaches_%d.kml' % int(time.time())
-    response['Content-Length'] = unicode(len(response_text))
+    response['Content-Type'] = 'text/xml'
+    response['Content-Disposition'] = f'attachment; filename = geocaches_{int(time.time())}.kml'
+    response['Content-Length'] = str(len(response_text))
 
     return response
 
@@ -2028,13 +2091,14 @@ def map_import_caches_kml(request):
 @it_isnt_updating
 @geocacher_su
 def geocaching_su_personal_statistics(request):
+    """ personal statistics """
     if request.method == 'POST':
         if 'ok' in request.POST:
-                nickname = request.POST.get('login_as') or ''
-                if nickname:
-                    request.session['login_as'] = nickname
-                else:
-                    request.session['login_as'] = None
+            nickname = request.POST.get('login_as') or ''
+            if nickname:
+                request.session['login_as'] = nickname
+            else:
+                request.session['login_as'] = None
 
     nickname = get_nickname(request)
     geocacher = get_object_or_none(Geocacher, nickname=nickname)
@@ -2051,6 +2115,7 @@ def geocaching_su_personal_statistics(request):
 @it_isnt_updating
 @geocacher_su
 def gcsu_found_my_caches_stat(request):
+    """ statistics for founding my caches """
     geocacher, geocachers, all_types = get_found_statistics(request)
 
     return render(
@@ -2066,6 +2131,7 @@ def gcsu_found_my_caches_stat(request):
 @it_isnt_updating
 @geocacher_su
 def gcsu_i_found_caches_stat(request):
+    """ statistics for caches found by me """
     geocacher, geocachers, all_types = get_found_statistics(
                                             request, i_found=True)
 
@@ -2082,6 +2148,7 @@ def gcsu_i_found_caches_stat(request):
 @it_isnt_updating
 @geocacher_su
 def gcsu_regions_found_caches_stat(request):
+    """ found caches by regions """
     nickname = get_nickname(request)
     geocacher = get_object_or_404(Geocacher, nickname=nickname)
 
@@ -2107,14 +2174,14 @@ def gcsu_regions_found_caches_stat(request):
                             'count': 0, })
 
     regions = []
-    sql = """
+    sql = f"""
         select c.iso, cs.code, count(l.id) as cnt
         from log_seek_cach l
         left join cach on l.cach_pid = cach.pid
         left join geo_country_subject cs on (cach.admin_code=cs.code and cach.country_code=cs.country_iso)
         left join geo_country c on cach.country_code=c.iso
         where cach.pid is not null and
-              l.cacher_uid=%s and
+              l.cacher_uid={geocacher.uid} and
               cs.code is not null and
               cs.code <> '777' and
               cs.country_iso IN
@@ -2123,12 +2190,13 @@ def gcsu_regions_found_caches_stat(request):
                'GE', 'UZ', 'KG', 'TM', 'TJ')
         group by c.iso, cs.code
         having cnt > 0
-        """ % geocacher.uid
+        """
     for item in iter_sql(sql):
-        regions.append({'iso': item[0],
-                        'code': item[1],
-                        'count': item[2],
-                        })
+        regions.append({
+            'iso': item[0],
+            'code': item[1],
+            'count': item[2],
+            })
 
     for my_region in regions:
         for region in all_regions:
@@ -2143,11 +2211,12 @@ def gcsu_regions_found_caches_stat(request):
     for region in all_regions:
         if region['country_name'] != country:
             if country:
-                countries.append({'country': country,
-                                  'regions': regions,
-                                  'count': count,
-                                  'regions_count': regions_count,
-                                  'all_regions': len(regions), })
+                countries.append({
+                    'country': country,
+                    'regions': regions,
+                    'count': count,
+                    'regions_count': regions_count,
+                    'all_regions': len(regions), })
             country = region['country_name']
             regions = []
             count = 0
@@ -2155,11 +2224,12 @@ def gcsu_regions_found_caches_stat(request):
         regions.append(region)
         count += region['count'] or 0
         regions_count += 1 if region['count'] else 0
-    countries.append({'country': country,
-                    'regions': regions,
-                    'count': count,
-                    'regions_count': regions_count,
-                    'all_regions': len(regions), })
+    countries.append({
+        'country': country,
+        'regions': regions,
+        'count': count,
+        'regions_count': regions_count,
+        'all_regions': len(regions), })
 
     return render(
         request,
@@ -2173,6 +2243,7 @@ def gcsu_regions_found_caches_stat(request):
 @it_isnt_updating
 @geocacher_su
 def geocaching_su_personal_charts(request):
+    """ personal charts """
     found_current_year = []
     found_last_year = []
     found_years = []
@@ -2196,20 +2267,21 @@ def geocaching_su_personal_charts(request):
     if stat:
         # FOUND
         caches_count = stat.found_count or 1
-        sql = """
+        sql = f"""
         SELECT cach.type_code, COUNT(l.id) as cnt
         FROM log_seek_cach as l
              LEFT JOIN cach ON l.cach_pid=cach.pid
-        WHERE l.cacher_uid=%s AND cach.pid IS NOT NULL
+        WHERE l.cacher_uid={geocacher.uid} AND cach.pid IS NOT NULL
         GROUP BY cach.type_code
         ORDER BY cnt desc
-        """ % geocacher.uid
+        """
 
         for item in iter_sql(sql):
-            cache_table.append({'type': item[0],
-                               'description': GEOCACHING_SU_CACH_TYPES.get(item[0]) or 'undefined',
-                               'count': item[1],
-                               'percent': float(item[1])/caches_count*100})
+            cache_table.append({
+                'type': item[0],
+                'description': GEOCACHING_SU_CACH_TYPES.get(item[0]) or 'undefined',
+                'count': item[1],
+                'percent': float(item[1])/caches_count*100})
 
         year_ = date.today().year
         last_year = year_ - 1
@@ -2226,34 +2298,34 @@ def geocaching_su_personal_charts(request):
             geocacher_year_statistics(
                 geocacher, year_, last_year, creation=False)
 
-        sql = """
+        sql = f"""
         SELECT YEAR(found_date) as year_, COUNT(l.id) as cnt
         FROM log_seek_cach as l
-        WHERE l.cacher_uid=%s
+        WHERE l.cacher_uid={geocacher.uid}
         GROUP BY YEAR(found_date)
-        """ % geocacher.uid
+        """
 
         years = {}
         for item in iter_sql(sql):
             years[item[0]] = item[1]
         found_years = []
-        m = first_year
-        while m <= year_:
+        counter = first_year
+        while counter <= year_:
             found_years.append(
-                {'count': years.get(m) or 0,
-                 'year': m})
-            m += 1
+                {'count': years.get(counter) or 0,
+                 'year': counter})
+            counter += 1
 
         # CREATED
         caches_count = stat.created_count or 1
-        sql = """
+        sql = f"""
         SELECT cach.type_code, COUNT(l.id) as cnt
         FROM log_create_cach as l
              LEFT JOIN cach ON l.cach_pid=cach.pid
-        WHERE l.author_uid=%s AND cach.pid IS NOT NULL
+        WHERE l.author_uid={geocacher.uid} AND cach.pid IS NOT NULL
         GROUP BY cach.type_code
         ORDER BY cnt desc
-        """ % geocacher.uid
+        """
 
         for item in iter_sql(sql):
             created_table.append({
@@ -2277,23 +2349,23 @@ def geocaching_su_personal_charts(request):
             geocacher_year_statistics(
                 geocacher, year_, last_year, creation=True)
 
-        sql = """
+        sql = f"""
         SELECT YEAR(created_date) as year_, COUNT(l.id) as cnt
         FROM log_create_cach as l
-        WHERE l.author_uid=%s
+        WHERE l.author_uid={geocacher.uid}
         GROUP BY YEAR(created_date)
-        """ % geocacher.uid
+        """
 
         years = {}
         for item in iter_sql(sql):
             years[item[0]] = item[1]
         created_years = []
-        m = first_year or year_
-        while m <= year_:
+        counter = first_year or year_
+        while counter <= year_:
             created_years.append(
-                {'count': years.get(m) or 0,
-                 'year': m})
-            m += 1
+                {'count': years.get(counter) or 0,
+                 'year': counter})
+            counter += 1
     return render(
         request,
         'Geocaching_su/personal_charts.html',
@@ -2321,76 +2393,58 @@ def geocaching_su_personal_charts(request):
 
 @it_isnt_updating
 def map_import_caches_gpx(request):
+    """ import caches as GPX file """
     return HttpResponse('')
 
 
 def coordinate_converter(request):
+    """ converter for coordinates """
     return render(
         request,
         'Geocaching_su/coordinate_converter.html',
         {})
 
 
-#@it_isnt_updating
-#def geocacher_search_rating(request):
-    #qs = GeocacherSearchStat.objects.all()
-    #qs = qs.select_related('geocacher').filter(points__gt=0)
-    #qs = qs.order_by('-points')
-
-    #source = datasource.QSDataSource(qs)
-    #table = GeocacherSearchRankListBase('geocacher_list')
-
-    #cnt = get_controller(table, source, request, settings.ROW_PER_PAGE)
-
-    #rc = cnt.process_request()
-    #if rc:
-        #return rc
-
-    #return render(
-        #request,
-        #'Geocaching_su/geocacher_list.html',
-        #{
-            #'table': cnt,
-            #'title': _("All years"),
-            #'curr_year': datetime.now().year,
-            #'last_year': datetime.now().year-1
-        #})
 @it_isnt_updating
 def geocacher_rate_real_current(request):
+    """ rate of geocachers, real, current year """
     qs = GeocacherStat.objects.all().order_by(
         '-tr_curr_created_count', '-tr_curr_found_count')
     title = _("%s. Real caches") % datetime.now().year
 
-    table = GeocacherRateRealCurrYearTable(qs)
+    the_table = GeocacherRateRealCurrYearTable(qs)
     RequestConfig(
-        request, paginate={"per_page": settings.ROW_PER_PAGE}).configure(table)
+        request, paginate={"per_page": settings.ROW_PER_PAGE}).configure(the_table)
 
-    return render(request,
-                  'Geocaching_su/dt2-geocacher_list.html',
-                  {'table': table,
-                   'title': title,
-                   'curr_year': datetime.now().year,
-                   'last_year': datetime.now().year - 1
-                   })
+    return render(
+        request,
+        'Geocaching_su/dt2-geocacher_list.html',
+        {'table': the_table,
+         'title': title,
+         'curr_year': datetime.now().year,
+         'last_year': datetime.now().year - 1
+         })
 
 
 @it_isnt_updating
 def geocacher_search_rating(request):
+    """ rate of geocachers, search """
     qs = GeocacherSearchStat.objects.all()
     qs = qs.select_related('geocacher').filter(points__gt=0)
     qs = qs.order_by('-points')
 
     f = GeocacherStatFilter(request.GET, queryset=qs)
 
-    table = GeocacherSearchTable(f.qs)
+    the_table = GeocacherSearchTable(f.qs)
     RequestConfig(
-        request, paginate={"per_page": settings.ROW_PER_PAGE}).configure(table)
+        request,
+        paginate={"per_page": settings.ROW_PER_PAGE}).configure(the_table)
 
     return render(
         request,
         'Geocaching_su/dt2-geocacher_list.html',
         {
-            'table': table,
+            'table': the_table,
             'filter': f,
             'title': _("Search rating. All years"),
             'curr_year': datetime.now().year,
@@ -2400,21 +2454,23 @@ def geocacher_search_rating(request):
 
 @it_isnt_updating
 def geocacher_search_rating_current(request):
+    """ rate of geocachers, search, current year """
     qs = GeocacherSearchStat.objects.all()
     qs = qs.select_related('geocacher').filter(year_points__gt=0)
     qs = qs.order_by('-year_points')
 
     f = GeocacherStatFilter(request.GET, queryset=qs)
 
-    table = GeocacherSearchYearTable(f.qs)
+    the_table = GeocacherSearchYearTable(f.qs)
     RequestConfig(
-        request, paginate={"per_page": settings.ROW_PER_PAGE}).configure(table)
+        request,
+        paginate={"per_page": settings.ROW_PER_PAGE}).configure(the_table)
 
     return render(
         request,
         'Geocaching_su/dt2-geocacher_list.html',
         {
-            'table': table,
+            'table': the_table,
             'filter': f,
             'title': _("Search rating. Current year %s") % datetime.now().year,
             'curr_year': datetime.now().year,
@@ -2422,72 +2478,50 @@ def geocacher_search_rating_current(request):
         })
 
 
-#@it_isnt_updating
-#def geocacher_search_rating_current(request):
-    #qs = GeocacherSearchStat.objects.all()
-    #qs = qs.select_related('geocacher').filter(year_points__gt=0)
-    #qs = qs.order_by('-year_points')
-
-    #source = datasource.QSDataSource(qs)
-    #table = GeocacherSearchRankListYear('geocacher_list')
-
-    #cnt = get_controller(table, source, request, settings.ROW_PER_PAGE)
-
-    #rc = cnt.process_request()
-    #if rc:
-        #return rc
-
-    #return render(
-        #request,
-        #'Geocaching_su/geocacher_list.html',
-        #{
-            #'table': cnt,
-            #'title': _("Current year %s")%datetime.now().year,
-            #'curr_year': datetime.now().year,
-            #'last_year': datetime.now().year-1
-        #})
-
-
 @accept_ajax
 def ajax_converter(request):
-    def minutes_from_degree(d):
-        f = d - int(d)
-        return f * 60
+    """ converter driven by ajax """
+    def minutes_from_degree(degree):
+        """ minutes from degree"""
+        minutes = degree - int(degree)
+        return minutes * 60
 
-    def seconds_from_degree(d):
-        f = d - int(d)
-        f = f * 60
-        s = f - int(f)
+    def seconds_from_degree(degree):
+        """ seconds from degree"""
+        minutes = degree - int(degree)
+        minutes = minutes * 60
+        seconds = minutes - int(minutes)
 
-        return s * 60
+        return seconds * 60
 
-    rc = {'status': 'ERR',
-          'dms': '',
-          'd': '',
-          'dm': ''
-          }
+    responce = {
+        'status': 'ERR',
+        'dms': '',
+        'd': '',
+        'dm': ''
+    }
 
-    s = request.POST.get('input')
+    string = request.POST.get('input')
 
-    Deg = None
-    Deg = get_degree(s)
+    degree = None
+    degree = get_degree(string)
 
-    if Deg is None:
-        return rc
+    if degree is None:
+        return responce
 
-    rc['d'] = '%.6f' % Deg
-    rc['dms'] = '%d° %d\' %.2f"' % (int(Deg),
-                                     int(minutes_from_degree(Deg)),
-                                     seconds_from_degree(Deg))
-    rc['dm'] = "%d° %.3f\'" % (int(Deg),
-                               minutes_from_degree(Deg))
+    minutes = minutes_from_degree(degree)
+    seconds = seconds_from_degree(degree)
+    responce['d'] = f'{degree:.6f}'
+    responce['dms'] = f'{int(degree)}° {int(minutes)}\' {seconds:.2f}"'
+    responce['dm'] = f"{int(degree)}° {minutes:.3f}\'"
 
-    rc['status'] = 'OK'
+    responce['status'] = 'OK'
 
-    return rc
+    return responce
 
 
 def distinct_types_list(types):
+    """ list of cache types """
     alist = []
     for type_ in types:
         if type_ == 'REAL':
@@ -2502,14 +2536,17 @@ def distinct_types_list(types):
 
 
 def get_iso_by_iso3(iso3):
+    """ get ISO by known ISO3 """
     if iso3 and len(iso3) == 3:
-        country = get_object_or_none(GeoCountry,
-                                     iso3=iso3)
+        country = get_object_or_none(
+            GeoCountry,
+            iso3=iso3)
         if country:
             return country.iso
 
 
 def get_nickname(request):
+    """ get user nickname """
     nickname = request.session.get('login_as')
     if not nickname:
         nickname = request.user.gpsfunuser.geocaching_su_nickname
@@ -2519,19 +2556,15 @@ def get_nickname(request):
 
 
 def get_list_of_counts(data, all_types):
+    """ get list of counts from the data """
     types = []
     for cache_type in all_types:
         types.append(data.get(cache_type) or 0)
     return types
 
 
-#def update_recommendation(geocachers, data):
-    #for gc in geocachers:
-        #if gc.get('uid') == data[0]:
-            #gc['recommendations'] = data[1]
-
-
 def row_by_date(data, year, month):
+    """ row by date """
     if not data or not year or not month:
         return None
 
@@ -2541,11 +2574,13 @@ def row_by_date(data, year, month):
     return None
 
 
-def ym(year, month):
+def yearmonth(year, month):
+    """ year and month as single integer value """
     return year * 100 + month
 
 
 def get_found_statistics(request, i_found=False):
+    """ statistics of found caches """
     nickname = get_nickname(request)
     geocacher = get_object_or_404(Geocacher, nickname=nickname)
 
@@ -2598,6 +2633,7 @@ def get_found_statistics(request, i_found=False):
 
 
 def activity_per_month(last_years=None, creation=False):
+    """ activity of geocacher per month """
     curr_year = datetime.now().year
     curr_month = datetime.now().month
 
@@ -2614,7 +2650,7 @@ def activity_per_month(last_years=None, creation=False):
         SELECT YEAR(MIN(created_date)), MONTH(MIN(created_date))
         FROM log_create_cach"""
         year2, month2 = sql2list(sql)
-        if ym(year2, month2) < ym(year_, month_):
+        if yearmonth(year2, month2) < yearmonth(year_, month_):
             year_ = year2
             month_ = month2
 
@@ -2625,14 +2661,15 @@ def activity_per_month(last_years=None, creation=False):
     if creation:
         field1 = 'trad'
         field2 = 'virt'
-    for y in range(curr_year - year_ + 1):
-        for m in range(12):
-            if ym(y + year_, m + 1) >= ym(year_, month_) and \
-               ym(y + year_, m + 1) <= ym(curr_year, curr_month):
-                data_table.append({'year': y + year_,
-                                   'month': m + 1,
-                                   field1: 0,
-                                   field2: 0})
+    for the_year in range(curr_year - year_ + 1):
+        for the_month in range(12):
+            if yearmonth(the_year + year_, the_month + 1) >= yearmonth(year_, month_) and \
+               yearmonth(the_year + year_, the_month + 1) <= yearmonth(curr_year, curr_month):
+                data_table.append({
+                    'year': the_year + year_,
+                    'month': the_month + 1,
+                    field1: 0,
+                    field2: 0})
 
     sql = RAWSQL['real_created_by_years'] if creation else RAWSQL['found_by_years']
 
@@ -2651,6 +2688,7 @@ def activity_per_month(last_years=None, creation=False):
 
 
 def get_caches(request, country_code, region_ids, type_ids, related_ids):
+    """ get caches """
     if 'all' in region_ids:
         caches = Cach.objects.filter(country_code=country_code,
                                      type_code__in=GEOCACHING_SU_ONMAP_TYPES)
@@ -2670,23 +2708,26 @@ def get_caches(request, country_code, region_ids, type_ids, related_ids):
                 caches = caches.filter(created_by=user_pid)
             if 'vis' in related_ids:
                 caches = caches.extra(
-                    where=["pid IN (SELECT cach_pid FROM log_seek_cach WHERE cacher_uid=%s)" % user_pid])
+                    where=[f"pid IN (SELECT cach_pid FROM log_seek_cach WHERE cacher_uid={user_pid})"])
             if 'notvis' in related_ids:
                 caches = caches.exclude(created_by=user_pid)
-                caches = caches.extra(where=[
-                                      "pid NOT IN (SELECT cach_pid FROM log_seek_cach WHERE cacher_uid=%s)" % user_pid])
+                caches = caches.extra(
+                    where=[f"pid NOT IN (SELECT cach_pid FROM log_seek_cach WHERE cacher_uid={user_pid})"])
     return caches
 
 
 def geocacher_year_statistics(geocacher, year_, last_year, creation=False):
+    """ year statistics for the geocacher """
     counter_current_year = \
         get_geocacher_year_statistics(
-            RAWSQL['geocacher_one_year_created_by_months'] if creation else RAWSQL['geocacher_one_year_found_by_months'],
+            RAWSQL['geocacher_one_year_created_by_months'] \
+            if creation else RAWSQL['geocacher_one_year_found_by_months'],
             year_, geocacher)
 
     counter_last_year = \
         get_geocacher_year_statistics(
-            RAWSQL['geocacher_one_year_created_by_months'] if creation else RAWSQL['geocacher_one_year_found_by_months'],
+            RAWSQL['geocacher_one_year_created_by_months'] \
+            if creation else RAWSQL['geocacher_one_year_found_by_months'],
             last_year, geocacher)
 
     sql = RAWSQL['first_year_created'] if creation else RAWSQL['first_year_found']
@@ -2698,8 +2739,8 @@ def geocacher_year_statistics(geocacher, year_, last_year, creation=False):
 
 
 def create_chart(
-    max_value, val2, val3, data1, data2, labels, legend_y, dmax,
-    name1='', name2='', width=700, height=250):
+        data1, data2, labels, name1='', name2='', width=700, height=250):
+    """ create the chart with parameters """
 
     color1 = '#f89d53'
     color2 = '#c56a20'
@@ -2743,7 +2784,8 @@ def create_chart(
     return chart
 
 
-def get_personal_caches_bar(request, geocacher_uid, sql):
+def get_personal_caches_bar(request, sql):
+    """ bar chart for the geocacher """
     nickname = get_nickname(request)
     geocacher = get_object_or_404(Geocacher, nickname=nickname)
 
@@ -2753,49 +2795,54 @@ def get_personal_caches_bar(request, geocacher_uid, sql):
     return chart
 
 
-def cach_rate(request, order_by, TableClass, template):
+def cach_rate(request, order_by, table_class, template):
+    """ Caches statistics """
     qs = CachStat.objects.all().order_by(order_by)
     source = datasource.QSDataSource(qs)
 
-    table = TableClass('cach_search')
-    cnt = GPSFunTableController(table,
-                                source,
-                                request,
-                                settings.ROW_PER_PAGE)
-    cnt.kind = 'cache_rate'
-    cnt.allow_manage_profiles = False
+    rate_table = table_class('cach_search')
+    the_controller = GPSFunTableController(
+        rate_table,
+        source,
+        request,
+        settings.ROW_PER_PAGE)
+    the_controller.kind = 'cache_rate'
+    the_controller.allow_manage_profiles = False
 
-    rc = cnt.process_request()
+    result = the_controller.process_request()
 
-    if rc:
-        return rc
+    if result:
+        return result
 
     return render(
         request,
         template,
         {
-            'table': cnt,
+            'table': the_controller,
         })
 
 
 def geocaching_su_profile(request, nickname):
+    """ profile of geocachers """
     geocacher = get_object_or_none(Geocacher, nickname=nickname)
     if geocacher:
-        url = 'https://geocaching.su/profile.php?uid=%d' % geocacher.uid
+        url = f'https://geocaching.su/profile.php?uid={geocacher.uid}'
     else:
         url = 'https://geocaching.su/?pn=108'
     return HttpResponseRedirect(url)
 
 
-def get_controller(table, source, request, rows_per_page):
-    cnt = GPSFunTableController(table, source, request, rows_per_page)
-    cnt.kind = 'geocacher_rate'
-    cnt.allow_manage_profiles = False
+def get_controller(the_table, source, request, rows_per_page):
+    """ get table controller """
+    the_controller = GPSFunTableController(the_table, source, request, rows_per_page)
+    the_controller.kind = 'geocacher_rate'
+    the_controller.allow_manage_profiles = False
 
-    return cnt
+    return the_controller
 
 
 def get_geocacher_year_statistics(sql, year, geocacher):
+    """ get statistics for geocacher, one year """
     sql = RAWSQL['geocacher_one_year_created_by_months']
     sql = sql % (geocacher.uid, year)
 
@@ -2803,14 +2850,15 @@ def get_geocacher_year_statistics(sql, year, geocacher):
     for item in iter_sql(sql):
         months[item[0]] = item[1]
     counters = []
-    for m in range(12):
+    for month in range(12):
         counters.append(
-            {'count': months.get(m + 1) or 0,
-             'month': m + 1})
+            {'count': months.get(month + 1) or 0,
+             'month': month + 1})
     return counters
 
 
 def get_piechart(sql, width, height):
+    """ create pie chart """
     colors = ['#f83c38', '#e61a16', '#1a7ddd', '#3c9fff',
         '#9dd872', '#d67b31', '#7bb650', '#f89d53']
     data = []
@@ -2865,6 +2913,7 @@ def get_piechart(sql, width, height):
 
 
 def get_geocacher_bar_chart(sql, width, height):
+    """ get bar chart for geoacher """
     type_colors = {
         'EV': '#f83c38',
         'CT': '#777',
@@ -2929,6 +2978,7 @@ def get_geocacher_bar_chart(sql, width, height):
 
 
 def get_chart_data(sql):
+    """ get data for the chart """
     data = []
     legend = []
     summ = 0
@@ -2940,6 +2990,7 @@ def get_chart_data(sql):
 
 
 def created_caches_per_year():
+    """ get count of created caches per year """
     cache_per_year = []
     sql = """
     SELECT DISTINCT

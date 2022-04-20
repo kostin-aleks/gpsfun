@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 NAME
      patch_geocachers.py
@@ -9,7 +8,6 @@ DESCRIPTION
 """
 import os
 import requests
-from pprint import pprint
 from django.db import connection
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -21,24 +19,27 @@ from gpsfun.geocaching_su_stat.utils import (
 
 
 def patch_it(name):
+    """ patch sql queries """
     pathtofile = os.path.join(settings.SCRIPTS_ROOT, name)
-    f = open(pathtofile, 'r')
-    text = f.read()
-    queries = text.split(';')
-    for sql in queries:
-        sql = sql.strip()
+    with open(pathtofile, 'r') as f:
+        text = f.read()
+        queries = text.split(';')
+        for sql in queries:
+            sql = sql.strip()
 
-        if sql.startswith('SELECT') or sql.startswith('select') \
-           or not sql or sql.startswith('--') or sql.startswith('#'):
-            continue
-        else:
+            if sql.startswith('SELECT') or sql.startswith('select') \
+               or not sql or sql.startswith('--') or sql.startswith('#'):
+                continue
+
             print
             print('execute', sql)
             with connection.cursor() as cursor:
                 cursor.execute(sql)
+        f.close()
 
 
 class Command(BaseCommand):
+    """ Command """
     help = 'Patch geocachers data by sql queries'
 
     def handle(self, *args, **options):
@@ -54,30 +55,30 @@ class Command(BaseCommand):
             print(name, ' processed')
 
         with requests.Session() as session:
-            post = session.post(
+            session.post(
                 'https://geocaching.su',
                 data=LOGIN_DATA
             )
-        r = session.get('https://geocaching.su')
-        if not logged(r.text):
+        response = session.get('https://geocaching.su')
+        if not logged(response.text):
             print('Authorization failed')
         else:
             for uid in Geocacher.objects.filter(
                     country_iso3__isnull=True).values_list('uid', flat=True):
-                r = session.get(
+                response = session.get(
                     'http://www.geocaching.su/site/popup/userstat.php',
                     params={'s': 2, 'uid': uid}
                 )
-                country = get_found_caches_countries(uid, r.text)
+                country = get_found_caches_countries(uid, response.text)
                 set_country_code(uid, country)
             names = {''}
             for uid in Geocacher.objects.filter(
                     admin_code__isnull=True).values_list('uid', flat=True):
-                r = session.get(
+                response = session.get(
                     'http://www.geocaching.su/site/popup/userstat.php',
                     params={'s': 2, 'uid': uid}
                 )
-                oblast = get_found_caches_oblast(uid, r.text)
+                oblast = get_found_caches_oblast(uid, response.text)
                 names.add(oblast)
                 set_oblast_code(uid, oblast)
 

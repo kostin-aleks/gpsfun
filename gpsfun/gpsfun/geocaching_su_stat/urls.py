@@ -1,6 +1,9 @@
+"""
+urls for application geocaching_su_stat
+"""
+
 from django.urls import path
 from django.views.decorators.cache import cache_page
-from gpsfun.geocaching_su_stat.views import geocaching_su_geocacher_stat_countries
 from gpsfun.geocaching_su_stat.views import (
     cach_rate_by_index, cach_rate_by_found, cach_rate_by_recommend,
     cach_view, geocacher_view, geocaching_su, geocaching_su_cach_stat,
@@ -21,15 +24,14 @@ from gpsfun.geocaching_su_stat.views import (
     geocaching_su_geocacher_activity_chart,
     geocaching_su_geocacher_activity_creating_chart,
     geocaching_su_geocacher_stat_pie,
-    geocacher_activity, geocacher_rate, geocacher_rate,
+    geocacher_activity, geocacher_rate,
     geocacher_rate_unreal, geocacher_rate_real,
     geocacher_rate_current, geocacher_rate_unreal_current,
     geocacher_rate_real_current, geocacher_rate_last,
     geocacher_rate_unreal_last, geocacher_search_rating_current,
     geocacher_rate_real_last, geocacher_search_rating,
     coordinate_converter, ajax_converter, filter_change_subjects,
-    cach_rate_by_index, cach_rate_by_found,
-    cach_rate_by_recommend, cach_view, geocaching_su_profile,
+    geocaching_su_profile,
 )
 
 urlpatterns = [
@@ -149,4 +151,3 @@ urlpatterns = [
     path('gcsu/profile/<nickname>/', geocaching_su_profile,
         name="gcsu-profile"),
 ]
-

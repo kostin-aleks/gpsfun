@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 NAME
      get_new_log_found.py
@@ -17,29 +16,30 @@ from gpsfun.geocaching_su_stat.utils import (
 
 
 class Command(BaseCommand):
+    """ Command """
     help = 'Load logs for last found caches'
 
     def handle(self, *args, **options):
         with requests.Session() as session:
-            post = session.post(
+            session.post(
                 'https://geocaching.su',
                 data=LOGIN_DATA
             )
 
-            r = session.get('https://geocaching.su')
-            if not logged(r.text):
+            response = session.get('https://geocaching.su')
+            if not logged(response.text):
                 print('Authorization failed')
             else:
-                r = session.get(
+                response = session.get(
                     'http://www.geocaching.su/',
                     params={'pn': 107}
                 )
-                for uid in get_geocachers_uids(r.text):
-                    r = session.get(
+                for uid in get_geocachers_uids(response.text):
+                    response = session.get(
                         'http://www.geocaching.su/site/popup/userstat.php',
                         params={'s': 2, 'uid': uid}
                     )
-                    for (cid, found_date, grade, x) in get_caches_data(uid, r.text):
+                    for (cid, found_date, grade, any_x) in get_caches_data(uid, response.text):
                         cache = get_object_or_none(Cach, pid=cid)
 
                         if cache and found_date:

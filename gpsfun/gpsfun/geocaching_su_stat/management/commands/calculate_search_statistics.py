@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 NAME
      calculate_search_statistics.py
@@ -7,16 +6,15 @@ NAME
 DESCRIPTION
      Calculates search statistics
 """
-import os
 from datetime import date
 from django.db import connection
-from django.conf import settings
 from django.core.management.base import BaseCommand
 from gpsfun.main.GeoCachSU.models import Cach, CachStat
 from gpsfun.main.models import log, UPDATE_TYPE
 
 
 def patch_it(sql):
+    """ patch sql queries """
     sql = sql.strip()
 
     with connection.cursor() as cursor:
@@ -25,9 +23,11 @@ def patch_it(sql):
 
 
 class Command(BaseCommand):
+    """ Command """
     help = 'Calculates search statistics by sql queries'
 
     def handle(self, *args, **options):
+        """ handle """
 
         for cache in Cach.objects.exclude(author__isnull=True):
             cache_stat, created = CachStat.objects.get_or_create(
@@ -53,7 +53,7 @@ class Command(BaseCommand):
             where gss.geocacher_uid is null
             """,
 
-            """
+            f"""
              update geocacher_search_stat gss
              set
              points=(
@@ -66,10 +66,10 @@ class Command(BaseCommand):
                  select ROUND(sum(IFNULL(cs.points, 0))) as points_sum
                  from  log_seek_cach lsc
                  left join cach_stat cs on lsc.cach_pid = cs.cach_pid
-                 where YEAR(lsc.found_date)=%s and
+                 where YEAR(lsc.found_date)={date.today().year} and
                        lsc.cacher_uid = gss.geocacher_uid
              )
-         """ % date.today().year
+         """
         ]
         for sql in queries:
             patch_it(sql)

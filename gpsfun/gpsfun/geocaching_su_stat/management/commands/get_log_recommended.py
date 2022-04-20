@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 NAME
      get_log_recommended.py
@@ -18,27 +17,28 @@ from gpsfun.geocaching_su_stat.utils import (
 
 
 class Command(BaseCommand):
+    """ Command """
     help = 'Update list of recommended caches for all geocachers'
 
     def handle(self, *args, **options):
         with requests.Session() as session:
-            post = session.post(
+            session.post(
                 'https://geocaching.su',
                 data=LOGIN_DATA
             )
-            r = session.get('https://geocaching.su')
-            if not logged(r.text):
+            response = session.get('https://geocaching.su')
+            if not logged(response.text):
                 print('Authorization failed')
             else:
                 ids = LogRecommendCach.objects.all().values_list(
                     'cacher_uid', flat=True)
                 for uid in Geocacher.objects.exclude(
                     uid__in=ids).values_list('uid', flat=True):
-                    r = session.get(
+                    response = session.get(
                         'http://www.geocaching.su/site/popup/userstat.php',
                         params={'s': 3, 'uid': uid}
                     )
-                    for (cid, x, y, z) in get_caches_data(uid, r.text):
+                    for (cid, any_x, any_y, any_z) in get_caches_data(uid, response.text):
                         cache = get_object_or_none(Cach, pid=cid)
 
                         if cache:

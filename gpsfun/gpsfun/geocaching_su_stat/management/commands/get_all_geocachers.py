@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 NAME
      get_all_geocachers.py
@@ -15,23 +14,24 @@ from gpsfun.geocaching_su_stat.utils import (
 
 
 class Command(BaseCommand):
+    """ Command """
     help = 'Loads list of all geocachers'
 
     def handle(self, *args, **options):
         with requests.Session() as session:
-            post = session.post(
+            session.post(
                 'https://geocaching.su',
                 data=LOGIN_DATA,
             )
 
-            r = session.get('https://geocaching.su')
-            if not logged(r.text):
+            response = session.get('https://geocaching.su')
+            if not logged(response.text):
                 print('Authorization failed')
             else:
                 for uid in range(200000):
-                    r = session.get(
-                        'http://www.geocaching.su/profile.php?uid=%d' % uid)
-                    geocacher = get_user_profile(uid, r.text)
+                    response = session.get(
+                        f'http://www.geocaching.su/profile.php?uid={uid}')
+                    geocacher = get_user_profile(uid, response.text)
                     if geocacher:
                         print(uid, geocacher.id, geocacher.nickname)
 

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 NAME
      get_new_log_created.py
@@ -9,7 +8,7 @@ DESCRIPTION
 """
 import requests
 from django.core.management.base import BaseCommand
-from gpsfun.main.GeoCachSU.models import (Geocacher, Cach, LogCreateCach)
+from gpsfun.main.GeoCachSU.models import (Cach, LogCreateCach)
 from gpsfun.DjHDGutils.dbutils import get_object_or_none
 from gpsfun.main.models import log, UPDATE_TYPE
 from gpsfun.geocaching_su_stat.utils import (
@@ -17,31 +16,32 @@ from gpsfun.geocaching_su_stat.utils import (
 
 
 class Command(BaseCommand):
+    """ Command """
     help = 'Update list of last created caches for all geocachers'
 
     def handle(self, *args, **options):
         with requests.Session() as session:
-            post = session.post(
+            session.post(
                 'https://geocaching.su',
                 data=LOGIN_DATA
             )
 
-            r = session.get('https://geocaching.su')
-            if not logged(r.text):
+            response = session.get('https://geocaching.su')
+            if not logged(response.text):
                 print('Authorization failed')
             else:
-                r = session.get(
+                response = session.get(
                     'http://www.geocaching.su/',
                     params={'pn': 107}
                 )
 
-                for uid in get_geocachers_uids(r.text):
-                    r = session.get(
+                for uid in get_geocachers_uids(response.text):
+                    response = session.get(
                         'http://www.geocaching.su/site/popup/userstat.php',
                         params={'s': 1, 'uid': uid}
                     )
 
-                    for (cid, found_date, grade, coauthor) in get_caches_data(uid, r.text):
+                    for (cid, found_date, grade, coauthor) in get_caches_data(uid, response.text):
                         cache = get_object_or_none(Cach, pid=cid)
 
                         if cache:

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 NAME
      get_new_caches.py
@@ -19,18 +18,19 @@ from gpsfun.main.GeoCachSU.models import Cach
 
 
 class Command(BaseCommand):
+    """ Command """
     help = 'Loads list of new caches'
 
     def handle(self, *args, **options):
         with requests.Session() as session:
-            post = session.post(
+            session.post(
                 'https://geocaching.su',
                 data=LOGIN_DATA
             )
 
-            r = session.get('https://geocaching.su')
+            response = session.get('https://geocaching.su')
 
-            if not logged(r.text):
+            if not logged(response.text):
                 print('Authorization failed')
             else:
                 last_cid = Cach.objects.all().aggregate(
