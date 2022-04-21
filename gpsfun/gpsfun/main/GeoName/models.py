@@ -1,4 +1,6 @@
-# -*- coding: utf-8 -*-
+"""
+Models for GeoName
+"""
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils import translation
@@ -17,6 +19,7 @@ SET_UA = SET_UA_UPPER | set((RU_CHARS + UA_CHARS).lower())
 
 
 class GeoCity(models.Model):
+    """ GeoCity """
     geonameid = models.IntegerField(default=0)
     name = models.CharField(max_length=200, blank=True, null=True)
     asciiname = models.CharField(max_length=200, blank=True, null=True)
@@ -40,42 +43,42 @@ class GeoCity(models.Model):
     moddate = models.DateTimeField(blank=True, null=True)
 
     class Meta:
-        db_table = u'geo_city'
+        db_table = 'geo_city'
 
-    def __unicode__(self):
-        return u'%s/%s/%s/%s' % (
-                    self.geonameid, self.name, self.country, self.admin1)
+    def __str__(self):
+        return f'{self.geonameid}/{self.name}/{self.country}/{self.admin1}'
 
     @property
     def strana(self):
+        """ Geocity country """
         return geocountry_by_code(self.country)
 
     def country_name(self):
+        """ Geocity country name """
         if self.strana and self.strana.name:
             return self.strana.name
-        else:
-            return ''
+        return ''
 
     @property
     def region(self):
-        return get_object_or_none(GeoCountryAdminSubject,
-                                    country_iso=self.country,
-                                    code=self.admin1)
+        """ Geocity region """
+        return get_object_or_none(
+            GeoCountryAdminSubject,
+            country_iso=self.country,
+            code=self.admin1)
 
     def region_name(self):
+        """ Geocity region name """
         if self.region and self.region.name:
             return self.region.name
-        else:
-            return ''
+        return ''
 
     def address_string(self):
-        print('address string')
-        return u'{}, {}, {}'.format(self.country_name(),
-                                   self.region_name(),
-                                   self.name or ''
-        )
+        """ geocity address string """
+        return f'{self.country_name()}, {self.region_name()}, {self.name or ""}'
 
     def localized_name(self, location):
+        """ geocity localized name """
         names = self.alternatenames.split(',')
         city_name = self.asciiname or self.name
         if location and location == 'ru':
@@ -83,25 +86,26 @@ class GeoCity(models.Model):
             ua_variants = []
             for name in names:
                 aset = set(name.strip())
-                if len(aset):
+                if aset:
                     if aset.issubset(SET_RU):
                         ru_variants.append(name)
                     elif aset.issubset(SET_UA):
                         ua_variants.append(name)
 
-            if len(ru_variants):
+            if ru_variants:
                 city_name = ru_variants[-1]
-            elif len(ua_variants):
+            elif ua_variants:
                 city_name = ua_variants[-1]
 
             set_city_name = set(city_name)
-            if len(set_city_name) and set_city_name.issubset(SET_UA_UPPER):
+            if set_city_name and set_city_name.issubset(SET_UA_UPPER):
                 city_name = city_name[0] + city_name[1:].lower()
 
         return city_name
 
 
 class GeoCountry(models.Model):
+    """ GeoCountry """
     geoname_id = models.IntegerField(default=0, db_index=True)
     iso = models.CharField(max_length=2, db_index=True)
     name = models.CharField(max_length=128, blank=True, null=True)
@@ -118,54 +122,60 @@ class GeoCountry(models.Model):
     currency_name = models.CharField(max_length=32, blank=True, null=True)
 
     class Meta:
-        db_table = u'geo_country'
+        db_table = 'geo_country'
 
-    def __unicode__(self):
-        return u'%s-%s' % (self.iso3, self.name)
+    def __str__(self):
+        return f'{self.iso3}-{self.name}'
 
     def languages(self):
+        """ languages """
         return GeoCountryLanguage.objects.filter(country_iso3=self.iso3)
 
     def neighbour(self):
+        """ neighbour """
         return GeoCountryNeighbour.objects.filter(country_iso3=self.iso3)
 
 
 class GeoCountryLanguage(models.Model):
+    """ GeoCountryLanguage """
     country_iso3 = models.CharField(max_length=3, db_index=True)
     lang_code = models.CharField(max_length=10, db_index=True)
 
     class Meta:
-        db_table = u'geo_country_language'
+        db_table = 'geo_country_language'
 
-    def __unicode__(self):
-        return u'%s-%s' % (self.country_iso3, self.lang_code)
+    def __str__(self):
+        return f'{self.country_iso3}-{self.lang_code}'
 
 
 class GeoCountryNeighbour(models.Model):
+    """ GeoCountryNeighbour """
     country_iso3 = models.CharField(max_length=3, db_index=True)
     neighbour_iso = models.CharField(max_length=2, db_index=True)
 
     class Meta:
-        db_table = u'geo_country_neighbour'
+        db_table = 'geo_country_neighbour'
 
-    def __unicode__(self):
-        return u'%s-%s' % (self.country_iso3, self.neighbour_iso3)
+    def __str__(self):
+        return f'{self.country_iso3}-{self.neighbour_iso}'
 
 
 class GeoCountryAdminSubject(models.Model):
+    """ GeoCountryAdminSubject """
     geoname_id = models.IntegerField(default=0, db_index=True)
     country_iso = models.CharField(max_length=2, db_index=True)
     name = models.CharField(max_length=128, blank=True, null=True)
     code = models.CharField(max_length=10, db_index=True)
 
     class Meta:
-        db_table = u'geo_country_subject'
+        db_table = 'geo_country_subject'
 
-    def __unicode__(self):
-        return u'%s-%s/%s' % (self.country_iso3, self.code, self.name)
+    def __str__(self):
+        return f'{self.country_iso}-{self.code}/{self.name}'
 
 
 class GeoRUSSubject(models.Model):
+    """ GeoRUSSubject """
     geoname_id = models.IntegerField(default=0)
     country_iso = models.CharField(max_length=2)
     name = models.CharField(max_length=128, blank=True, null=True)
@@ -175,13 +185,14 @@ class GeoRUSSubject(models.Model):
     gai_code = models.CharField(max_length=32)
 
     class Meta:
-        db_table = u'geo_russia_subject'
+        db_table = 'geo_russia_subject'
 
-    def __unicode__(self):
-        return u'%s-%s/%s' % (self.country_iso, self.code, self.ascii_name)
+    def __str__(self):
+        return f'{self.country_iso}-{self.code}/{self.ascii_name}'
 
 
 class GeoUKRSubject(models.Model):
+    """ GeoUKRSubject """
     geoname_id = models.IntegerField(default=0)
     country_iso = models.CharField(max_length=2)
     name = models.CharField(max_length=128, blank=True, null=True)
@@ -189,18 +200,20 @@ class GeoUKRSubject(models.Model):
     ascii_name = models.CharField(max_length=128, blank=True, null=True)
 
     class Meta:
-        db_table = u'geo_ukraine_subject'
+        db_table = 'geo_ukraine_subject'
 
-    def __unicode__(self):
-        return u'%s-%s/%s' % (self.country_iso, self.code, self.ascii_name)
+    def __str__(self):
+        return f'{self.country_iso}-{self.code}/{self.ascii_name}'
 
 
 def country_by_code(country_code):
+    """ get country by code """
     country = geocountry_by_code(country_code)
     return country.name if country else ''
 
 
 def geocountry_by_code(country_code):
+    """ get geocountry by code """
     if country_code is None:
         return None
     if len(country_code) == 2:
@@ -211,9 +224,11 @@ def geocountry_by_code(country_code):
         country = None
     if country and country.count() == 1:
         return country[0]
+    return None
 
 
 def region_by_code(country_code, region_codes):
+    """ get region by code """
     region_code = ''
     if len(region_codes):
         region_code = region_codes[0]
@@ -223,51 +238,53 @@ def region_by_code(country_code, region_codes):
 
 
 def country_iso_by_iso3(iso3):
+    """ get country ISO by ISO3 """
     countries = GeoCountry.objects.filter(iso3=iso3)
     if countries.count() == 1:
         return countries[0].iso
+    return None
 
 
-def populate_country_subject_city(field_country, field_subject, field_city, city):
+def populate_country_subject_city(
+    field_country, field_subject, field_city, city):
+    """ populate country subject city """
     field_country.choices = []
     field_country.choices.append(('NONE', _('-- choose country --')))
 
     countries = GeoCountry.objects.all().values_list('iso', 'name')
 
-    l = []
+    lst = []
     for country in countries:
-        l.append((country[0], _(country[1])))
+        lst.append((country[0], _(country[1])))
 
-    field_country.choices = field_country.choices + sorted(l, key=lambda x: x[1])
+    field_country.choices = field_country.choices + sorted(lst, key=lambda x: x[1])
 
     field_subject.choices = []
     field_subject.choices.append(('NONE',_('-- choose admin subject --')))
 
     if city:
-        city_country = GeoCountry.objects.get(iso=city.country)
         subjects = GeoCountryAdminSubject.objects.filter(country_iso=city.country).values_list('code', 'name')
 
-        l = []
+        lst = []
         for subject in subjects:
-            l.append((subject[0], _(subject[1])))
+            lst.append((subject[0], _(subject[1])))
 
-        field_subject.choices = field_subject.choices + sorted(l, key=lambda x: x[1])
+        field_subject.choices = field_subject.choices + sorted(lst, key=lambda x: x[1])
 
     field_city.choices = []
     field_city.choices.append(('NONE', _('-- choose city --')))
     if city:
         cities = GeoCity.objects.filter(country=city.country, admin1=city.admin1)
-        l = [(city.geonameid,
+        lst = [(city.geonameid,
               city.localized_name(translation.get_language())) for city in cities]
 
-        field_city.choices = field_city.choices + sorted(l, key=lambda x: x[1])
+        field_city.choices = field_city.choices + sorted(lst, key=lambda x: x[1])
 
     return field_country, field_subject, field_city
 
 
 def get_city_by_geoname(city_geoname):
+    """ get city by geoname """
     if city_geoname:
         return get_object_or_none(GeoCity, geonameid=city_geoname)
-
-
-
+    return None

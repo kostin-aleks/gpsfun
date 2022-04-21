@@ -1,4 +1,6 @@
-# -*- coding: utf-8 -*-
+"""
+urlify
+"""
 
 import re
 from maps import *

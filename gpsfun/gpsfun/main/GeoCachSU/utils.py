@@ -1,9 +1,12 @@
-from gpsfun.main.GeoCachSU.models import Cach, CachStat, GEOCACHING_SU_CACH_TYPES
-#from core.Geoname.models import GeoCountry
+"""
+utils for main.GeoCachSU
+"""
 from django.utils.translation import ugettext_lazy as _
+from gpsfun.main.GeoCachSU.models import CachStat, GEOCACHING_SU_CACH_TYPES
 from gpsfun.DjHDGutils.dbutils import iter_sql
 
-def _populate(model, field, request, filter=None, exclude=None, add_empty=False):
+
+def _populate(model, field, request, filter_=None, exclude=None, add_empty=False):
     """
     filter={'field': value,
             'field__range': [value1, value]}
@@ -15,8 +18,8 @@ def _populate(model, field, request, filter=None, exclude=None, add_empty=False)
         field.choices.append(('','-------'))
 
     qs = model.objects.all().order_by('name')
-    if filter:
-        qs = qs.filter(**filter)
+    if filter_:
+        qs = qs.filter(**filter_)
     if exclude:
         qs = qs.exclude(**exclude)
 
@@ -25,6 +28,7 @@ def _populate(model, field, request, filter=None, exclude=None, add_empty=False)
 
 
 def populate_cach_type(field, *kargs, **kwargs):
+    """ populate cache types """
     field.choices = []
     field.choices.append(('ALL',_('all')))
     field.choices.append(('REAL',_('all real')))
@@ -40,6 +44,7 @@ def populate_cach_type(field, *kargs, **kwargs):
 
 
 def cache_types():
+    """ list of cache types """
     choices = []
     sql = """
     SELECT DISTINCT type_code
@@ -52,34 +57,37 @@ def cache_types():
 
 
 def populate_country(field, *kargs, **kwargs):
+    """ populate country """
     field.choices = []
     field.choices.append(('ALL', _('all')))
 
     qs = CachStat.objects.all()
     qs = qs.values_list('cach__country_code', 'cach__country_name')
     qs = qs.distinct().order_by('cach__country_name')
-    l = []
+    lst = []
     for item in qs:
-        l.append((item[0], _(item[1])))
+        lst.append((item[0], _(item[1])))
 
-    field.choices = field.choices + sorted(l, key=lambda x: x[1])
+    field.choices = field.choices + sorted(lst, key=lambda x: x[1])
 
 
 def countries_iso():
+    """ list of countries """
     choices = []
     # choices.append(('', _('all')))
 
     qs = CachStat.objects.exclude(cach__country_code__isnull=True)
     qs = qs.values_list('cach__country_code', 'cach__country_name')
     qs = qs.distinct().order_by('cach__country_name')
-    l = []
+    lst = []
     for item in qs:
-        l.append((item[0], _(item[1])))
+        lst.append((item[0], _(item[1])))
 
-    return choices + sorted(l, key=lambda x: x[1])
+    return choices + sorted(lst, key=lambda x: x[1])
 
 
 def countries_iso3():
+    """ list of countries """
     choices = []
 
     sql = """
@@ -90,14 +98,15 @@ def countries_iso3():
     HAVING c.iso3 IS NOT NULL
     ORDER BY c.name
     """
-    l = []
+    lst = []
     for item in iter_sql(sql):
-        l.append((item[0], _(item[1])))
+        lst.append((item[0], _(item[1])))
 
-    return choices + sorted(l, key=lambda x: x[1])
+    return choices + sorted(lst, key=lambda x: x[1])
 
 
 def populate_country_iso3(field, *kargs, **kwargs):
+    """ populate country """
     field.choices = []
     field.choices.append(('',_('all')))
 
@@ -109,13 +118,15 @@ def populate_country_iso3(field, *kargs, **kwargs):
     HAVING c.iso3 IS NOT NULL
     ORDER BY c.name
     """
-    l = []
+    lst = []
     for item in iter_sql(sql):
-        l.append((item[0], _(item[1])))
+        lst.append((item[0], _(item[1])))
 
-    field.choices = field.choices + sorted(l, key=lambda x: x[1])
+    field.choices = field.choices + sorted(lst, key=lambda x: x[1])
+
 
 def populate_countries_iso3(field, *kargs, **kwargs):
+    """ populate countries """
     field.choices = []
     field.choices.append(('ALL',_('all')))
 
@@ -126,25 +137,28 @@ def populate_countries_iso3(field, *kargs, **kwargs):
     HAVING c.iso3 IS NOT NULL
     ORDER BY c.name
     """
-    l = []
+    lst = []
     for item in iter_sql(sql):
-        l.append((item[0], _(item[1])))
+        lst.append((item[0], _(item[1])))
 
-    field.choices = field.choices + sorted(l, key=lambda x: x[1])
+    field.choices = field.choices + sorted(lst, key=lambda x: x[1])
+
 
 def populate_subjects(field, *kargs, **kwargs):
+    """ populate subjects """
     field.choices = []
-    field.choices.append(('ALL',_('all')))
-    sql = """
+    field.choices.append(('ALL', _('all')))
+    iso3 = kwargs.get('selected_country_iso', '')
+    sql = f"""
     SELECT gcs.code, gcs.name
     FROM geo_country_subject gcs
     LEFT JOIN geo_country gc ON gcs.country_iso=gc.iso
-    WHERE gc.iso3 = '%s'
+    WHERE gc.iso3 = '{iso3}'
     ORDER BY gcs.name
-    """ % kwargs.get('selected_country_iso','')
+    """
 
-    l = []
+    lst = []
     for item in iter_sql(sql):
-        l.append((item[0], _(item[1])))
+        lst.append((item[0], _(item[1])))
 
-    field.choices = field.choices + sorted(l, key=lambda x: x[1])
+    field.choices = field.choices + sorted(lst, key=lambda x: x[1])

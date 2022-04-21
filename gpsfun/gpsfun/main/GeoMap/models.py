@@ -1,3 +1,6 @@
+"""
+GeoMap models
+"""
 import random
 from django.db import models
 
@@ -50,21 +53,24 @@ NOISE = {
 
 
 def random_noise(noise):
+    """ random value """
     return random.randrange(0, noise) / 1000000.0
 
 
 class Location(models.Model):
+    """ Location """
     NS_degree = models.FloatField(blank=True, null=True)
     EW_degree = models.FloatField(blank=True, null=True)
 
     class Meta:
-        db_table = u'location'
+        db_table = 'location'
 
-    def __unicode__(self):
-        return u'location %s: %s / %s' % (self.id, self.NS_degree, self.EW_degree)
+    def __str__(self):
+        return f'location {self.id}: {self.NS_degree} / {self.EW_degree}'
 
 
 class Geosite(models.Model):
+    """ Geosite """
     code = models.CharField(max_length=16)
     name = models.CharField(max_length=128)
     url = models.CharField(max_length=128, blank=True, null=True)
@@ -74,18 +80,20 @@ class Geosite(models.Model):
     logo = models.CharField(max_length=128, blank=True, null=True)
 
     class Meta:
-        db_table = u'geosite'
+        db_table = 'geosite'
 
-    def __unicode__(self):
-        return u'Geosite %s-%s-%s' % (self.code, self.name, self.url)
+    def __str__(self):
+        return f'Geosite {self.code}-{self.name}-{self.url}'
 
     def url2cache(self, pid, code):
+        """ url to geocache """
         if self.url_by_code:
             return self.cache_url % code
         return self.cache_url % pid
 
 
 class Geothing(models.Model):
+    """ Geothing """
     geosite = models.ForeignKey(Geosite, on_delete=models.CASCADE)
     location = models.ForeignKey(Location, on_delete=models.CASCADE)
     pid = models.IntegerField(default=0)
@@ -102,74 +110,84 @@ class Geothing(models.Model):
     oblast = models.CharField(max_length=64, blank=True, null=True)
 
     class Meta:
-        db_table = u'geothing'
+        db_table = 'geothing'
 
-    def __unicode__(self):
-        return u'%s/%s/%s/%s' % (self.id, self.geosite.code, self.code, self.name)
+    def __str__(self):
+        return '{self.id}/{self.geosite.code}/{self.code}/{self.name}'
 
     @property
     def latitude_degree(self):
+        """ latitude degree """
         return self.location.NS_degree + random_noise(NOISE.get(self.geosite.code) or 1)
 
     @property
     def longitude_degree(self):
+        """ longitude degree """
         return self.location.EW_degree + random_noise(NOISE.get(self.geosite.code) or 1)
 
     @property
     def latitude_degree_minutes(self):
-        d = (None,None)
+        """ latitude degree minutes """
+        degree = (None, None)
         if self.location and self.location.NS_degree is not None:
-            d = point_degree_minutes(self.location.NS_degree)
+            degree = point_degree_minutes(self.location.NS_degree)
 
-        return d
+        return degree
 
     @property
     def longitude_degree_minutes(self):
-        d = (None,None)
+        """ longitude degree minutes """
+        degree = (None, None)
         if self.location and self.location.EW_degree is not None:
-            d = point_degree_minutes(self.location.EW_degree)
+            degree = point_degree_minutes(self.location.EW_degree)
 
-        return d
+        return degree
 
     @property
     def site(self):
+        """ geothing web site """
         return self.geosite.name
 
     @property
     def url(self):
+        """ url to geothing """
         return self.geosite.url2cache(self.pid, self.code)
 
     # two aliases
     @property
     def latitude(self):
+        """ latitude """
         return self.latitude_degree
 
     @property
     def longitude(self):
+        """ longitude """
         return self.longitude_degree
 
 
 def point_degree_minutes(degree):
-    d = (None, None)
+    """ point degree minutes """
+    couple = (None, None)
     if degree is not None:
         deg = int(degree)
         minutes = (abs(degree) - abs(deg)) * 60
-        d = (deg, minutes)
+        couple = (deg, minutes)
 
-    return d
+    return couple
 
 
 class BlockNeedBeDivided(models.Model):
+    """ BlockNeedBeDivided """
     geosite = models.ForeignKey(Geosite, on_delete=models.CASCADE)
     added = models.DateTimeField()
     bb = models.CharField(max_length=128)
     idx = models.IntegerField(db_index=True)
 
     class Meta:
-        db_table = u'block_need_be_divided'
+        db_table = 'block_need_be_divided'
 
-    def __unicode__(self):
-        return u'Block %s-%s' % (self.geosite, self.bb)
+    def __str__(self):
+        return u'Block {self.geosite}-{self.bb}'
 
     @classmethod
     def next_index(cls):

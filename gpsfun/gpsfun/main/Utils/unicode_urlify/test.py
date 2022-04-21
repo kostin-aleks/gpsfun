@@ -14,7 +14,7 @@ class PinYinTestCase(unittest.TestCase):
                          u'athb-lg-gye')
 
     def testEmpty(self):
-         self.assertEqual(urlify(u''),
+        self.assertEqual(urlify(u''),
                           u'default')
 
     def testStopWords(self):
@@ -45,7 +45,6 @@ class PinYinTestCase(unittest.TestCase):
         # NOTE: no one character in line suppoerted; return 'default'
         r = urlify(u'漢語')
         self.assertEqual(r, 'default')
-
 
 
 if __name__ == '__main__':

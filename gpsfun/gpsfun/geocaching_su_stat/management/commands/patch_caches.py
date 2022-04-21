@@ -10,7 +10,7 @@ import os
 from django.db import connection
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from gpsfun.main.models import log, UPDATE_TYPE
+from gpsfun.main.models import log, UpdateType
 
 
 def patch_it(name):
@@ -48,6 +48,6 @@ class Command(BaseCommand):
             patch_it('sql/' + name)
             print(name, ' processed')
 
-        log(UPDATE_TYPE.geocacher_patch, 'OK')
+        log(UpdateType.geocacher_patch, 'OK')
 
         return 'Geocachers data are updated'

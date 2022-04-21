@@ -10,7 +10,7 @@ import requests
 from django.core.management.base import BaseCommand
 from gpsfun.main.GeoCachSU.models import (Cach, LogCreateCach)
 from gpsfun.DjHDGutils.dbutils import get_object_or_none
-from gpsfun.main.models import log, UPDATE_TYPE
+from gpsfun.main.models import log, UpdateType
 from gpsfun.geocaching_su_stat.utils import (
     LOGIN_DATA, logged, get_caches_data, get_geocachers_uids)
 
@@ -53,5 +53,5 @@ class Command(BaseCommand):
                                 the_log.coauthor = coauthor
                                 the_log.save()
 
-        log(UPDATE_TYPE.gcsu_new_logs_created, 'OK')
+        log(UpdateType.gcsu_new_logs_created, 'OK')
         return 'List of created caches has updated'

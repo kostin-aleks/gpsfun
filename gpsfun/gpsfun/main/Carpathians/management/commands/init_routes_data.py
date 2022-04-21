@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 NAME
      init_routes_data.py
@@ -9,11 +8,11 @@ DESCRIPTION
 """
 
 from django.core.management.base import BaseCommand
-from urllib.request import urlopen
 from gpsfun.main.Carpathians.models import Ridge, Peak, GeoPoint
 
 
 class Command(BaseCommand):
+    """ Command """
     help = 'Adds initial data into database'
 
     def handle(self, *args, **options):

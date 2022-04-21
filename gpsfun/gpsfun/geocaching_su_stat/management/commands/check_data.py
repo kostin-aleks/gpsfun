@@ -8,7 +8,7 @@ DESCRIPTION
 """
 
 from django.core.management.base import BaseCommand
-from gpsfun.main.models import log, UPDATE_TYPE
+from gpsfun.main.models import log, UpdateType
 from gpsfun.main.models import LogCheckData
 
 
@@ -20,6 +20,6 @@ class Command(BaseCommand):
         """ handle """
         LogCheckData.check_data()
 
-        log(UPDATE_TYPE.gcsu_check_data, 'OK')
+        log(UpdateType.gcsu_check_data, 'OK')
 
         return 'Result of checking is saved'

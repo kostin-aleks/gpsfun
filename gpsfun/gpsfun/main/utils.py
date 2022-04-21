@@ -1,15 +1,18 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+"""
+utils for main
+"""
 
 import re
 from datetime import datetime
 from django.utils.translation import ugettext_lazy as _
 from gpsfun.main.GeoMap.models import Geothing, Location
 
+
 MAX_POINTS = 500
 
 
 def get_latlon_limits(points):
+    """ get latlon limits """
     lat_min = lat_max = lng_min = lng_max = None
     for point in points:
         if lat_min is None or point.latitude < lat_min:
@@ -24,6 +27,7 @@ def get_latlon_limits(points):
 
 
 def get_rectangle(lat_min, lat_max, lng_min, lng_max):
+    """ get rectangle """
     rect = None
     if lat_min is not None and lat_max is not None and lng_min is not None and lng_max is not None:
         rect = {
@@ -36,21 +40,23 @@ def get_rectangle(lat_min, lat_max, lng_min, lng_max):
 
 
 def points_rectangle(points):
-    if not len(points):
+    """ points rectangle """
+    if not points:
         return get_rectangle(45, 55, 30, 40)
-    ADD = 0.05
+    add_ = 0.05
     lat_min, lat_max, lng_min, lng_max = get_latlon_limits(points)
 
     if abs(lat_max - lat_min) < 0.05:
-        lat_max += ADD
-        lat_min -= ADD
+        lat_max += add_
+        lat_min -= add_
     if abs(lng_max - lng_min) < 0.05:
-        lng_max += ADD
-        lng_min -= ADD
+        lng_max += add_
+        lng_min -= add_
     return get_rectangle(lat_min, lat_max, lng_min, lng_max)
 
 
-def get_degree(s):
+def get_degree(string):
+    """ get degree """
     p_dms = re.compile("^[\-\+\sNESW]*(1|0[0-8]\d|\d{1,2})[\°\s]+(\d|[0-5]\d)[\'\s](\d|[0-5]\d)[\.\,](\d*)[\sNESW\°\"]*$")
     p_dms_int = re.compile("^[\-\+\sNESW]*(1|0[0-8]\d|\d{1,2})[\°\s]+(\d|[0-5]\d)[\'\s](\d|[0-5]\d)[\sNESW\°\"]*$")
     p_d = re.compile("^[\-\+\sNESW]*(1[0-8]\d|\d{1,2})[\.\,](\d*)[\sNESW\°]*$")
@@ -58,48 +64,46 @@ def get_degree(s):
     p_dm_int = re.compile("^[\-\+\sNESW]*(1|0[0-8]\d|\d{1,2})[\°\s]+(\d|[0-5]\d)[\sNESW\°\']*$")
     p_d_int = re.compile("^[\-\+\sNESW]*(1[0-8]\d|\d{1,2})[\sNESW\°]*$")
 
-    Deg = Min = Sec = None
+    deg_ = min_ = sec_ = None
 
-    m = p_dms.match(s)
-    if m:
-        Deg = m.groups()[0]
-        Min = m.groups()[1]
-        Sec_str = '{}.{}'.format(m.groups()[2], m.groups()[3])
-        Deg = float(Deg) + float(Min) / 60.0 + float(Sec_str) / 3600
-    else:
-        m = p_d.match(s)
-        if m:
-            Deg_str = '{}.{}'.format(m.groups()[0],
-                                     m.groups()[1])
-            Deg = float(Deg_str)
+    matched = p_dms.match(string)
+    if matched:
+        deg_ = matched.groups()[0]
+        min_ = matched.groups()[1]
+        sec_str = f'{matched.groups()[2]}.{matched.groups()[3]}'
+        return float(deg_) + float(min_) / 60.0 + float(sec_str) / 3600
 
-        else:
-            m = p_dm.match(s)
-            if m:
-                Deg = m.groups()[0]
-                Min_str = '{}.{}'.format(m.groups()[1],
-                                         m.groups()[2])
-                Min = float(Min_str)
-                Deg = float(Deg) + float(Min) / 60.0
-            else:
-                m = p_d_int.match(s)
-                if m:
-                    Deg = m.groups()[0]
-                    Deg = float(Deg)
-                else:
-                    m = p_dm_int.match(s)
-                    if m:
-                        Deg = m.groups()[0]
-                        Min = m.groups()[1]
-                        Deg = float(Deg) + float(Min) / 60.0
-                    else:
-                        m = p_dms_int.match(s)
-                        if m:
-                            Deg = m.groups()[0]
-                            Min = m.groups()[1]
-                            Sec = m.groups()[2]
-                            Deg = float(Deg) + float(Min) / 60.0 + float(Sec) / 3600
-    return Deg
+    matched = p_d.match(string)
+    if matched:
+        deg_str = f'{matched.groups()[0]}.{matched.groups()[1]}'
+        return float(deg_str)
+
+    matched = p_dm.match(string)
+    if matched:
+        deg_ = matched.groups()[0]
+        min_str = f'{matched.groups()[1]}.{matched.groups()[2]}'
+        min_ = float(min_str)
+        return float(deg_) + float(min_) / 60.0
+
+    matched = p_d_int.match(string)
+    if matched:
+        deg_ = matched.groups()[0]
+        return float(deg_)
+
+    matched = p_dm_int.match(string)
+    if matched:
+        deg_ = matched.groups()[0]
+        min_ = matched.groups()[1]
+        return float(deg_) + float(min_) / 60.0
+
+    matched = p_dms_int.match(string)
+    if matched:
+        deg_ = matched.groups()[0]
+        min_ = matched.groups()[1]
+        sec_ = matched.groups()[2]
+        return float(deg_) + float(min_) / 60.0 + float(sec_) / 3600
+
+    return deg_
 
 country_list = [
 _("Ukraine"),
@@ -1256,6 +1260,7 @@ _("Brestskaya Voblasts'"),
 
 
 class TheGeothing:
+    """ TheGeothing """
     pid = None
     code = None
     name = None
@@ -1266,6 +1271,7 @@ class TheGeothing:
 
 
 class TheLocation:
+    """ TheLocation """
     NS_degree = None
     EW_degree = None
     NS_minute = None
@@ -1273,6 +1279,7 @@ class TheLocation:
 
 
 def location_was_changed(location, the_location):
+    """ location was changed ? """
     location_changed = False
     if int(location.NS_degree * 1000000) != int(the_location.NS_degree * 1000000):
         location_changed = True
@@ -1282,14 +1289,16 @@ def location_was_changed(location, the_location):
 
 
 def create_new_geothing(the_geothing, the_location, geosite):
+    """ create new geothing """
     geothing = Geothing(geosite=geosite)
-    l = Location()
-    l.NS_degree = the_location.NS_degree
-    l.EW_degree = the_location.EW_degree
-    l.NS_minute = the_location.NS_minute
-    l.EW_minute = the_location.EW_minute
-    l.save()
-    geothing.location = l
+    location = Location()
+    location.NS_degree = the_location.NS_degree
+    location.EW_degree = the_location.EW_degree
+    location.NS_minute = the_location.NS_minute
+    location.EW_minute = the_location.EW_minute
+    location.save()
+
+    geothing.location = location
     geothing.pid = the_geothing.pid
     geothing.code = the_geothing.code
     geothing.type_code = the_geothing.type_code
@@ -1300,6 +1309,7 @@ def create_new_geothing(the_geothing, the_location, geosite):
 
 
 def update_geothing(geothing, the_geothing, the_location):
+    """ update geothing """
     changed = False
     if geothing.code != the_geothing.code:
         changed = True
@@ -1335,16 +1345,18 @@ def update_geothing(geothing, the_geothing, the_location):
     if changed or location_changed:
         geothing.save()
         return 1
+    return None
 
 
 def get_uid(tbl):
+    """ get uid """
     uid = None
     a_list = tbl.findAll('a')
-    for a in a_list:
-        href = a.get('href', '')
+    for anchor in a_list:
+        href = anchor.get('href', '')
         if href.startswith('javascript:indstat('):
-            p = re.compile('javascript:indstat\((\d+)\,\d+\)')
-            dgs = p.findall(href)
+            preg = re.compile('javascript:indstat\((\d+)\,\d+\)')
+            dgs = preg.findall(href)
             if len(dgs):
                 uid = int(dgs[0])
                 break
@@ -1352,31 +1364,34 @@ def get_uid(tbl):
 
 
 def text_or_none(cell):
-    r = None
+    """ get text or None """
     if nonempty_cell(cell):
-        r = cell.strip()
-        if type(r) != type(u' '):
-            r = unicode(r, 'utf8')
-    return r
+        res = cell.strip()
+        if not isinstance(res, str):
+            res = str(res)
+        return res
+    return None
 
 
 def nonempty_cell(cell):
-    r = True
+    """ is cell not empty ? """
     if not cell or cell == '&nbsp;':
-        r = False
-    return r
+        return False
+    return True
 
 
 def strdate_or_none(cell):
-    def year_from_text(s):
-        r = None
-        p = re.compile('\d+')
-        dgs = p.findall(s)
+    """ get date or None """
+    def year_from_text(string):
+        """ get year from text """
+        preg = re.compile('\d+')
+        dgs = preg.findall(string)
         if dgs and len(dgs):
-            r = int(dgs[0])
-            if r < 1000:
-                r = 1900
-        return r
+            result = int(dgs[0])
+            if result < 1000:
+                result = 1900
+            return result
+        return None
 
     dmonths = {
         'января': 1,
@@ -1392,55 +1407,54 @@ def strdate_or_none(cell):
         'ноября': 11,
         'декабря': 12,
     }
-    r = None
+
     if nonempty_cell(cell):
         parts = cell.split('.')
         if len(parts) > 2:
             year = parts[2]
             if year:
                 try:
-                    r = datetime(int(year), int(parts[1]), int(parts[0]))
+                    return datetime(int(year), int(parts[1]), int(parts[0]))
                 except ValueError:
-                    r = None
+                    return None
         else:
             parts = cell.split()
             if len(parts) == 3:
                 year = year_from_text(parts[2])
                 if year:
                     try:
-                        r = datetime(int(year), dmonths[parts[1]], int(parts[0]))
+                        return datetime(int(year), dmonths[parts[1]], int(parts[0]))
                     except ValueError:
-                        r = None
-    return r
+                        return None
+    return None
 
 
 def sex_or_none(cell):
-    r = None
+    """ get sex or None """
     if nonempty_cell(cell):
-        r = cell[0]
-        if r == u'м':
-            r = 'M'
-        else:
-            r = 'F'
-    return r
+        res = cell[0]
+        return 'M' if res == 'м' else 'F'
+    return None
 
 
 def date_or_none(cell):
-    r = None
+    """ get date or None """
     if nonempty_cell(cell):
         parts = cell.split('.')
         if len(parts) > 2:
             try:
-                r = datetime(int(parts[2][:4]), int(parts[1]), int(parts[0]))
+                return datetime(int(parts[2][:4]), int(parts[1]), int(parts[0]))
             except ValueError:
-                r = None
-    return r
+                return None
+    return None
 
 
 def utf8(text):
+    """ convert text into utf8 """
     return ''.join([char for char in text if len(char.encode('utf-8')) < 4])
 
 def parse_header(text):
+    """ parse header """
     parts = text.split()
     code = parts[-1]
     name = ' '.join(parts[:-1])

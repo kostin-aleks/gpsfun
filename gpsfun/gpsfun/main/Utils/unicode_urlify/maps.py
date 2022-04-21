@@ -1,4 +1,6 @@
-# -*- coding: utf-8 -*-
+"""
+urlify maps
+"""
 
 latin_map = {
     u'À': u'A', u'Á': u'A', u'Â': u'A', u'Ã': u'A', u'Ä': u'A', u'Å': u'A', u'Æ': u'AE', u'Ç':

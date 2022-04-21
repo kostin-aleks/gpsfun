@@ -1,14 +1,20 @@
+""" Carpathians models """
+
+import math
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from gpsfun.utils import get_image_path, media_url, image_url
+
+from gpsfun.utils import get_image_path
 
 
 def thumbnail(width, height):
-    MAX = 400
-    k = width / height
-    if height > MAX:
-        height = MAX
-        width = int(height * k)
+    """ thumbnail """
+    max_ = 400
+    factor = width / height
+    if height > max_:
+        height = max_
+        width = int(height * factor)
     return {'width': width, 'height': height}
 
 
@@ -22,20 +28,21 @@ class GeoPoint(models.Model):
         _("longitude"), default=0, decimal_places=6, max_digits=10)
 
     def __str__(self):
-        return 'point {:10.6f}, {:10.4f}'.format(self.latitude, self.longitude)
+        return f'point {self.latitude:10.6f}, {self.longitude:10.4f}'
 
     class Meta:
         db_table = 'geopoint'
         verbose_name = _("geopoint")
         verbose_name_plural = _("geopoints")
 
-    def distance_to_point(self, P):
+    def distance_to_point(self, point):
         """
         distance from this point to another point, km
         """
-        if P is not None:
+        if point is not None:
             return haversine_distance(
-                self.latitude, self.longitude, P.latitude, P.longitude)
+                self.latitude, self.longitude, point.latitude, point.longitude)
+        return None
 
     def distance_to_coordinates(self, latitude, longitude):
         """
@@ -45,12 +52,16 @@ class GeoPoint(models.Model):
             self.latitude, self.longitude, latitude, longitude)
 
     @classmethod
-    def degree_from_string(cls, s):
-        items = [float(x) for x in s.split()]
+    def degree_from_string(cls, string):
+        """ get degree from string """
+        items = [float(x) for x in string.split()]
         return items[0] + items[1] / 60.0 + items[2] / 3600.0
 
 
 class Ridge(models.Model):
+    """
+    Ridge model
+    """
     slug = models.SlugField(_("slug"), unique=True)
     name = models.CharField(max_length=128)
     description = models.TextField(blank=True, null=True)
@@ -61,16 +72,21 @@ class Ridge(models.Model):
         verbose_name_plural = _("ridges")
 
     def __str__(self):
-        return '%s-%s' % (self.id, self.slug)
+        return f'{self.id}-{self.slug}'
 
     def peaks(self):
+        """ ridge peaks """
         return self.peak_set.order_by('name')
 
     def routes(self):
+        """ ridge routes """
         return Route.objects.filter(peak__ridge=self).order_by('number')
 
 
 class RidgeInfoLink(models.Model):
+    """
+    Ridge Info Link model
+    """
     ridge = models.ForeignKey(
         Ridge, on_delete=models.PROTECT, verbose_name=_("ridge"))
     link = models.URLField(_("link"), max_length=128)
@@ -82,10 +98,13 @@ class RidgeInfoLink(models.Model):
         verbose_name_plural = _("ridge links")
 
     def __str__(self):
-        return '%s-%s' % (self.id, self.link)
+        return f'{self.id}-{self.link}'
 
 
 class Peak(models.Model):
+    """
+    Peak model
+    """
     slug = models.SlugField(_("slug"), unique=True)
     ridge = models.ForeignKey(
         Ridge, on_delete=models.PROTECT, verbose_name=_("ridge"))
@@ -104,16 +123,21 @@ class Peak(models.Model):
         verbose_name_plural = _("peaks")
 
     def __str__(self):
-        return '%s-%s' % (self.id, self.slug)
+        return f'{self.id}-{self.slug}'
 
     def routes(self):
+        """ peak routes """
         return self.route_set.order_by('number')
 
     def photos(self):
+        """ peak photos """
         return self.peakphoto_set.order_by('id')
 
 
 class PeakPhoto(models.Model):
+    """
+    Peak Photo model
+    """
     peak = models.ForeignKey(
         Peak, on_delete=models.PROTECT, verbose_name=_("peak"))
     photo = models.ImageField(
@@ -126,14 +150,18 @@ class PeakPhoto(models.Model):
         verbose_name_plural = _("peak photos")
 
     def __str__(self):
-        return '%s-%s' % (self.id, self.photo)
+        return f'{self.id}-{self.photo}'
 
     @property
     def thumbnail(self):
+        """ get photo thumbnail """
         return thumbnail(self.photo.width, self.photo.height)
 
 
 class Route(models.Model):
+    """
+    Route model
+    """
     peak = models.ForeignKey(
         Peak, on_delete=models.PROTECT, verbose_name=_("peak"))
     name = models.CharField(max_length=64, blank=True, null=True)
@@ -160,19 +188,25 @@ class Route(models.Model):
         verbose_name_plural = _("routes")
 
     def __str__(self):
-        return '%s-%s' % (self.number, self.name)
+        return f'{self.number}-{self.name}'
 
     def sections(self):
+        """ route sections """
         return self.routesection_set.order_by('num')
 
     def points(self):
+        """ route points """
         return self.routepoint_set.order_by('id')
 
     def photos(self):
+        """ route photos """
         return self.routephoto_set.order_by('id')
 
 
 class RouteSection(models.Model):
+    """
+    Route Section model
+    """
     route = models.ForeignKey(
         Route, on_delete=models.PROTECT, verbose_name=_("route"))
     num = models.IntegerField(blank=True, null=True)
@@ -187,20 +221,22 @@ class RouteSection(models.Model):
         verbose_name_plural = _("route sections")
 
     def __str__(self):
-        return '%s-%s' % (self.id, self.num)
+        return f'{self.id}-{self.num}'
 
     @property
     def number(self):
-        return 'R<sub>{}</sub>-R<sub>{}</sub>'.format(self.num - 1, self.num)
+        """ get section number """
+        return f'R<sub>{self.num - 1}</sub>-R<sub>{self.num}</sub>'
 
     @property
     def details(self):
-        km = self.length // 1000
-        m = self.length % 1000
-        length = '{}м'.format(m)
-        if km:
-            length = '{}км '.format(km) + length
-        items = [length, ]
+        """ get route section details """
+        len_km = self.length // 1000
+        len_m = self.length % 1000
+        length = f'{len_m}м'
+        if len_km:
+            length = f'{len_km}км ' + length
+        items = [length]
         if self.angle:
             items.append(self.angle)
         items.append(self.difficulty)
@@ -208,6 +244,9 @@ class RouteSection(models.Model):
 
 
 class RoutePhoto(models.Model):
+    """
+    Route Photo model
+    """
     route = models.ForeignKey(
         Route, on_delete=models.PROTECT, verbose_name=_("route"))
     photo = models.ImageField(
@@ -220,14 +259,18 @@ class RoutePhoto(models.Model):
         verbose_name_plural = _("route photos")
 
     def __str__(self):
-        return '%s-%s' % (self.id, self.photo)
+        return f'{self.id}-{self.photo}'
 
     @property
     def thumbnail(self):
+        """ get photo thumbnail """
         return thumbnail(self.photo.width, self.photo.height)
 
 
 class RoutePoint(models.Model):
+    """
+    Route Point model
+    """
     route = models.ForeignKey(
         Route, on_delete=models.PROTECT, verbose_name=_("route"))
     point = models.ForeignKey(
@@ -241,4 +284,24 @@ class RoutePoint(models.Model):
         verbose_name_plural = _("route points")
 
     def __str__(self):
-        return '%s-%s' % (self.route.id, self.point)
+        return f'{self.route.id}-{self.point}'
+
+
+def haversine_distance(lat1, lon1, lat2, lon2):
+    """
+    It calculates distance between two points (km).
+    https://en.wikipedia.org/wiki/Haversine_formula
+    Test: distance between Red Square (55.7539° N, 37.6208° E)
+    and Hermitage (59.9398° N, 30.3146° E) equals 634.569km
+    """
+    earth_radius = 6371.0
+
+    lon1, lat1, lon2, lat2 = map(math.radians, (lon1, lat1, lon2, lat2))
+
+    # haversine formula
+    dlon = lon2 - lon1
+    dlat = lat2 - lat1
+    aaa = math.sin(dlat / 2) ** 2 + math.cos(lat1) * \
+        math.cos(lat2) * math.sin(dlon / 2) ** 2
+
+    return earth_radius * 2 * math.asin(math.sqrt(aaa))

@@ -12,7 +12,7 @@ from django.db import connection
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from gpsfun.main.GeoCachSU.models import Geocacher
-from gpsfun.main.models import log, UPDATE_TYPE
+from gpsfun.main.models import log, UpdateType
 from gpsfun.geocaching_su_stat.utils import (
     LOGIN_DATA, logged, get_found_caches_countries, set_country_code,
     get_found_caches_oblast, set_oblast_code)
@@ -83,6 +83,6 @@ class Command(BaseCommand):
                 set_oblast_code(uid, oblast)
 
 
-        log(UPDATE_TYPE.geocacher_patch, 'OK')
+        log(UpdateType.geocacher_patch, 'OK')
 
         return 'Geocachers data are updated'

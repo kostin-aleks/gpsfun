@@ -9,7 +9,7 @@ DESCRIPTION
 
 import requests
 from django.core.management.base import BaseCommand
-from gpsfun.main.models import log, UPDATE_TYPE
+from gpsfun.main.models import log, UpdateType
 from gpsfun.geocaching_su_stat.utils import (
     LOGIN_DATA, logged, get_caches
 )
@@ -32,6 +32,6 @@ class Command(BaseCommand):
             else:
                 get_caches()
 
-        log(UPDATE_TYPE.gcsu_caches, 'OK')
+        log(UpdateType.gcsu_caches, 'OK')
 
         return 'List of caches has updated'

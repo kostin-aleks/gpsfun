@@ -3,7 +3,7 @@ There are Admin Classes to present in admin interface objects related to Country
 """
 
 from django.contrib import admin
-from gpsfun.main.GeoName.models import (GeoCity, )
+from gpsfun.main.GeoName.models import (GeoCity,)
 
 
 class GeoCityAdmin(admin.ModelAdmin):
@@ -19,4 +19,3 @@ class GeoCityAdmin(admin.ModelAdmin):
 
 
 admin.site.register(GeoCity, GeoCityAdmin)
-

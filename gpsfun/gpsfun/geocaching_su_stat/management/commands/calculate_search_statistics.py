@@ -10,7 +10,7 @@ from datetime import date
 from django.db import connection
 from django.core.management.base import BaseCommand
 from gpsfun.main.GeoCachSU.models import Cach, CachStat
-from gpsfun.main.models import log, UPDATE_TYPE
+from gpsfun.main.models import log, UpdateType
 
 
 def patch_it(sql):
@@ -74,6 +74,6 @@ class Command(BaseCommand):
         for sql in queries:
             patch_it(sql)
 
-        log(UPDATE_TYPE.search_statistics, 'OK')
+        log(UpdateType.search_statistics, 'OK')
 
         return 'Geocachers search statistics is updated'

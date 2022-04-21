@@ -10,7 +10,7 @@ import os
 from django.db import connection
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from gpsfun.main.models import log, UPDATE_TYPE
+from gpsfun.main.models import log, UpdateType
 
 
 def patch_it(name):
@@ -46,6 +46,6 @@ class Command(BaseCommand):
             patch_it(name)
             print(name, ' processed')
 
-        log(UPDATE_TYPE.cache_statistics, 'OK')
+        log(UpdateType.cache_statistics, 'OK')
 
         return 'Caches statistics is updated'

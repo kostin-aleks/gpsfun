@@ -9,7 +9,7 @@ DESCRIPTION
 
 import requests
 from django.core.management.base import BaseCommand
-from gpsfun.main.models import log, UPDATE_TYPE
+from gpsfun.main.models import log, UpdateType
 from gpsfun.main.GeoCachSU.models import Cach
 from gpsfun.geocaching_su_stat.utils import (
     LOGIN_DATA, logged, get_country)
@@ -58,6 +58,6 @@ class Command(BaseCommand):
                         cache.oblast = country['region']
                         cache.save()
 
-        log(UPDATE_TYPE.set_caches_locations, 'OK')
+        log(UpdateType.set_caches_locations, 'OK')
 
         return 'Location of caches has updated'

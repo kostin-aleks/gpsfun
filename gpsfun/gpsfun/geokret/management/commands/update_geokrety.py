@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 import requests
 from bs4 import BeautifulSoup
 from django.core.management.base import BaseCommand
-from gpsfun.main.models import log, UPDATE_TYPE
+from gpsfun.main.models import log, UpdateType
 from gpsfun.main.GeoKrety.models import GeoKret, Location
 
 
@@ -66,6 +66,6 @@ class Command(BaseCommand):
 
                     geokret.save()
 
-        log(UPDATE_TYPE.geokrety_updated, 'OK')
+        log(UpdateType.geokrety_updated, 'OK')
 
         return 'Geokrety are updated'

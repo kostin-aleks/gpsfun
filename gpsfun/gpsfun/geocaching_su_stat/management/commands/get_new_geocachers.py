@@ -10,7 +10,7 @@ from django.core.management.base import BaseCommand
 from django.db.models import Max
 import requests
 from gpsfun.main.GeoCachSU.models import Geocacher
-from gpsfun.main.models import log, UPDATE_TYPE
+from gpsfun.main.models import log, UpdateType
 from gpsfun.geocaching_su_stat.utils import (
     LOGIN_DATA, logged, get_user_profile)
 
@@ -41,5 +41,5 @@ class Command(BaseCommand):
                     if geocacher:
                         print(uid, geocacher.id, geocacher.nickname)
 
-        log(UPDATE_TYPE.gcsu_new_geocachers, 'OK')
+        log(UpdateType.gcsu_new_geocachers, 'OK')
         return 'List of geocachers has updated'

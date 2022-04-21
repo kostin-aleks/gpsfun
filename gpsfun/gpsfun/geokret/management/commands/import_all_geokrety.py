@@ -14,7 +14,7 @@ import requests
 
 from django.core.management.base import BaseCommand
 
-from gpsfun.main.models import log, UPDATE_TYPE
+from gpsfun.main.models import log, UpdateType
 from gpsfun.main.GeoKrety.models import GeoKret, Location
 
 
@@ -93,6 +93,6 @@ class Command(BaseCommand):
                             kret.save()
                             print(kret.name)
 
-        log(UPDATE_TYPE.geokrety_imported, 'OK')
+        log(UpdateType.geokrety_imported, 'OK')
 
         return 'Geokrety are imported'

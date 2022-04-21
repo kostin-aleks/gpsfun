@@ -10,7 +10,7 @@ DESCRIPTION
 
 import requests
 from django.core.management.base import BaseCommand
-from gpsfun.main.models import log, UPDATE_TYPE
+from gpsfun.main.models import log, UpdateType
 from gpsfun.main.GeoCachSU.models import Cach, Geocacher
 from gpsfun.geocaching_su_stat.utils import (
     LOGIN_DATA, logged, get_author)
@@ -48,6 +48,6 @@ class Command(BaseCommand):
                             print('not found author', author_uid)
 
 
-        log(UPDATE_TYPE.set_caches_authors, 'OK')
+        log(UpdateType.set_caches_authors, 'OK')
 
         return 'Authors of caches have updated'

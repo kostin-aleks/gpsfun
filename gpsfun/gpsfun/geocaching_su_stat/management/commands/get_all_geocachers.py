@@ -8,7 +8,7 @@ DESCRIPTION
 """
 from django.core.management.base import BaseCommand
 import requests
-from gpsfun.main.models import log, UPDATE_TYPE
+from gpsfun.main.models import log, UpdateType
 from gpsfun.geocaching_su_stat.utils import (
     LOGIN_DATA, logged, get_user_profile)
 
@@ -35,5 +35,5 @@ class Command(BaseCommand):
                     if geocacher:
                         print(uid, geocacher.id, geocacher.nickname)
 
-        log(UPDATE_TYPE.gcsu_geocachers, 'OK')
+        log(UpdateType.gcsu_geocachers, 'OK')
         return 'List of geocachers has updated'

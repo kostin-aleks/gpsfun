@@ -10,7 +10,7 @@ DESCRIPTION
 import requests
 from django.core.management.base import BaseCommand
 from gpsfun.DjHDGutils.dbutils import get_object_or_none
-from gpsfun.main.models import log, UPDATE_TYPE
+from gpsfun.main.models import log, UpdateType
 from gpsfun.main.GeoCachSU.models import Geocacher
 from gpsfun.main.GeoName.models import GeoCountry
 from gpsfun.geocaching_su_stat.utils import get_subdiv_data
@@ -40,6 +40,6 @@ class Command(BaseCommand):
                 elif country.get('status') == 'limit':
                     break
 
-        log(UPDATE_TYPE.set_geocachers_locations, 'OK')
+        log(UpdateType.set_geocachers_locations, 'OK')
 
         return 'Location of geocachers has updated'

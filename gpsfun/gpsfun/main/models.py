@@ -1,10 +1,14 @@
+"""
+models for main
+"""
+from datetime import datetime
 from django.db import models
 from gpsfun.DjHDGutils.dbutils import get_object_or_none
-from datetime import datetime
 from gpsfun.main.GeoCachSU.models import Geocacher, Cach
 
 
-class UPDATE_TYPE:
+class UpdateType:
+    """ UpdateType """
     gcsu = 'gcsu'
     gcsu_caches = 'gcsu_caches'
     gcsu_new_caches = 'gcsu_new_caches'
@@ -51,41 +55,45 @@ class UPDATE_TYPE:
 
 
 class LogUpdate(models.Model):
+    """ LogUpdate """
     update_type = models.CharField(max_length=32)
     update_date = models.DateTimeField(blank=True, null=True)
     message = models.CharField(max_length=255)
 
     class Meta:
-        db_table = u'log_update'
+        db_table = 'log_update'
 
-    def __unicode__(self):
-        return u'Update %s on %s' % (self.update_type, self.update_date)
+    def __str__(self):
+        return f'Update {self.update_type} on {self.update_date}'
 
 
 class Variable(models.Model):
+    """ Variable """
     name = models.CharField(max_length=64)
     value = models.CharField(max_length=128)
 
     class Meta:
-        db_table = u'variables'
+        db_table = 'variables'
 
-    def __unicode__(self):
-        return u'%s -> %s' % (self.name, self.value)
+    def __str__(self):
+        return f'{self.name} -> {self.value}'
 
 
 class LogAPI(models.Model):
+    """ LogAPI """
     method = models.CharField(max_length=32)
     update_date = models.DateTimeField(blank=True, null=True)
     IP = models.CharField(max_length=16)
 
     class Meta:
-        db_table = u'log_api'
+        db_table = 'log_api'
 
-    def __unicode__(self):
-        return u'API request %s at %s' % (self.method, self.update_date)
+    def __str__(self):
+        return f'API request {self.method} at {self.update_date}'
 
 
 def switch_off_status_updated():
+    """ switch off the status 'updated' """
     updated = get_object_or_none(Variable, name='updated')
     if updated is None:
         return False
@@ -98,6 +106,7 @@ def switch_off_status_updated():
 
 
 def switch_on_status_updated():
+    """ switch on the status 'updated' """
     updated = get_object_or_none(Variable, name='updated')
     if updated is None:
         return False
@@ -109,16 +118,19 @@ def switch_on_status_updated():
 
 
 def log(type_, message):
-    l = LogUpdate(update_type=type_, message=message, update_date=datetime.now())
-    l.save()
+    """ log """
+    log_ = LogUpdate(update_type=type_, message=message, update_date=datetime.now())
+    log_.save()
 
 
 def log_api(method, IP):
-    l = LogAPI(method=method, IP=IP, update_date=datetime.now())
-    l.save()
+    """ log api """
+    log_ = LogAPI(method=method, IP=IP, update_date=datetime.now())
+    log_.save()
 
 
 class LogCheckData(models.Model):
+    """ LogCheckData """
     geocacher_count = models.IntegerField(blank=True, null=True)
     geocacher_wo_country_count = models.IntegerField(blank=True, null=True)
     geocacher_wo_region_count = models.IntegerField(blank=True, null=True)
@@ -129,13 +141,14 @@ class LogCheckData(models.Model):
     checking_date = models.DateTimeField(blank=True, null=True)
 
     class Meta:
-        db_table = u'log_check_data'
+        db_table = 'log_check_data'
 
     def __str__(self):
-        return u'Cheked data %s at %s' % (self.method, self.checking_date)
+        return f'Cheked data at {self.checking_date}'
 
     @classmethod
     def check_data(cls):
+        """ check data """
         cls.objects.create(
             geocacher_count=Geocacher.objects.all().count(),
             geocacher_wo_country_count=Geocacher.objects.filter(
@@ -151,5 +164,3 @@ class LogCheckData(models.Model):
                 author__isnull=True).count(),
             checking_date=datetime.now()
         )
-
-

@@ -6,11 +6,11 @@ related to geocaching statistics
 from django.contrib import admin
 from gpsfun.main.GeoCachSU.models import (
     Geocacher, Cach, LogCreateCach, LogSeekCach, LogRecommendCach,
-    CacheDescription, CacheLog, CachStat,
-    GeocacherStat, GeocacherSearchStat)
+    CachStat, GeocacherStat, GeocacherSearchStat)
 
 
 class GeocacherAdmin(admin.ModelAdmin):
+    """ GeocacherAdmin """
     list_display = (
         'uid', 'nickname', 'register_date', 'name', 'birstday',
         'sex', 'country', 'town', 'oblast',
@@ -24,6 +24,7 @@ admin.site.register(Geocacher, GeocacherAdmin)
 
 
 class CachAdmin(admin.ModelAdmin):
+    """ CachAdmin """
     list_display = (
         'pid', 'code', 'type_code', 'name', 'created_date',
         'author',
@@ -39,6 +40,7 @@ admin.site.register(Cach, CachAdmin)
 
 
 class LogCreateCachAdmin(admin.ModelAdmin):
+    """ LogCreateCachAdmin """
     list_display = (
         'author_uid', 'cach_pid', 'created_date', 'coauthor'
     )
@@ -49,6 +51,7 @@ admin.site.register(LogCreateCach, LogCreateCachAdmin)
 
 
 class LogSeekCachAdmin(admin.ModelAdmin):
+    """ LogSeekCachAdmin """
     list_display = (
         'cacher_uid', 'cach_pid', 'found_date', 'grade'
     )
@@ -59,6 +62,7 @@ admin.site.register(LogSeekCach, LogSeekCachAdmin)
 
 
 class LogRecommendCachAdmin(admin.ModelAdmin):
+    """ LogRecommendCachAdmin """
     list_display = (
         'cacher_uid', 'cach_pid'
     )
@@ -69,6 +73,7 @@ admin.site.register(LogRecommendCach, LogRecommendCachAdmin)
 
 
 class CachStatAdmin(admin.ModelAdmin):
+    """ CachStatAdmin """
     list_display = (
         'geocacher', 'cach', 'cach_pid', 'recommend_count',
         'found_count', 'rank', 'points'
@@ -81,6 +86,7 @@ admin.site.register(CachStat, CachStatAdmin)
 
 
 class GeocacherStatAdmin(admin.ModelAdmin):
+    """ GeocacherStatAdmin """
     list_display = (
         'geocacher', 'uid', 'created_count', 'found_count',
         'curr_found_count', 'curr_created_count',
@@ -102,6 +108,7 @@ admin.site.register(GeocacherStat, GeocacherStatAdmin)
 
 
 class GeocacherSearchStatAdmin(admin.ModelAdmin):
+    """ GeocacherSearchStatAdmin """
     list_display = (
         'geocacher', 'geocacher_uid', 'points', 'year_points',
         'country', 'region'
@@ -111,4 +118,3 @@ class GeocacherSearchStatAdmin(admin.ModelAdmin):
     ordering = ('id', )
 
 admin.site.register(GeocacherSearchStat, GeocacherSearchStatAdmin)
-

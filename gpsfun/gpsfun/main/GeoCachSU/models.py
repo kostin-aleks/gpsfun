@@ -1,3 +1,6 @@
+"""
+Models GeoCachSU
+"""
 from datetime import datetime
 from django.db import models
 
@@ -6,6 +9,7 @@ from gpsfun.DjHDGutils.dbutils import get_object_or_none
 from gpsfun.main.GeoName.models import GeoCountry, GeoCountryAdminSubject, \
      country_iso_by_iso3
 from gpsfun.main.db_utils import sql2val
+
 
 GEOCACHING_SU_CACH_TYPES = {
     'EV': _('Event'),
@@ -24,6 +28,7 @@ GEOCACHING_SU_ONMAP_TYPES = ('MV', 'MS', 'TR', 'VI', 'LV', 'LT')
 
 
 class Geocacher(models.Model):
+    """ Geocacher """
     uid = models.IntegerField(null=True, unique=True)
     nickname = models.CharField(max_length=64)
     name = models.CharField(max_length=128, blank=True, null=True)
@@ -45,167 +50,198 @@ class Geocacher(models.Model):
             models.Index(fields=['uid']),
             models.Index(fields=['nickname']),
         ]
-        db_table = u'geocacher'
+        db_table = 'geocacher'
 
-    def __unicode__(self):
-        return u'%s/%s/%s/%s' % (self.id, self.uid, self.name, str(self.nickname).decode('utf-8'))
+    def __str__(self):
+        nick = str(self.nickname).decode('utf-8')
+        return f'{self.id}/{self.uid}/{self.name}/{nick}'
 
     def cacher_country(self):
+        """ get geocacher country """
         return get_object_or_none(GeoCountry, iso3=self.country_iso3)
 
     def cacher_region(self):
+        """ get geocacher region """
         iso = country_iso_by_iso3(self.country_iso3)
-        return get_object_or_none(GeoCountryAdminSubject,
-                                  country_iso=iso,
-                                  code=self.admin_code)
+        return get_object_or_none(
+            GeoCountryAdminSubject,
+            country_iso=iso,
+            code=self.admin_code)
 
     def statistics(self):
+        """ get geocacher statistic """
         return get_object_or_none(GeocacherStat, geocacher=self)
 
     def caching_months(self):
+        """ list of months with geocaching """
         months = []
         if self.register_date:
             seek_months = LogSeekCach.objects.filter(cacher_uid=self.uid)
             seek_months = seek_months.values_list('found_date', flat=True).distinct()
 
-            for dt in seek_months:
-                if not (dt.year, dt.month) in months:
-                    months.append((dt.year, dt.month))
+            for dtime in seek_months:
+                if (dtime.year, dtime.month) not in months:
+                    months.append((dtime.year, dtime.month))
             hide_months = LogCreateCach.objects.filter(author_uid=self.uid)
             hide_months = hide_months.values_list('created_date', flat=True).distinct()
 
-            for dt in hide_months:
-                if not (dt.year, dt.month) in months:
-                    months.append((dt.year, dt.month))
+            for dtime in hide_months:
+                if (dtime.year, dtime.month) not in months:
+                    months.append((dtime.year, dtime.month))
 
-            return len(months)
+        return len(months)
 
     def total_months(self):
+        """ total months after registration of user """
         #IMPROVE
         if self.register_date:
             return int(round((datetime.now() - self.register_date).days / 30.0))
+        return 0
 
     def avg_caches_per_month(self):
-        sql = """
+        """ average count of caches per month """
+        sql = f"""
         SELECT AVG(cnt)
         FROM (
             SELECT YEAR(found_date), MONTH(found_date), COUNT(id) as cnt
             FROM log_seek_cach
-            WHERE cacher_uid=%s
+            WHERE cacher_uid={self.uid}
             GROUP BY YEAR(found_date), MONTH(found_date)
         ) as tbl
-        """ % self.uid
+        """
         return sql2val(sql)
 
     def most_found_one_month(self):
-        sql = """
+        """ the most count of found caches for one month """
+        sql = f"""
         SELECT MAX(cnt)
         FROM (
             SELECT YEAR(found_date), MONTH(found_date), COUNT(id) as cnt
             FROM log_seek_cach
-            WHERE cacher_uid=%s
+            WHERE cacher_uid={self.uid}
             GROUP BY YEAR(found_date), MONTH(found_date)
         ) as tbl
-        """ % self.uid
+        """
         return sql2val(sql)
 
     def avg_created_caches_per_month(self):
-        sql = """
+        """ average count of created caches per month """
+        sql = f"""
         SELECT AVG(cnt)
         FROM (
             SELECT YEAR(created_date), MONTH(created_date), COUNT(id) as cnt
             FROM log_create_cach
-            WHERE author_uid=%s
+            WHERE author_uid={self.uid}
             GROUP BY YEAR(created_date), MONTH(created_date)
         ) as tbl
-        """ % self.uid
+        """
         return sql2val(sql)
 
     def most_created_one_month(self):
-        sql = """
+        """ the most count of created caches for one month """
+        sql = f"""
         SELECT MAX(cnt)
         FROM (
             SELECT YEAR(created_date), MONTH(created_date), COUNT(id) as cnt
             FROM log_create_cach
-            WHERE author_uid=%s
+            WHERE author_uid={self.uid}
             GROUP BY YEAR(created_date), MONTH(created_date)
         ) as tbl
-        """ % self.uid
+        """
         return sql2val(sql)
 
     def latest_found_cache(self):
+        """ latest found cache """
         last_found = LogSeekCach.objects.filter(cacher_uid=self.uid)
         last_found = last_found.order_by('-found_date')[:1]
         if last_found:
             last_found = last_found[0]
             cache = get_object_or_none(Cach, pid=last_found.cach_pid)
-            return {'date': last_found.found_date,
-                    'cache': cache, }
+            return {
+                'date': last_found.found_date,
+                'cache': cache, }
+        return None
 
     def latest_created_cache(self):
+        """ latest created cache """
         last_created = LogCreateCach.objects.filter(author_uid=self.uid)
         last_created = last_created.order_by('-created_date')[:1]
         if last_created:
             last_created = last_created[0]
             cache = get_object_or_none(Cach, pid=last_created.cach_pid)
-            return {'date': last_created.created_date,
-                    'cache': cache, }
+            return {
+                'date': last_created.created_date,
+                'cache': cache, }
+        return None
 
     def recommendation_count(self):
+        """ count of geocacher recommendations """
         return LogRecommendCach.objects.filter(cacher_uid=self.uid).count()
 
     def recommendations(self):
+        """ recommendations """
         caches = Cach.objects.filter(author=self)
         caches = caches.values_list('pid', flat=True)
         return LogRecommendCach.objects.filter(cach_pid__in=caches)
 
     def caches_recommendation_count(self):
+        """ count of caches recommendations """
         caches = Cach.objects.filter(author=self)
         caches = caches.values_list('pid', flat=True)
         return self.recommendations().count()
 
     def recommended_caches_count(self):
+        """ count of recommended caches """
         return self.recommendations().values('cach_pid').distinct().count()
 
     def ratio_recommended_caches(self):
+        """ ratio for recommended caches """
         recommended = self.recommended_caches_count()
         if self.statistics() and  self.statistics().created_count:
             return float(recommended or 0) / self.statistics().created_count * 100.0
+        return None
 
     def seek_milestones(self):
+        """ milestones for found caches """
         found = LogSeekCach.objects.filter(cacher_uid=self.uid)
         found = found.order_by('found_date')
         stones = []
         cnt = found.count()
         if cnt:
-            stones.append({'idx': 1,
-                           'item': found[0]})
+            stones.append({
+                'idx': 1,
+                'item': found[0]})
             k = 50
             while k <= cnt:
-                stones.append({'idx': k,
-                               'item': found[k - 1]})
+                stones.append({
+                    'idx': k,
+                    'item': found[k - 1]})
                 k += 50
 
         return stones
 
     def hide_milestones(self):
+        """ milestones for created caches """
         hidden = LogCreateCach.objects.filter(author_uid=self.uid)
         hidden = hidden.order_by('created_date')
         stones = []
         cnt = hidden.count()
         if cnt:
-            stones.append({'idx': 1,
-                           'item': hidden[0]})
+            stones.append({
+                'idx': 1,
+                'item': hidden[0]})
             k = 20
             while k <= cnt:
-                stones.append({'idx': k,
-                               'item': hidden[k - 1]})
+                stones.append({
+                    'idx': k,
+                    'item': hidden[k - 1]})
                 k += 20
 
         return stones
 
 
 class Cach(models.Model):
+    """ Geocache """
     pid = models.IntegerField(default=0)
     code = models.CharField(max_length=32)
     type_code = models.CharField(max_length=2)
@@ -224,7 +260,7 @@ class Cach(models.Model):
     oblast_name = models.CharField(max_length=128, blank=True, null=True)
 
     class Meta:
-        db_table = u'cach'
+        db_table = 'cach'
         indexes = [
             models.Index(fields=['pid']),
             models.Index(fields=['type_code']),
@@ -233,112 +269,115 @@ class Cach(models.Model):
             models.Index(fields=['admin_code']),
         ]
 
-    def __unicode__(self):
-        return u'%s/%s/%s' % (self.id, self.code, self.name.decode('utf-8'))
+    def __str__(self):
+        name = self.name.decode('utf-8')
+        return f'{self.id}/{self.code}/{name}'
 
     @property
     def latitude_degree(self):
-        d = None
-        if self.loc_NS_degree is not None:
-            d = self.loc_NS_degree + (self.loc_NS_minute or 0) / 60.0
-            if self.loc_NS != 'N':
-                d = -d
-        return d
+        """ cache latitude, degree """
+        return self.latitude
 
     @property
     def longitude_degree(self):
-        d = None
-        if self.loc_EW_degree is not None:
-            d = self.loc_EW_degree + (self.loc_EW_minute or 0) / 60.0
-            if self.loc_EW != 'E':
-                d = -d
-        return d
+        """ cache longitude, degree """
+        return self.longitude
 
     @property
     def site(self):
+        """ site where the cache is published """
         return 'geocaching.su'
 
     @property
     def url(self):
-        return "http://www.geocaching.su/?pn=101&cid=%s" % self.pid
+        """ url to the cache """
+        return f"http://www.geocaching.su/?pn=101&cid={self.pid}"
 
     @property
     def status(self):
+        """ cache status """
         return 'Available'
 
     @property
     def type_name(self):
+        """ type name for the cache """
         return GEOCACHING_SU_CACH_TYPES[self.type_code] or ''
 
     @property
     def archived(self):
+        """ archived? """
         return False
 
     @property
     def size(self):
+        """ cache size """
         return ''
 
 
 class LogCreateCach(models.Model):
+    """ LogCreateCach """
     author_uid = models.IntegerField(default=0)
     cach_pid = models.IntegerField(default=0)
     created_date = models.DateTimeField(blank=True, null=True)
     coauthor = models.BooleanField(default=False)
 
     class Meta:
-        db_table = u'log_create_cach'
+        db_table = 'log_create_cach'
         indexes = [
             models.Index(fields=['author_uid']),
             models.Index(fields=['cach_pid']),
             models.Index(fields=['created_date']),
         ]
 
-    def __unicode__(self):
-        return u'Created cach %s/%s by %s' % (
-            self.cach_pid, self.created_date, self.author_uid)
+    def __str__(self):
+        return f'Created cach {self.cach_pid}/{self.created_date} by {self.author_uid}'
 
     def cache(self):
+        """ get logged cache """
         return get_object_or_none(Cach, pid=self.cach_pid)
 
 
 class LogSeekCach(models.Model):
+    """ LogSeekCach """
     cacher_uid = models.IntegerField(default=0)
     cach_pid = models.IntegerField(default=0)
     found_date = models.DateTimeField(blank=True, null=True)
     grade = models.IntegerField(blank=True, null=True)
 
     class Meta:
-        db_table = u'log_seek_cach'
+        db_table = 'log_seek_cach'
         indexes = [
             models.Index(fields=['cacher_uid']),
             models.Index(fields=['cach_pid']),
             models.Index(fields=['found_date']),
         ]
 
-    def __unicode__(self):
-        return u'Found cach %s/%s by %s' % (
-            self.cach_pid, self.found_date, self.cacher_uid)
+    def __str__(self):
+        return f'Found cach {self.cach_pid}/{self.found_date} by {self.cacher_uid}'
 
     def cache(self):
+        """ get logged cache """
         return get_object_or_none(Cach, pid=self.cach_pid)
 
 
 class LogRecommendCach(models.Model):
+    """ LogRecommendCach """
     cacher_uid = models.IntegerField(default=0)
     cach_pid = models.IntegerField(default=0)
 
     class Meta:
-        db_table = u'log_recommend_cach'
+        db_table = 'log_recommend_cach'
         indexes = [
             models.Index(fields=['cacher_uid']),
             models.Index(fields=['cach_pid']),
         ]
 
-    def __unicode__(self):
-        return u'Recommend cach %s by %s' % (self.cach_pid, self.cacher_uid)
+    def __str__(self):
+        return f'Recommend cach {self.cach_pid} by {self.cacher_uid}'
 
 
 class CacheDescription(models.Model):
+    """ CacheDescription """
     cache = models.ForeignKey(Cach, on_delete=models.CASCADE)
     cache_pid = models.IntegerField(default=0)
     terrain_description = models.TextField(blank=True, null=True)
@@ -347,16 +386,17 @@ class CacheDescription(models.Model):
     cache_content = models.TextField(blank=True, null=True)
 
     class Meta:
-        db_table = u'cache_description'
+        db_table = 'cache_description'
         indexes = [
             models.Index(fields=['cache_pid']),
         ]
 
-    def __unicode__(self):
-        return u'Cache description %s' % self.cache_pid
+    def __str__(self):
+        return f'Cache description {self.cache_pid}'
 
 
 class CacheLog(models.Model):
+    """ CacheLog """
     cache = models.ForeignKey(Cach, on_delete=models.CASCADE)
     cache_pid = models.IntegerField(default=0)
     logged_by_uid = models.IntegerField(blank=True, null=True)
@@ -366,7 +406,7 @@ class CacheLog(models.Model):
     txt = models.TextField(blank=True, null=True)
 
     class Meta:
-        db_table = u'cache_log'
+        db_table = 'cache_log'
         indexes = [
             models.Index(fields=['logged_by_uid']),
             models.Index(fields=['cache_pid']),
@@ -374,9 +414,8 @@ class CacheLog(models.Model):
             models.Index(fields=['log_date']),
         ]
 
-    def __unicode__(self):
-        return u'Cache log %s by %s - %s' % (
-                    self.cache_pid, self.logged_by_nick, self.log_date)
+    def __str__(self):
+        return f'Cache log {self.cache_pid} by {self.logged_by_nick} - {self.log_date}'
 
 
 CACHE_TYPE_WEIGHT = {
@@ -393,6 +432,7 @@ CRITICAL_COUNT = 40
 
 
 class CachStat(models.Model):
+    """ CachStat """
     cach = models.ForeignKey(
         Cach, verbose_name='cache', on_delete=models.CASCADE)
     geocacher = models.ForeignKey(
@@ -406,33 +446,35 @@ class CachStat(models.Model):
     points = models.FloatField(verbose_name='points', blank=True, null=True)
 
     class Meta:
-        db_table = u'cach_stat'
+        db_table = 'cach_stat'
         indexes = [
             models.Index(fields=['cach_pid']),
         ]
 
-    def __unicode__(self):
-        return u'Cach stat %s/%s by %s' % (
-                        self.pid, self.recommend_count, self.found_count)
+    def __str__(self):
+        return 'Cach stat {self.pid}/{self.recommend_count} by {self.found_count}'
 
     def multiply_factor(self):
+        """ factor """
         if self.found_count is not None:
             if self.found_count < 2:
                 return 10
             if self.found_count >= CRITICAL_COUNT:
                 return 1
-            b = 9.0 / (1 - 1.0 / CRITICAL_COUNT)
-            a = 10.0 - b
-            return a + b / self.found_count
+            b_prm = 9.0 / (1 - 1.0 / CRITICAL_COUNT)
+            a_prm = 10.0 - b_prm
+            return a_prm + b_prm / self.found_count
         return 0
 
     def calculate_points(self):
+        """ calculate points """
         self.points = self.multiply_factor() * \
                 (CACHE_TYPE_WEIGHT.get(self.cach.type_code) or 0)
         self.save()
 
 
 class GeocacherStat(models.Model):
+    """ GeocacherStat """
     geocacher = models.ForeignKey(
         Geocacher, verbose_name='Geocacher', on_delete=models.CASCADE)
     uid = models.IntegerField(blank=True, null=True)
@@ -460,17 +502,17 @@ class GeocacherStat(models.Model):
     tr_last_created_count = models.IntegerField(blank=True, null=True)
 
     class Meta:
-        db_table = u'geocacher_stat'
+        db_table = 'geocacher_stat'
         indexes = [
             models.Index(fields=['uid']),
         ]
 
-    def __unicode__(self):
-        return u'Geocacher stat %s-%s/%s' % (
-                    self.geocacher, self.created_count, self.found_count)
+    def __str__(self):
+        return f'Geocacher stat {self.geocacher}-{self.created_count}/{self.found_count}'
 
 
 class GeocacherSearchStat(models.Model):
+    """ GeocacherSearchStat """
     geocacher = models.ForeignKey(
         Geocacher, verbose_name='Geocacher', null=True,
         on_delete=models.CASCADE)
@@ -481,27 +523,28 @@ class GeocacherSearchStat(models.Model):
     region = models.CharField(max_length=128, blank=True, null=True)
 
     class Meta:
-        db_table = u'geocacher_search_stat'
+        db_table = 'geocacher_search_stat'
         indexes = [
             models.Index(fields=['geocacher_uid']),
         ]
 
-    def __unicode__(self):
-        return u'Geocacher search stat %s by %s' % (
-            self.points, self.geocacher_uid)
+    def __str__(self):
+        return f'Geocacher search stat {self.points} by {self.geocacher_uid}'
 
     def set_points(self):
-        sql = """
+        """ set points """
+        sql = f"""
         select sum(IFNULL(cs.points, 0)) as points_sum
         from  log_seek_cach lsc
         left join cach_stat cs on lsc.cach_pid = cs.cach_pid
-        where lsc.cacher_uid = %s
-        """ % self.geocacher_uid
+        where lsc.cacher_uid = {self.geocacher_uid}
+        """
         self.points = sql2val(sql)
         self.save()
 
 
 class Cacher:
+    """ Cacher """
     # pid = None
     uid = None
     nickname = None
@@ -524,8 +567,8 @@ class Cacher:
     forum_posts = None
 
     def __eq__(self, other):
-        r = self.__dict__ == other.__dict__
-        if not r:
+        result = self.__dict__ == other.__dict__
+        if not result:
             print(self.__dict__)
             print(other.__dict__)
-        return r
+        return result
