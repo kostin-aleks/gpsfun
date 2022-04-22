@@ -54,10 +54,10 @@ def disable_ssl_info(request):
 
 def custom_csrf_error(request, reason=""):
     """ custom csrf error """
-    #csrf_error = ErrorLog()
-    #csrf_error.error_type = "CSRF"
-    #csrf_error.error_source = request.path
-    #csrf_error.error_date = datetime.now()
-    #csrf_error.error_details = reason
-    #csrf_error.save()
+    # csrf_error = ErrorLog()
+    # csrf_error.error_type = "CSRF"
+    # csrf_error.error_source = request.path
+    # csrf_error.error_date = datetime.now()
+    # csrf_error.error_details = reason
+    # csrf_error.save()
     return render(request, 'custom_csrf_error.html', {'reason': reason})

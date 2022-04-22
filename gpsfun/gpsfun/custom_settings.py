@@ -1,11 +1,14 @@
+"""
+custom settings
+"""
+
 from gpsfun.settings import *
 
 
-DEBUG=True
+DEBUG = True
 
 ADMINS = (
     ('kostin', 'kostin@halogen-dg.com'),
-    #('alex', 'alex@halogen-dg.com'),
 )
 
 MANAGERS = ADMINS

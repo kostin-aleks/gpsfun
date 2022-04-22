@@ -3,12 +3,12 @@ urlify
 """
 
 import re
-from maps import *
+from .maps import *
 
 western_maps = [ latin_map, latin_symbol_map, greek_map, turkish_map, \
                 russian_map, ukrainian_map, czech_map, polish_map, latvian_map ]
 
-for i in xrange(len(western_maps)):
+for i in range(len(western_maps)):
     western_maps[i] = dict([(ord(k), v) for k, v in western_maps[i].items()])
 
 stop_words = [u'a', u'an', u'as', u'at', u'before', u'but', u'by', u'for',
