@@ -100,3 +100,21 @@ def get_object_or_none(klass, *args, **kwargs):
         return queryset.get(*args, **kwargs)
     except queryset.model.DoesNotExist:
         return None
+
+
+def iter_sql(sql, args=[], database='default'):
+    """ iterate sql """
+    if database != 'default':
+        from django.db import connections
+        cursor = connections[database].cursor()
+    else:
+        cursor = connection.cursor()
+
+    cursor.execute(sql, args)
+
+    while True:
+        row = cursor.fetchone()
+        if row is None:
+            break
+        yield row
+    cursor.close()

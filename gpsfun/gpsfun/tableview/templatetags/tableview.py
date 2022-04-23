@@ -3,7 +3,7 @@ from django.template import Variable
 from django.conf import settings
 import types
 
-from gpsfun.DjHDGutils.tableview.models import TableViewProfile
+from gpsfun.tableview.models import TableViewProfile
 
 register = template.Library()
 
