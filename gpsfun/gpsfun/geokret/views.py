@@ -12,8 +12,8 @@ from django.template.loader import render_to_string
 from django.db.models import Max
 from django.utils.translation import ugettext_lazy as _
 
-from gpsfun.DjHDGutils.dbutils import get_object_or_none
-from gpsfun.DjHDGutils.ajax import accept_ajax
+from gpsfun.main.db_utils import get_object_or_none
+from gpsfun.main.ajax import accept_ajax
 from gpsfun.main.db_utils import sql2table
 from gpsfun.main.GeoKrety.models import GeoKret
 from gpsfun.main.GeoName.models import GeoCountry

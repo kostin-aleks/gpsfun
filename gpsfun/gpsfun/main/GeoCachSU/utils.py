@@ -3,7 +3,7 @@ utils for main.GeoCachSU
 """
 from django.utils.translation import ugettext_lazy as _
 from gpsfun.main.GeoCachSU.models import CachStat, GEOCACHING_SU_CACH_TYPES
-from gpsfun.DjHDGutils.dbutils import iter_sql
+from gpsfun.main.db_utils import iter_sql
 
 
 def _populate(model, field, request, filter_=None, exclude=None, add_empty=False):

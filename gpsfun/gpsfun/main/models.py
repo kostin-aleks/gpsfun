@@ -3,7 +3,7 @@ models for main
 """
 from datetime import datetime
 from django.db import models
-from gpsfun.DjHDGutils.dbutils import get_object_or_none
+from gpsfun.main.db_utils import get_object_or_none
 from gpsfun.main.GeoCachSU.models import Geocacher, Cach
 
 

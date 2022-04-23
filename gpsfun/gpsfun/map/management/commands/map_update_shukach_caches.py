@@ -16,7 +16,7 @@ from django.core.management.base import BaseCommand
 from gpsfun.main.models import log
 from gpsfun.main.db_utils import sql2table, sql2val, execute_query, get_cursor
 from gpsfun.main.GeoMap.models import GEOCACHING_ONMAP_TYPES
-from gpsfun.DjHDGutils.dbutils import exec_sql
+from gpsfun.main.db_utils import exec_sql
 
 
 def dephi_date_to_python_date(date):

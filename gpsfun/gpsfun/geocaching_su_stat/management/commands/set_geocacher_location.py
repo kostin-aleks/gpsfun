@@ -9,7 +9,7 @@ DESCRIPTION
 
 import requests
 from django.core.management.base import BaseCommand
-from gpsfun.DjHDGutils.dbutils import get_object_or_none
+from gpsfun.main.db_utils import get_object_or_none
 from gpsfun.main.models import log, UpdateType
 from gpsfun.main.GeoCachSU.models import Geocacher
 from gpsfun.main.GeoName.models import GeoCountry

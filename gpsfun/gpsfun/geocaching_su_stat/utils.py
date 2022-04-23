@@ -8,7 +8,7 @@ import re
 from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
-from gpsfun.DjHDGutils.dbutils import get_object_or_none
+from gpsfun.main.db_utils import get_object_or_none
 from gpsfun.main.GeoCachSU.models import Geocacher, Cach
 from gpsfun.main.utils import (
     date_or_none, sex_or_none, strdate_or_none, utf8)

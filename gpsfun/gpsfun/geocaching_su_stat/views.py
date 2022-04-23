@@ -28,10 +28,10 @@ import django_tables2 as tables
 from django_tables2.config import RequestConfig
 
 from gpsfun.tableview import table, widgets, datasource, controller
-from gpsfun.DjHDGutils.dbutils import iter_sql
-from gpsfun.DjHDGutils.forms import RequestForm
-from gpsfun.DjHDGutils.dbutils import get_object_or_none
-from gpsfun.DjHDGutils.ajax import accept_ajax
+from gpsfun.main.db_utils import iter_sql
+from gpsfun.main.forms import RequestForm
+from gpsfun.main.db_utils import get_object_or_none
+from gpsfun.main.ajax import accept_ajax
 
 from gpsfun.main.GeoCachSU.models import Cach, CachStat, Geocacher, \
      GEOCACHING_SU_CACH_TYPES, GEOCACHING_SU_REAL_TYPES, \

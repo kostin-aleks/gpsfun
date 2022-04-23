@@ -6,12 +6,11 @@ from django.contrib import messages
 from django.shortcuts import render
 from django.utils.translation import ugettext_lazy as _
 
-from gpsfun.DjHDGutils.misc import atoi
+from gpsfun.main.misc import atoi
 from gpsfun.main.GeoName.models import get_city_by_geoname
 from gpsfun.main.GeoMap.models import Location
 from gpsfun.user.forms import CityForm
 from gpsfun.geocaching_su_stat.views import get_degree
-
 
 
 def user_profile(request):

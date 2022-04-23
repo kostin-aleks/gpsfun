@@ -11,9 +11,9 @@ from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
 from django.http import HttpResponse
 
-from gpsfun.DjHDGutils.dbutils import get_object_or_none
-from gpsfun.DjHDGutils.ajax import accept_ajax
-from gpsfun.DjHDGutils.dbutils import iter_sql
+from gpsfun.main.db_utils import get_object_or_none
+from gpsfun.main.ajax import accept_ajax
+from gpsfun.main.db_utils import iter_sql
 
 from gpsfun.main.GeoMap.models import (CACHE_TYPES, CACHE_KINDS,
     GEOCACHING_ONMAP_TYPES)

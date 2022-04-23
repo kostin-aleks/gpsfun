@@ -99,7 +99,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.sitemaps',
     'django.contrib.flatpages',
-    'gpsfun.DjHDGutils',
+    # 'gpsfun.DjHDGutils',
     'gpsfun.tableview',
     'gpsfun.main.GeoName',
     'gpsfun.main.GeoCachSU',

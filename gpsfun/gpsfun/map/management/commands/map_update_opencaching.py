@@ -18,7 +18,7 @@ from gpsfun.main.models import log
 from gpsfun.main.db_utils import sql2val
 from gpsfun.main.GeoMap.models import GEOCACHING_ONMAP_TYPES
 from gpsfun.main.GeoMap.models import (Geothing, Geosite, BlockNeedBeDivided)
-from gpsfun.DjHDGutils.dbutils import get_object_or_none
+from gpsfun.main.db_utils import get_object_or_none
 from gpsfun.main.utils import (
     update_geothing, create_new_geothing, TheGeothing, TheLocation)
 

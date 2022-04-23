@@ -4,7 +4,7 @@ Models for GeoName
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils import translation
-from gpsfun.DjHDGutils.dbutils import get_object_or_none
+from gpsfun.main.db_utils import get_object_or_none
 
 
 RU_CHARS = u"АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ -"

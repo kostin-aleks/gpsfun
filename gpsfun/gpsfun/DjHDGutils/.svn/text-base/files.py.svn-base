@@ -1,5 +1,0 @@
-def save_file_from_formfield(filepath, requestfile):
-    destination = open(filepath, 'wb+')
-    for chunk in requestfile.chunks():
-        destination.write(chunk)
-    destination.close()
