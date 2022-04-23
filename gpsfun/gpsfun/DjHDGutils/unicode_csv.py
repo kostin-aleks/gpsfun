@@ -1,9 +1,15 @@
-import csv, codecs, cStringIO
+""" unicode csv """
+
+import csv
+import codecs
+import cStringIO
+
 
 class UTF8Recoder:
     """
     Iterator that reads an encoded stream and reencodes the input to UTF-8
     """
+
     def __init__(self, f, encoding):
         self.reader = codecs.getreader(encoding)(f)
 
@@ -12,6 +18,7 @@ class UTF8Recoder:
 
     def next(self):
         return self.reader.next().encode("utf-8")
+
 
 class UnicodeReader:
     """
@@ -25,10 +32,11 @@ class UnicodeReader:
 
     def next(self):
         row = self.reader.next()
-        return [unicode(s, "utf-8") for s in row]
+        return [s.encode("utf-8") for s in row]
 
     def __iter__(self):
         return self
+
 
 class UnicodeWriter:
     """
@@ -44,11 +52,13 @@ class UnicodeWriter:
         self.encoder = codecs.getincrementalencoder(encoding)()
 
     def encode(self, item):
+        """ encode """
         if isinstance(item, int):
             return item
-        return unicode(item).encode("utf-8")
-        
+        return item.encode("utf-8")
+
     def writerow(self, row):
+        """ write row """
         self.writer.writerow([self.encode(s) for s in row])
         # Fetch UTF-8 output from the queue ...
         data = self.queue.getvalue()
@@ -61,6 +71,6 @@ class UnicodeWriter:
         self.queue.truncate(0)
 
     def writerows(self, rows):
+        """ write rows """
         for row in rows:
             self.writerow(row)
-

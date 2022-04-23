@@ -1,13 +1,16 @@
 #!/usr/bin/env python
-
-# auth decorators intended to use with accept_ajax
+"""
+auth decorators intended to use with accept_ajax
+"""
 
 from django.utils.translation import ugettext_lazy as _
 
-def login_required_ajax(view):
-    """ check that user logged in
 
-        use as decorator below @accept_ajax """
+def login_required_ajax(view):
+    """
+    check that user logged in
+    use as decorator below @accept_ajax
+    """
 
     def f(request, *args, **kwargs):
         if not request.user.is_authenticated():
@@ -17,6 +20,7 @@ def login_required_ajax(view):
         return view(request, *args, **kwargs)
 
     return f
+
 
 def permission_required_ajax(permission):
     """ check that user has permission
@@ -36,5 +40,3 @@ def permission_required_ajax(permission):
 
         return f
     return decorator
-
-

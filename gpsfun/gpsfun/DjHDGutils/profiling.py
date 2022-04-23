@@ -1,5 +1,14 @@
+"""
+profiling
+"""
+import hotshot
+import os
+import time
+
+from django.conf import settings
 from django.db import connection
 from django.template import Template, Context
+
 
 class SQLLogMiddleware:
     """
@@ -9,38 +18,34 @@ class SQLLogMiddleware:
     MIDDLEWARE_CLASSES += ('DjHDGutils.profiling.SQLLogMiddleware',)
     """
 
-    def process_response ( self, request, response ):
-
+    def process_response(self, request, response):
+        """ process response """
 
         time = 0.0
         for q in connection.queries:
-		time += float(q['time'])
+            time += float(q['time'])
 
-        if response['Content-type'].find('text/html')==-1:
+        if response['Content-type'].find('text/html') == -1:
             return response
 
         t = Template(u'''
-            <p><em>Total query count:</em> {{ count }}<br/>
-            <em>Total execution time:</em> {{ time }}</p>
-            <ul class="sqllog">
-                {% for sql in sqllog %}
-                    <li>{{ sql.time }}: {{ sql.sql }}</li>
-                {% endfor %}
-            </ul>
-        ''')
+                     <p><em>Total query count:</em> {{ count }}<br/>
+                     <em>Total execution time:</em> {{ time }}</p>
+                     <ul class="sqllog">
+                     {% for sql in sqllog %}
+                     <li>{{ sql.time }}: {{ sql.sql }}</li>
+                     {% endfor %}
+                     </ul>
+                     ''')
 
         content = response.content.decode('utf-8')
-        content += t.render(Context({'sqllog':connection.queries,'count':len(connection.queries),'time':time}))
+        content += t.render(Context({'sqllog': connection.queries, 'count': len(connection.queries), 'time': time}))
         response.content = content.encode('utf-8')
 
         return response
 
 # receoipt from https://code.djangoproject.com/wiki/ProfilingDjango
 
-import hotshot
-import os
-import time
-from django.conf import settings
 
 try:
     PROFILE_LOG_BASE = settings.PROFILE_LOG_BASE
@@ -66,9 +71,12 @@ def profile(log_file):
         log_file = os.path.join(PROFILE_LOG_BASE, log_file)
 
     def _outer(f):
+        """ outer """
         def _inner(*args, **kwargs):
-            # Add a timestamp to the profile output when the callable
-            # is actually called.
+            """
+            Add a timestamp to the profile output when the callable
+            is actually called.
+            """
             (base, ext) = os.path.splitext(log_file)
             base = base + "-" + time.strftime("%Y%m%dT%H%M%S", time.gmtime())
             final_log_file = base + ext

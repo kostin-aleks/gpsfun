@@ -1,3 +1,6 @@
+"""
+test utils
+"""
 import os
 import json
 import warnings
@@ -8,12 +11,13 @@ from django.test import TestCase as DjangoTestCase
 from django.test.runner import DiscoverRunner
 from django.db import connections, DEFAULT_DB_ALIAS
 from django.test.client import Client, MULTIPART_CONTENT
+from DjHDGutils.shell_utils import startprocess
 
 
 def chrome_debug(response):
-    tmpname = '/tmp/%d-debug.html' % os.getpid()
+    tmpname = f'/tmp/{os.getpid()}-debug.html'
     open(tmpname, 'w').write(response.content)
-    from DjHDGutils.shell_utils import startprocess
+
     startprocess("chromium " + tmpname)
 
 
@@ -25,6 +29,7 @@ class DefaultDatabaseRunner(DiscoverRunner):
     write in settings.py:
     TEST_RUNNER = 'DjHDGutils.testutils.DefaultDatabaseRunner'
     """
+
     def setup_databases(self, **kwargs):
         pass
 
@@ -51,13 +56,15 @@ class TestCase(DjangoTestCase):
             databases = [DEFAULT_DB_ALIAS]
 
     def _post_teardown(self):
-        """ Performs any post-test things. This includes:
+        """
+        Performs any post-test things. This includes:
 
-            * Putting back the original ROOT_URLCONF if it was changed.
+        * Putting back the original ROOT_URLCONF if it was changed.
         """
         self._urlconf_teardown()
 
     def get(self, *args, **kwargs):
+        """ get """
         self._last_url = args[0]
         self._response = self._client.get(*args, **kwargs)
         self._soup = None
@@ -65,10 +72,12 @@ class TestCase(DjangoTestCase):
 
     def post_url(self, path, data={}, content_type=MULTIPART_CONTENT,
                  follow=False, **extra):
+        """ post url """
         self._last_url = path
-        self._response = self._client.post(path, data,
-                                           content_type,
-                                           follow, **extra)
+        self._response = self._client.post(
+            path, data,
+            content_type,
+            follow, **extra)
         self._soup = None
 
     def post(self, data={}, content_type=MULTIPART_CONTENT,
@@ -79,14 +88,17 @@ class TestCase(DjangoTestCase):
 
     def assertContains(self, text, count=None, status_code=200,
                        msg_prefix=''):
-        super(TestCase, self).assertContains(self._response,
-                                             text=text,
-                                             count=count,
-                                             status_code=status_code,
-                                             msg_prefix=msg_prefix)
+        """ assert Contains """
+        super(TestCase, self).assertContains(
+            self._response,
+            text=text,
+            count=count,
+            status_code=status_code,
+            msg_prefix=msg_prefix)
 
     def assertNotContains(self, text, status_code=200,
                           msg_prefix=''):
+        """ assert Not Contains """
         super(TestCase, self).assertNotContains(self._response,
                                                 text=text,
                                                 status_code=status_code,
@@ -116,6 +128,7 @@ class TestCase(DjangoTestCase):
     # twill related functions
     @property
     def url(self):
+        """ url """
         if hasattr(self._response, 'redirect_chain') \
            and self._response.redirect_chain:
             return self._response.redirect_chain[-1][0]
@@ -123,18 +136,23 @@ class TestCase(DjangoTestCase):
 
     @property
     def text(self):
+        """ text """
         return self._response.content
 
     def response_code(self):
+        """ response code """
         return self._response.status_code
 
     def assertCode(self, code):
+        """ assert Code """
         self.assertEquals(code, self._response.status_code)
 
     def follow(self):
+        """ follow """
         raise 'TODO: Implement'
 
     def find(self, text):
+        """ find """
         self.assertContains(text)
 
     # def ff(self):
@@ -142,13 +160,16 @@ class TestCase(DjangoTestCase):
     #     chrome_debug(self._response)
 
     def ajax_on(self):
+        """ ajax on """
         self._client.defaults['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest'
 
     def ajax_off(self):
+        """ ajax off """
         if 'HTTP_X_REQUESTED_WITH' in self._client.defaults:
             del self._client.defaults['HTTP_X_REQUESTED_WITH']
 
     def json(self):
+        """ json """
         return json.loads(self.text)
 
 
@@ -157,7 +178,9 @@ class HostsRequestFactory(Client, object):
     This ClientFactory should use with django_hosts extention to proper handling
     request for different hosts
     """
+
     def _update_env(self, path, extra):
+        """ update env """
         parsed = urlparse(path)
 
         kwargs = deepcopy(extra)
@@ -165,40 +188,52 @@ class HostsRequestFactory(Client, object):
         return kwargs
 
     def get(self, path, data={}, follow=False, **extra):
-        return super(HostsRequestFactory, self).get(path,
-                                                    data,
-                                                    follow,
-                                                    **self._update_env(path, extra))
+        """ get """
+        return super(HostsRequestFactory, self).get(
+            path,
+            data,
+            follow,
+            **self._update_env(path, extra))
 
     def post(self, path, data={}, content_type=MULTIPART_CONTENT, follow=False, **extra):
-        return super(HostsRequestFactory, self).post(path,
-                                                     data,
-                                                     content_type,
-                                                     follow,
-                                                     **self._update_env(path, extra))
+        """ post """
+        return super(HostsRequestFactory, self).post(
+            path,
+            data,
+            content_type,
+            follow,
+            **self._update_env(path, extra))
 
     def head(self, path, data={}, follow=False, **extra):
-        return super(HostsRequestFactory, self).head(path,
-                                                     data,
-                                                     follow,
-                                                     **self._update_env(path, extra))
+        """ head """
+        return super(HostsRequestFactory, self).head(
+            path,
+            data,
+            follow,
+            **self._update_env(path, extra))
 
     def options(self, path, data={}, follow=False, **extra):
-        return super(HostsRequestFactory, self).options(path,
-                                                        data,
-                                                        follow,
-                                                        **self._update_env(path, extra))
+        """ options """
+        return super(HostsRequestFactory, self).options(
+            path,
+            data,
+            follow,
+            **self._update_env(path, extra))
 
     def put(self, path, data={}, content_type=MULTIPART_CONTENT,
             follow=False, **extra):
-        return super(HostsRequestFactory, self).put(path,
-                                                    data,
-                                                    content_type,
-                                                    follow,
-                                                    **self._update_env(path, extra))
+        """ put """
+        return super(HostsRequestFactory, self).put(
+            path,
+            data,
+            content_type,
+            follow,
+            **self._update_env(path, extra))
 
     def delete(self, path, data={}, follow=False, **extra):
-        return super(HostsRequestFactory, self).delete(path,
-                                                       data,
-                                                       follow,
-                                                       **self._update_env(path, extra))
+        """ delete """
+        return super(HostsRequestFactory, self).delete(
+            path,
+            data,
+            follow,
+            **self._update_env(path, extra))

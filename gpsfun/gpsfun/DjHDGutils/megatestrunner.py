@@ -1,4 +1,7 @@
 #!/usr/bin/python
+"""
+mega test runner
+"""
 import unittest
 from django.test.simple import DjangoTestSuiteRunner
 
@@ -37,18 +40,17 @@ class MegaTestSuiteRunner(DjangoTestSuiteRunner):
         result = 0
 
         if len(suite._tests) > 0:
-            print 'Standard testing:'
+            print('Standard testing:')
             old_names = self.setup_databases()
             run_result = self.run_suite(suite)
             result += self.suite_result(suite, run_result)
             self.teardown_databases(old_names)
 
         if len(suite_existing_db._tests) > 0:
-            print 'Existing db testing:'
+            print('Existing db testing:')
             run_result = self.run_suite(suite_existing_db)
             result += self.suite_result(suite_existing_db, run_result)
 
         self.teardown_test_environment()
 
         return result
-

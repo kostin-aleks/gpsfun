@@ -1,6 +1,8 @@
+"""
+table
+"""
 from copy import deepcopy
 import csv
-from django.template.loader import render_to_string
 from django.utils.datastructures import SortedDict
 from django.db.models import Q
 
@@ -18,7 +20,9 @@ def get_declared_fields(bases, attrs, with_base_columns=True):
     used. The distinction is useful in ModelForm subclassing.
     Also integrates any additional media definitions
     """
-    columns = [(column_name, attrs.pop(column_name)) for column_name, obj in attrs.items() if isinstance(obj, widgets.BaseWidget)]
+    columns = [(column_name, attrs.pop(column_name))
+               for column_name, obj in attrs.items()
+               if isinstance(obj, widgets.BaseWidget)]
     columns.sort(lambda x, y: cmp(x[1].creation_counter, y[1].creation_counter))
 
     # If this class is subclassing another Form, add that Form's fields.
@@ -80,8 +84,7 @@ class DeclarativeFieldsMetaclass(type):
         attrs['csv_allow'] = csv_allow
         attrs['csv_dialect'] = csv_dialect
 
-        new_class = super(DeclarativeFieldsMetaclass,
-                     cls).__new__(cls, name, bases, attrs)
+        new_class = super(DeclarativeFieldsMetaclass, cls).__new__(cls, name, bases, attrs)
 
         return new_class
 
@@ -93,21 +96,24 @@ class BaseTableView(object):
         self.kwargs = kwargs
 
     def get_id(self):
+        """ get id """
         return self.id
 
-
     def get_row_class(self, row):
+        """ get row class """
         return ''
 
     def apply_filter(self, filter, source):
+        """ apply filter """
         pass
 
     def apply_search(self, search_value, source):
+        """ apply search """
         if not search_value:
             return
         search_filter = []
         for orm_field_name in self.search:
-            filter_name = "%s__icontains" % orm_field_name
+            filter_name = f"{orm_field_name}__icontains"
             search_filter.append(Q(**{filter_name: search_value}))
 
         if search_filter:
@@ -118,34 +124,45 @@ class BaseTableView(object):
 
 
 class CellTitle(object):
+    """ CellTitle """
+
     def __init__(self, controller, key, column):
         self.controller = controller
         self.key = key
         self.column = column
 
     def is_sortable(self):
+        """ is sortable ? """
         return self.key in self.controller.table.sortable
 
     def is_sorted(self):
+        """ is sorted ? """
         return self.key == self.controller.sort_by
 
     def is_asc(self):
+        """ is asc ? """
         return self.key == self.controller.sort_by and self.controller.sort_asc
 
     def html_title(self):
+        """ html title """
         return self.column.html_title()
 
     def html_title_attr(self):
+        """ html title attr """
         return self.column.html_title_attr()
 
     def is_permanent(self):
+        """ is permanent ? """
         return self.key in self.controller.table.permanent
 
     def is_visible(self):
+        """ is visible ? """
         return self.key in self.controller.visible_columns
 
 
 class BoundCell(object):
+    """ BoundCell """
+
     def __init__(self, row_index, key, bound_row, column):
         self.row_index = row_index
         self.bound_row = bound_row
@@ -154,53 +171,59 @@ class BoundCell(object):
         self.row_index = row_index
 
     def get_cell_class(self):
-        if hasattr(self.bound_row.controller.table, 'cell_class_%s'%self.key):
-            cb = getattr(self.bound_row.controller.table, 'cell_class_%s'%self.key)
-            return cb(self.bound_row.controller.table, self.row_index, self.bound_row.row, self.column.get_value(self.bound_row.row) )
+        """ get cell class """
+        if hasattr(self.bound_row.controller.table, f'cell_class_{self.key}'):
+            cb = getattr(self.bound_row.controller.table, f'cell_class_{self.key}')
+            return cb(self.bound_row.controller.table, self.row_index, self.bound_row.row, self.column.get_value(self.bound_row.row))
         return ''
 
     def get_cell_style(self):
-        if hasattr(self.bound_row.controller.table, 'cell_style_%s'%self.key):
-            cb = getattr(self.bound_row.controller.table, 'cell_style_%s'%self.key)
-            return cb(self.bound_row.controller.table, self.row_index, self.bound_row.row, self.column.get_value(self.bound_row.row) )
+        """ get cell style """
+        if hasattr(self.bound_row.controller.table, f'cell_style_{self.key}'):
+            cb = getattr(self.bound_row.controller.table, f'cell_style_{self.key}')
+            return cb(self.bound_row.controller.table, self.row_index, self.bound_row.row, self.column.get_value(self.bound_row.row))
         return ''
 
-
     def as_html(self):
-        
-        if hasattr(self.bound_row.controller.table, 'render_%s'%self.key):
-            cb = getattr(self.bound_row.controller.table, 'render_%s'%self.key)
-            return cb(self.bound_row.controller.table, self.row_index, self.bound_row.row, self.column.get_value(self.bound_row.row) )
-                
+        """ as html """
+        if hasattr(self.bound_row.controller.table, f'render_{self.key}'):
+            cb = getattr(self.bound_row.controller.table, f'render_{self.key}')
+            return cb(self.bound_row.controller.table, self.row_index, self.bound_row.row, self.column.get_value(self.bound_row.row))
+
         return self.column.html_cell(self.row_index, self.bound_row.row)
 
     def html_cell_attr(self):
+        """ html cell attributes """
         return self.column.html_cell_attr()
 
     def get_id(self):
+        """ get id """
         return self.key
 
 
-
 class BoundRow(object):
+    """ BoundRow """
+
     def __init__(self, controller, row_index, row):
         self.controller = controller
         self.row = row
         self.row_index = row_index
 
     def __iter__(self):
-        for key,column in self.controller.iter_columns():
+        for key, column in self.controller.iter_columns():
             yield BoundCell(self.row_index, key, self, column)
 
-
     def get_id(self):
+        """ get id """
         table_id = self.controller.table.get_id() or 'table'
-        
-        return u"%s_row_%d"%(table_id, self.row_index)
+
+        return f"{table_id}_row_{self.row_index}"
 
     def get_row_class(self):
+        """ get row class """
         return self.controller.table.get_row_class(self.controller, self.row)
 
 
 class TableView(BaseTableView):
+    """ TableView """
     __metaclass__ = DeclarativeFieldsMetaclass

@@ -1,6 +1,3 @@
-from django import forms
-from django.template.loader import render_to_string
-
 """
 class AddTripForm(RequestModelForm):
     start_time = SplitDateTimeJSField(label=_('Start Time'))
@@ -9,13 +6,17 @@ class AddTripForm(RequestModelForm):
 from: http://stackoverflow.com/questions/38601/using-django-time-date-widgets-in-custom-form
 """
 
+from django import forms
+from django.template.loader import render_to_string
+
 
 class SplitDateTimeJSField(forms.SplitDateTimeField):
+    """ SplitDateTimeJSField """
+
     def __init__(self, *args, **kwargs):
         super(SplitDateTimeJSField, self).__init__(*args, **kwargs)
         self.widget.widgets[0].attrs = {'class': 'vDateField'}
         self.widget.widgets[1].attrs = {'class': 'vTimeField'}
-
 
 
 class FakeField(forms.Field):
@@ -36,6 +37,7 @@ class FakeField(forms.Field):
         super(FakeField, self).__init__(*kargs, **kwargs)
 
     def render(self):
+        """ render """
         if self.template:
             return render_to_string(self.template,
                                     {'field': self})
@@ -55,4 +57,5 @@ class FakeField(forms.Field):
 
 
 class GroupHeaderField(FakeField):
+    """ GroupHeaderField """
     template = "forms/form_field_header.html"

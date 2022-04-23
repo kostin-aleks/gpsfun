@@ -1,10 +1,15 @@
-from django.core.management import call_command
+"""
+devserver
+"""
 from django.core.management.commands.runserver import BaseRunserverCommand
 from django.conf import settings
 import random
 import os
 
+
 class Command(BaseRunserverCommand):
+    """ Command """
+
     def handle(self, addrport='', *args, **options):
         if not addrport:
             summ = sum([ord(char)

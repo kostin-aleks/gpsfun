@@ -1,6 +1,7 @@
-# basic idea from http://code.activestate.com/recipes/496923/
-# provided by Alex Greif
-#
+"""
+basic idea from http://code.activestate.com/recipes/496923/
+provided by Alex Greif
+"""
 import string
 import xml
 if hasattr(xml, "use_pyxml"):
@@ -10,10 +11,12 @@ from xml.marshal import generic
 
 
 class Marshaller(generic.Marshaller):
+    """ Marshaller """
     tag_unicode = 'unicode'
     tag_boolean = 'boolean'
 
     def m_unicode(self, value, dict):
+        """ m unicode """
         name = self.tag_unicode
         L = ['<' + name + '>']
         s = value.encode('utf-8')
@@ -26,18 +29,20 @@ class Marshaller(generic.Marshaller):
         return L
 
     def m_bool(self, value, dict):
+        """ m boolean """
         name = self.tag_boolean
         L = ['<' + name + '>']
         L.append(value and 'True' or 'False')
         L.append('</' + name + '>')
         return L
-        
 
 
 class Unmarshaller(generic.Unmarshaller):
+    """ Unmarshaller """
+
     def __init__(self):
-        self.unmarshal_meth['unicode'] = ('um_start_unicode','um_end_unicode')
-        self.unmarshal_meth['boolean'] = ('um_start_boolean','um_end_boolean')
+        self.unmarshal_meth['unicode'] = ('um_start_unicode', 'um_end_unicode')
+        self.unmarshal_meth['boolean'] = ('um_start_boolean', 'um_end_boolean')
         # super maps the method names to methods
         generic.Unmarshaller.__init__(self)
 
@@ -45,14 +50,15 @@ class Unmarshaller(generic.Unmarshaller):
     um_start_boolean = generic.Unmarshaller.um_start_generic
 
     def um_end_unicode(self, name):
+        """ um end inicode """
         ds = self.data_stack
         # the value is a utf-8 encoded unicode
         ds[-1] = ''.join(ds[-1])
         self.accumulating_chars = 0
 
     def um_end_boolean(self, name):
+        """ um end boolean """
         ds = self.data_stack
         ds[-1] = string.join(ds[-1], "")
-        ds[-1] = (ds[-1]=='True')
+        ds[-1] = (ds[-1] == 'True')
         self.accumulating_chars = 0
-

@@ -1,9 +1,13 @@
+"""
+password
+"""
 import string
 from random import choice
 
 
 def get_password(size=8):
-    safe_letters = ''.join([s for s in string.letters + string.digits if s not in 'liIoO01'])
+    safe_letters = ''.join(
+        [s for s in string.letters + string.digits if s not in 'liIoO01'])
     return ''.join([choice(safe_letters) for i in range(size)])
 
 

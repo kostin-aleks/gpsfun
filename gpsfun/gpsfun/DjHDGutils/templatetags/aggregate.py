@@ -88,6 +88,7 @@ register = template.Library()
 
 
 def get_or_set_marker(context):
+    """ get or set marker """
     for d in context.dicts:
         if 'agg_top' in d:
             return d
@@ -96,11 +97,13 @@ def get_or_set_marker(context):
 
 
 class AggInitNode(template.Node):
+    """ AggInitNode """
     def __init__(self, keys):
-        self.keys = [ Variable(key) for key in keys]
+        self.keys = [Variable(key) for key in keys]
 
     def render(self, context):
-        key = "".join([ unicode(item.resolve(context)) for item in self.keys ])
+        """ render """
+        key = "".join([str(item.resolve(context)) for item in self.keys])
         dicts = get_or_set_marker(context)
         dicts[key] = Decimal('0.0')
         return ''
@@ -108,38 +111,42 @@ class AggInitNode(template.Node):
 
 @register.tag()
 def agg_init(parset, token):
+    """ aggregate init """
     items = token.split_contents()
     if len(items) < 2:
         raise template.TemplateSyntaxError(
-            "%r tag requires at least 1 arguments" % items[0])
+            f"{items[0]} tag requires at least 1 arguments")
     return AggInitNode(items[1:])
 
 
 class AggGetNode(template.Node):
+    """ AggGetNode """
     def __init__(self, keys, store_as):
-        self.keys = [ Variable(key) for key in keys]
+        self.keys = [Variable(key) for key in keys]
         self.store_as = store_as
 
     def render(self, context):
-        key = "".join([ unicode(item.resolve(context)) for item in self.keys ])
+        """ render """
+        key = "".join([str(item.resolve(context)) for item in self.keys])
         value = context.get(key)
         if self.store_as:
             context[self.store_as] = value
             return ''
-        else:
-            return value
+
+        return value
 
 
 @register.tag()
 def agg_get(parset, token):
+    """ aggregate init """
     args = token.split_contents()
     store_as = None
 
     if len(args) < 2:
         raise template.TemplateSyntaxError(
-            "%r tag requires at least 1 arguments" % args[0])
+            f"{args[0]} tag requires at least 1 arguments")
 
-    if len(args) >=4 and args[-2] == 'as':
+    if len(args) >= 4 and args[-2] == 'as':
         store_as = args[-1]
         args = args[:-2]
 
@@ -147,12 +154,14 @@ def agg_get(parset, token):
 
 
 class AggSumNode(template.Node):
+    """ AggSumNode """
     def __init__(self, value, keys):
-        self.keys = [ Variable(key) for key in keys]
+        self.keys = [Variable(key) for key in keys]
         self.value = Variable(value)
 
     def render(self, context):
-        key = "".join([ unicode(item.resolve(context)) for item in self.keys ])
+        """ render """
+        key = "".join([str(item.resolve(context)) for item in self.keys])
         value = context.get(key) or Decimal('0.0')
         value += self.value.resolve(context) or Decimal('0.0')
         dicts = get_or_set_marker(context)
@@ -163,8 +172,9 @@ class AggSumNode(template.Node):
 
 @register.tag()
 def agg_sum(parset, token):
+    """ aggregate summ """
     items = token.split_contents()
     if len(items) < 3:
         raise template.TemplateSyntaxError(
-            "%r tag requires at least 2 arguments" % items[0])
+            f"{items[0]} tag requires at least 2 arguments")
     return AggSumNode(items[1], items[2:])

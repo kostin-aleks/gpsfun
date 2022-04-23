@@ -1,10 +1,13 @@
+"""
+tableview models
+"""
 import pickle
 from django.db import models
 from django.conf import settings
-from django.contrib.auth.models import User
 
 
 class TableViewProfile(models.Model):
+    """ TableViewProfile """
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE,
         related_name='profile_user')
@@ -13,10 +16,8 @@ class TableViewProfile(models.Model):
     is_default = models.BooleanField(default=False)
     dump = models.TextField()
 
-
     class Meta:
-        db_table = u'djhdg_tableview_profile'
-
+        db_table = 'djhdg_tableview_profile'
 
     def _get_state(self):
         dump = str(self.dump)

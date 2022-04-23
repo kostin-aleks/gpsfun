@@ -1,5 +1,13 @@
+"""
+form utils
+"""
+
+
 def get_records(request):
-    sequence = [n.split('=')[0].replace('%3A',':') for n in request.raw_post_data.split('&') if n.find('%3Arecord') != -1]
+    """ get records """
+    sequence = [n.split('=')[0].replace('%3A', ':')
+                for n in request.raw_post_data.split('&')
+                if n.find('%3Arecord') != -1]
     indexes = {}
     field_data = {}
     records = []
@@ -19,7 +27,7 @@ def get_records(request):
                 indexes[prev_recname] += 1
             index = indexes[recname]
             field_data = {}
-        field_data[fieldname]=request.POST.getlist(var)[index]
+        field_data[fieldname] = request.POST.getlist(var)[index]
         prev_recname = recname
 
         field_data['name'] = recname
@@ -28,6 +36,7 @@ def get_records(request):
 
 
 def update_from_request(object, data, mapping=None):
+    """ update from request """
     for key in data:
         getkey = mapping.get(key, key) if mapping else key
         if hasattr(object, getkey):
@@ -35,6 +44,7 @@ def update_from_request(object, data, mapping=None):
 
 
 def object_values(object, values_list):
-    dict={}
+    """ object values """
+    dict = {}
     for v in values_list:
-        dict[v]=object[v]
+        dict[v] = object[v]

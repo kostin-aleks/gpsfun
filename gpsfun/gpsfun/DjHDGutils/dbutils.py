@@ -1,3 +1,15 @@
+"""
+db utils
+
+Compatibility layer for transparent using Django <1.2 and >-1.3
+
+Note:
+Structure of django database config was changed.
+New django config allow work with several databases.
+
+Classes below provide compatibility layer for DjHDGutils
+
+"""
 import re
 import os
 
@@ -10,18 +22,8 @@ from django.db import transaction
 from .execution import shellcmd
 
 
-"""
-Compatibility layer for transparent using Django <1.2 and >-1.3
-
-Note:
-Structure of django database config was changed.
-New django config allow work with several databases.
-
-Classes below provide compatibility layer for DjHDGutils
-
-"""
-
 class DjangoDb(object):
+    """ DjangoDb """
     name = None
     host = None
     password = None
@@ -30,6 +32,7 @@ class DjangoDb(object):
     port = None
 
     def cmdargs(self):
+        """ cmd args """
         args = ''
         if self.engine.endswith('postgresql_psycopg2'):
             if self.host:
@@ -58,15 +61,18 @@ class DjangoDb(object):
         return args
 
     def as_dict(self):
-        return dict(NAME = self.name,
-                    HOST = self.host,
-                    PASSWORD = self.password,
-                    USER = self.user,
-                    ENGING = self.engine,
-                    PORT = self.port)
+        """ as dict """
+        return dict(NAME=self.name,
+                    HOST=self.host,
+                    PASSWORD=self.password,
+                    USER=self.user,
+                    ENGING=self.engine,
+                    PORT=self.port)
 
 
 class NewDjangoDb(DjangoDb):
+    """ NewDjangoDb """
+
     def __init__(self, database='default'):
         self.name = settings.DATABASES[database]['NAME']
         self.host = settings.DATABASES[database].get('HOST')
@@ -75,7 +81,10 @@ class NewDjangoDb(DjangoDb):
         self.password = settings.DATABASES[database].get('PASSWORD')
         self.engine = settings.DATABASES[database]['ENGINE'].split('.')[-1]
 
+
 class OldDjangoDb(DjangoDb):
+    """ OldDjangoDb """
+
     def __init__(self):
         self.name = settings.DATABASE_NAME
         self.host = settings.DATABASE_HOST
@@ -86,16 +95,19 @@ class OldDjangoDb(DjangoDb):
 
 
 def get_db_config(database='default'):
+    """ get db config """
     if hasattr(settings, 'DATABASES'):
         db_config = NewDjangoDb(database)
     else:
         db_config = OldDjangoDb()
     return db_config
 
+
 db_config = get_db_config()
 
 
 def get_object_or_none(klass, *args, **kwargs):
+    """ get object or none """
     queryset = _get_queryset(klass)
     try:
         return queryset.get(*args, **kwargs)
@@ -104,16 +116,18 @@ def get_object_or_none(klass, *args, **kwargs):
 
 
 def escape(value):
+    """ escape """
     return re.sub(r'([\\\'\"])', r'\\\1', value)
 
 
-def exec_sql(sql,args=[], database='default'):
-    if database!='default':
+def exec_sql(sql, args=[], database='default'):
+    """ exec sql """
+    if database != 'default':
         from django.db import connections
         cursor = connections[database].cursor()
     else:
         cursor = connection.cursor()
-    cursor.execute(sql,args)
+    cursor.execute(sql, args)
 
     if cursor.rowcount > 0:
         row = cursor.fetchone()
@@ -125,17 +139,17 @@ def exec_sql(sql,args=[], database='default'):
 
 
 def exec_sql_modify(sql, args=[]):
+    """ execute sql modify """
     cursor = connection.cursor()
 
     if hasattr(cursor, 'Warning'):
         """ compatibility with MySQL """
         try:
-            cursor.execute(sql,args)
+            cursor.execute(sql, args)
         except cursor.Warning:
             pass
     else:
-        cursor.execute(sql,args)
-
+        cursor.execute(sql, args)
 
     rc = cursor.rowcount
     cursor.close()
@@ -143,13 +157,14 @@ def exec_sql_modify(sql, args=[]):
 
 
 def iter_sql(sql, args=[], database='default'):
-    if database!='default':
+    """ iterate sql """
+    if database != 'default':
         from django.db import connections
         cursor = connections[database].cursor()
     else:
         cursor = connection.cursor()
 
-    cursor.execute(sql,args)
+    cursor.execute(sql, args)
 
     while True:
         row = cursor.fetchone()
@@ -159,32 +174,35 @@ def iter_sql(sql, args=[], database='default'):
     cursor.close()
 
 
-
 def set_sequence(model, value):
+    """ set sequence """
     curs = connection.cursor()
-    sql = "select setval('%s_%s_seq',%%s);"%(model._meta.db_table, model._meta.pk.column)
-    curs.execute(sql,(value+1,))
+    sql = "select setval('%s_%s_seq',%%s);" % (model._meta.db_table, model._meta.pk.column)
+    curs.execute(sql, (value + 1,))
+
 
 def get_max_pk(model):
     """
     Return max value of pk column
     """
-    sql = "select max(%s) from %s;"%(model._meta.pk.column, model._meta.db_table)
+    sql = "select max(%s) from %s;" % (model._meta.pk.column, model._meta.db_table)
     row = exec_sql(sql)
     return row[0]
 
 
-#FIXME: (Vic) here not perfect way to detect django version.
+# FIXME: (Vic) here not perfect way to detect django version.
 #       Requere to move out MySQLSequence to standalone file
 
 if 'unknown' not in django.get_version() and \
-       (('-' in django.get_version() and int(django.get_version().split('-')[-1])>7476) or \
-   ('-' not in django.get_version() and int(django.get_version().split('.')[0]) >= 1)):
+    (('-' in django.get_version() and int(django.get_version().split('-')[-1]) > 7476) or
+        ('-' not in django.get_version() and int(django.get_version().split('.')[0]) >= 1)):
 
     class MySQLSequence(models.Model):
+        """ MySQLSequence """
         id = models.IntegerField(primary_key=True, default=0)
 
         def next(self):
+            """ next """
             cursor = connection.cursor()
             cursor.execute("UPDATE %s SET id=LAST_INSERT_ID(id+1)" % self._meta.db_table)
             if cursor.rowcount == 0:
@@ -195,15 +213,16 @@ if 'unknown' not in django.get_version() and \
             return cursor.fetchall()[0][0]
 
         class Meta:
-            abstract=True
-
+            abstract = True
 
     class PgSQLSequence(models.Model):
+        """ PgSQLSequence """
         class Meta:
-            abstract=True
+            abstract = True
 
         @classmethod
         def next(cls):
+            """ next """
             from django.db import connections, transaction
             connection = connections['default']
             cursor = connection.cursor()
@@ -212,21 +231,21 @@ if 'unknown' not in django.get_version() and \
             return cursor.fetchone()[0]
 
 
-
 def drop_create_database(use_superuser=False, database='default'):
+    """ drop create database """
     db_config = get_db_config(database)
     if db_config.engine in ('postgresql_psycopg2', 'postgis'):
         import psycopg2
         if use_superuser:
             params = "dbname='template1' user='postgres'"
         else:
-            params = "dbname='template1' user='%(user)s'" % dict(user = db_config.user)
+            params = "dbname='template1' user='%(user)s'" % dict(user=db_config.user)
         if db_config.host:
             params += "host='%s'" % db_config.host
         if db_config.password:
             params += "password='%s'" % db_config.password
         conn = psycopg2.connect(params)
-        conn.set_isolation_level(0) # To drop the database you would need to change the isolation level
+        conn.set_isolation_level(0)  # To drop the database you would need to change the isolation level
         cursor = conn.cursor()
         try:
             cursor.execute('drop database "%s"' % db_config.name)
@@ -241,7 +260,7 @@ def drop_create_database(use_superuser=False, database='default'):
         conn.close()
 
     elif db_config.engine == 'mysql':
-        shellcmd("echo drop database IF EXISTS \`%s\`  \; "\
+        shellcmd("echo drop database IF EXISTS \`%s\`  \; "
                  "create database %s | mysql -u%s -p%s" % (db_config.name,
                                                            db_config.name,
                                                            db_config.user,
@@ -253,19 +272,23 @@ def drop_create_database(use_superuser=False, database='default'):
             os.unlink(dbfilename)
     else:
         raise ValueError(
-            'Database engine %s is not supported by reinst_db.py script' % \
+            'Database engine %s is not supported by reinst_db.py script' %
             settings.DATABASE_ENGINE)
 
 
 class reg(object):
     """ http://code.activestate.com/recipes/577186-accessing-cursors-by-field-name/ """
+
     def __init__(self, cursor, row):
-        for (attr, val) in zip((d[0] for d in cursor.description), row) :
+        for (attr, val) in zip((d[0] for d in cursor.description), row):
             setattr(self, attr, val)
 
 
 class LockForUpate(object):
+    """ LockForUpate """
+
     def _raw_lock(self):
+        """ raw lock """
         cursor = connection.cursor()
         cursor.execute("""select id from \"%s\" where id=%%s for update""" % self._meta.db_table,
                        [self.id])
@@ -274,13 +297,13 @@ class LockForUpate(object):
         return type(self).objects.get(pk=self.id)
 
     def _native_lock(self):
+        """ native lock """
         return type(self).objects.select_for_update().get(pk=self.id)
 
     def lock_for_update(self):
         """
         lock object for update
         Return locked object
-
         """
         if hasattr(self._base_manager, 'select_for_update'):
             return self._native_lock()
@@ -289,6 +312,7 @@ class LockForUpate(object):
 
 
 def update_diff(instanse, **kwargs):
+    """ update diff """
     need_save = False
 
     for key, value in kwargs.iteritems():
@@ -303,17 +327,17 @@ def update_diff(instanse, **kwargs):
 
 
 def exec_sql_modify_many(sql, args=[]):
+    """ execute sql modify many """
     cursor = connection.cursor()
 
     if hasattr(cursor, 'Warning'):
         """ compatibility with MySQL """
         try:
-            cursor.executemany(sql,args)
+            cursor.executemany(sql, args)
         except cursor.Warning:
             pass
     else:
-        cursor.executemany(sql,args)
-
+        cursor.executemany(sql, args)
 
     rc = cursor.rowcount
     cursor.close()

@@ -1,7 +1,9 @@
+"""
+template tags flatpage extensions
+"""
 from django import template
 from django.template import Variable
-from django.conf import settings
-import types
+
 
 register = template.Library()
 
@@ -17,8 +19,8 @@ class PrintColumnNode(template.Node):
             column = self.column.resolve(context)
             row = self.row.resolve(context)
             controller = self.controller.resolve(context)
-            col_data = controller.resolve_column_data(column,row)
-            return column.print_column(col_data,controller)
+            col_data = controller.resolve_column_data(column, row)
+            return column.print_column(col_data, controller)
 
         except template.VariableDoesNotExist:
             return ''
@@ -31,7 +33,7 @@ def print_column(parser, token):
         tag_name, column, row, controller = token.split_contents()
     except ValueError:
         raise template.TemplateSyntaxError(
-            "%r tag requires exactly 3 arguments" % token.contents.split()[0])
+            f"{token.contents.split()[0]} tag requires exactly 3 arguments")
 
     return PrintColumnNode(column, row, controller)
 
@@ -47,19 +49,19 @@ class PrintHrefNode(template.Node):
             column = self.column.resolve(context)
             controller = self.controller.resolve(context)
             row = self.row.resolve(context)
-            fun_name = "get_%s_href"%(column.name)
-            if hasattr(controller,fun_name):
-                fnc = getattr(controller,fun_name)
+            fun_name = f"get_{column.name}_href"
+            if hasattr(controller, fun_name):
+                fnc = getattr(controller, fun_name)
                 if callable(fnc):
                     rc = fnc(row)
 
-                    if type(rc) == types.DictType:
+                    if isinstance(rc, dict):
                         rc_str = ''
-                        for key,value in rc.items():
-                            rc_str += "%s='%s'"%(key,value)
+                        for key, value in rc.items():
+                            rc_str += f"{key}='{value}'"
                         return rc_str
 
-                    return "href='%s'"%rc
+                    return f"href='{rc}'"
 
             return ""
 
@@ -74,11 +76,9 @@ def print_href(parser, token):
         tag_name, column, row, controller = token.split_contents()
     except ValueError:
         raise template.TemplateSyntaxError(
-            "%r tag requires exactly 3 arguments" % token.contents.split()[0])
+            f"{token.contents.split()[0]} tag requires exactly 3 arguments")
 
     return PrintHrefNode(column, row, controller)
-
-
 
 
 class ColumnOrderNone(template.Node):
@@ -92,7 +92,7 @@ class ColumnOrderNone(template.Node):
             controller = self.controller.resolve(context)
 
             if column.name in controller.state.order_by and not controller.state.is_default():
-                return u"-%s"%(column.name)
+                return "-%s" % (column.name)
 
             return column.name
 
@@ -101,13 +101,12 @@ class ColumnOrderNone(template.Node):
 
 
 @register.tag()
-def column_order(parset,token):
+def column_order(parset, token):
     try:
         # split_contents() knows not to split quoted strings.
         tag_name, column, controller = token.split_contents()
     except ValueError:
         raise template.TemplateSyntaxError(
-            "%r tag requires exactly 2 arguments" % token.contents.split()[0])
+            f"{token.contents.split()[0]} tag requires exactly 2 arguments")
 
     return ColumnOrderNone(column, controller)
-

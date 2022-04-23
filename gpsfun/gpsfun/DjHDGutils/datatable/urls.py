@@ -1,4 +1,6 @@
+""" database urls """
 from django.conf.urls.defaults import *
+
 
 urlpatterns = patterns(
     'DjHDGutils.datatable.views',

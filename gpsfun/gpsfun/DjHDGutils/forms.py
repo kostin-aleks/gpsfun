@@ -1,10 +1,16 @@
+"""
+forms
+"""
 from django import forms
 from django.template import Context, loader
 
 
-__all__ = [ 'RequestModelForm', 'RequestForm']
+__all__ = ['RequestModelForm', 'RequestForm']
+
 
 class _Form(object):
+    """ Form """
+
     def __init__(self, *kargs, **kwargs):
         """
         Init accept two additional arguments:
@@ -15,11 +21,7 @@ class _Form(object):
         Inherit class can define function init
         which will be called after complete __init__
 
-
-
-
         """
-
         self._request = None
         self._template = None
         self.kwargs = {}
@@ -27,7 +29,7 @@ class _Form(object):
         my_kwargs = {}
 
         # hack with iterators, because deepcopy not workin on production server
-        for key,value in kwargs.iteritems():
+        for key, value in kwargs.iteritems():
             if key == 'request':
                 self._request = value
             elif key == 'template':
@@ -39,70 +41,77 @@ class _Form(object):
 
         super(self._ref_class, self).__init__(*kargs, **my_kwargs)
 
-        if ( hasattr(self,'init')):
-            init = getattr(self,'init')
+        if (hasattr(self, 'init')):
+            init = getattr(self, 'init')
             if callable(init):
                 init()
 
     def get_value_for(self, field_name):
-        """ used to obtain value of fields
-
-            useful when need get value not depend on form state
+        """
+        used to obtain value of fields
+        useful when need get value not depend on form state
         """
         if self.is_bound:
             return self[field_name].data
         return self.initial.get(field_name, self.fields[field_name].initial)
 
     def get_template_name(self):
+        """ get template name """
         return self._template or "forms/form.html"
 
-
     def output_via_template(self):
-        "Helper function for fieldsting fields data from form."
+        """
+        Helper function for fieldsting fields data from form.
+        """
 
-        bound_fields = [forms.forms.BoundField(self, field, name) for name, field \
+        bound_fields = [forms.forms.BoundField(self, field, name)
+                        for name, field
                         in self.fields.items()]
 
-        c = Context(dict(form = self, bound_fields = bound_fields))
+        c = Context(dict(form=self, bound_fields=bound_fields))
         t = loader.get_template(self.get_template_name())
         return t.render(c)
 
-
     def as_template(self):
-        "{{ form.as_template }}"
+        """ {{ form.as_template }} """
         for field in self.fields.keys():
             self.fields[field].str_class = str(self.fields[field].widget.__class__.__name__)
         return self.output_via_template()
 
-
     def set_model_fields(self, instance, exclude_fields=[]):
-        '''Fills values from the form fields into instance fields'''
+        """
+        Fills values from the form fields into instance fields
+        """
         data = self.cleaned_data
         for key in data:
             if key in instance._meta.get_all_field_names() and not key in exclude_fields:
-                setattr(instance, '%s' % key, data[key])
-
+                setattr(instance, f'{key}', data[key])
 
     def set_initial(self, instance):
+        """ set initial """
         for field in self.fields.keys():
             if field in self.initial:
                 continue
-            if hasattr(instance, '%s' % field):
-                attr = getattr(instance, '%s' % field)
+            if hasattr(instance, f'{field}'):
+                attr = getattr(instance, f'{field}')
                 if callable(attr):
                     attr = attr()
                 self.initial[field] = attr
 
 
 class RequestModelForm(_Form, forms.ModelForm):
+    """ RequestModelForm """
     _ref_class = forms.ModelForm
 
 
 class RequestForm(_Form, forms.Form):
+    """ RequestForm """
     _ref_class = forms.Form
 
 
 class RequestFormSet(forms.formsets.BaseFormSet):
+    """ RequestFormSet """
+
     def __init__(self, *args, **kwargs):
         self._request = kwargs.pop('request', None)
         self.form_args = kwargs.pop('args', [])
@@ -117,7 +126,7 @@ class RequestFormSet(forms.formsets.BaseFormSet):
             'auto_id': self.auto_id,
             'prefix': self.add_prefix(i),
             'error_class': self.error_class,
-            }
+        }
         if self.is_bound:
             defaults['data'] = self.data
             defaults['files'] = self.files
@@ -138,6 +147,9 @@ class RequestFormSet(forms.formsets.BaseFormSet):
 
     @property
     def empty_form(self):
+        """
+        empty form
+        """
         form = self.form(
             *self.form_args,
             auto_id=self.auto_id,
@@ -145,4 +157,5 @@ class RequestFormSet(forms.formsets.BaseFormSet):
             empty_permitted=True,
             request=self._request)
         self.add_fields(form, None)
+
         return form

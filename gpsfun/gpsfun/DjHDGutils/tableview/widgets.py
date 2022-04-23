@@ -1,12 +1,17 @@
+"""
+widgets
+"""
 from django.utils.safestring import mark_safe
 from django.urls import reverse, NoReverseMatch
 from django.db.models.manager import Manager
 
 
 class BaseWidget(object):
+    """ BaseWidget """
     creation_counter = 0
 
-    def __init__(self, label, refname=None, width=None, title_attr=None, cell_attr=None):
+    def __init__(
+            self, label, refname=None, width=None, title_attr=None, cell_attr=None):
         self.label = label
         self.refname = refname
         self.title_attr = title_attr
@@ -18,6 +23,7 @@ class BaseWidget(object):
         BaseWidget.creation_counter += 1
 
     def html_title(self):
+        """ html title """
         return self.label
 
     def _recursive_value(self, row, keylist):
@@ -32,6 +38,7 @@ class BaseWidget(object):
         return value
 
     def get_value(self, row, refname=None, default=None):
+        """ get value """
         if refname is None and self.refname is None:
             return default
 
@@ -44,57 +51,62 @@ class BaseWidget(object):
         return default
 
     def html_cell(self, row_index, row):
+        """ html cell """
         value = self.get_value(row)
         if value is None:
             value = '&nbsp'
         return mark_safe(value)
 
-
     def _dict2attr(self, attr):
+        """ dictionary to attributes """
         if not attr:
             return u""
 
-        rc = u""
-        for key,value in attr.iteritems():
-            rc += u' %s="%s"'%(key,value)
+        rc = ""
+        for key, value in attr.iteritems():
+            rc += f' {key}="{value}"'
 
         return mark_safe(rc)
 
-
     def html_title_attr(self):
+        """ html title attribute """
         return self._dict2attr(self.title_attr)
-
 
     def html_cell_attr(self):
         return self._dict2attr(self.cell_attr)
 
 
-
 class LabelWidget(BaseWidget):
+    """ LabelWidget """
     pass
 
+
 class DateTimeWidget(BaseWidget):
+    """ DateTimeWidget """
+
     def __init__(self, *kargs, **kwargs):
         self.format = "%d/%m/%y %H:%M"
 
         _kwargs = {}
-        for key,value in kwargs.iteritems():
+        for key, value in kwargs.iteritems():
             if key == 'format':
-               self.format = value
+                self.format = value
             else:
-               _kwargs[key] = value
+                _kwargs[key] = value
 
         super(DateTimeWidget, self).__init__(*kargs, **_kwargs)
 
-
     def html_cell(self, row_index, row):
+        """ html cell """
         value = self.get_value(row)
         if value:
             return value.strftime(self.format)
-        return mark_safe(u'&nbsp;')
+        return mark_safe('&nbsp;')
 
 
 class HrefWidget(BaseWidget):
+    """ HrefWidget """
+
     def __init__(self, *kargs, **kwargs):
         self.href = None
         self.reverse = None
@@ -113,14 +125,14 @@ class HrefWidget(BaseWidget):
 
         super(HrefWidget, self).__init__(*kargs, **my_kwargs)
 
-
     def html_cell(self, row_index, row):
+        """ html cell """
         href = ''
         value = super(HrefWidget, self).html_cell(row_index, row)
         if self.reverse:
             try:
                 href = reverse(self.reverse, args=[self.get_value(row, self.reverse_column), ])
-            except NoReverseMatch, e:
+            except NoReverseMatch as e:
                 href = "#NoReverseMatch"
 
-        return mark_safe(u"<a href='%s'>%s</a>"%(href,value))
+        return mark_safe(f"<a href='{href}'>{value}</a>")

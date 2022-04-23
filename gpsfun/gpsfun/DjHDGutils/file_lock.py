@@ -6,7 +6,8 @@ from django.core.files import locks
 from time import sleep
 import os
 
-FILE_NAME_PREFIX = '/tmp/file_lock_%d_' % os.getuid()
+
+FILE_NAME_PREFIX = f'/tmp/file_lock_{os.getuid()}_'
 
 
 class LockException(Exception):
@@ -23,7 +24,7 @@ def get_lock(name, timeout='forewer'):
     if timeout == 'forewer':
         locks.lock(f, locks.LOCK_EX)
     else:
-        #print '   waiting for lock...'
+        # print '   waiting for lock...'
         for waited in range(timeout + 1):
             try:
                 if waited > 0:         # sleep between iterations
@@ -62,7 +63,9 @@ def single_execute(lock_name, timeout=0, quiet_exit=False):
     """
 
     def f1(f):
+        """ f1 """
         def f2(*args, **kwargs):
+            """ f2 """
             try:
                 _lock = get_lock('single_execute_lock_%s' % lock_name,
                                  timeout=timeout)

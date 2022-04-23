@@ -1,4 +1,8 @@
+"""
+pagination
+"""
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
+
 
 def paginate_page(request, objects_list, per_page):
     """ taking out similar code pieces to function to paginate objects """

@@ -1,11 +1,6 @@
-from django.conf import settings
-from django.http import Http404
-from types import ListType
-from DjHDGutils.misc import atoi
-import math
-
-
 """
+paginator
+
 Typical template example
 ===========================
 
@@ -40,6 +35,14 @@ Template example for paginator::
 
 """
 
+from types import ListType
+import math
+
+from django.conf import settings
+from django.http import Http404
+
+from DjHDGutils.misc import atoi
+
 
 class Paginator(object):
     """ Paginator tool
@@ -52,7 +55,7 @@ class Paginator(object):
         will look for ``ROW_PER_PAGE`` in project settings file.
     """
 
-    def __init__(self, queryset, page=None, row_per_page=None, request=None, 
+    def __init__(self, queryset, page=None, row_per_page=None, request=None,
                  skip_startup_recalc=False):
         self._queryset = queryset
         self.request = request
@@ -67,9 +70,10 @@ class Paginator(object):
                 self._calc(page)
 
     def _calc(self, page=None):
+        """ calc """
         if self.request and 'page' in self.request.GET and page is None:
             page = self.request.GET['page']
-        self._page = atoi(page,1)
+        self._page = atoi(page, 1)
 
         self.row_per_page = self.row_per_page or settings.PAGINATOR_PER_PAGE
 
@@ -78,7 +82,7 @@ class Paginator(object):
         else:
             self._hits = int(self._queryset.count())
 
-        self._pages = int(math.ceil(float(self._hits)/float(self.row_per_page)))
+        self._pages = int(math.ceil(float(self._hits) / float(self.row_per_page)))
         if not self._pages:
             self._pages = 1
 
@@ -88,17 +92,19 @@ class Paginator(object):
         self.segment = 5
 
     def _get_page(self):
+        """ get page """
         if self._page is None:
             self._calc()
         return self._page
 
     def _set_page(self, value):
+        """ set page """
         self._calc(value)
     page = property(_get_page, _set_page)
 
-
     def get_start_url(self):
-        url='?'
+        """ get start url """
+        url = '?'
         if self.request and len(self.request.GET.items()) > 0:
             qset = self.request.GET.copy()
             if qset.has_key('page'):
@@ -110,14 +116,16 @@ class Paginator(object):
 
         return url
 
-
     def get_page_count(self):
+        """ get page count """
         return self._pages
 
     def get_rows_count(self):
+        """ get rows count """
         return self._hits
 
     def get_offset(self):
+        """ get offset """
         start = (self.page - 1) * atoi(self.row_per_page)
         end = self.page * atoi(self.row_per_page)
         return (start, end)
@@ -128,14 +136,13 @@ class Paginator(object):
             return self._queryset
 
         start, end = self.get_offset()
-        return self._queryset[start : end]
-
+        return self._queryset[start: end]
 
     def get_bar(self):
         """ Return list of page numbers for current segment """
 
         bar = []
-        for page in range(self.page-self.segment,self.page+self.segment+1):
+        for page in range(self.page - self.segment, self.page + self.segment + 1):
             if page <= 0 or page > self.get_page_count():
                 continue
 
@@ -143,52 +150,58 @@ class Paginator(object):
         return bar
 
     def get_prev_page(self):
+        """ get previous page """
         if self.page - 1 <= 0:
             return None
 
         return (self.page - 1)
 
     def get_next_page(self):
+        """ get next page """
         if self.page + 1 > self.get_page_count():
             return None
 
         return (self.page + 1)
 
-
     def get_prev_page_group(self):
-        if self.page - self.segment*2 - 1 <= 0:
+        """ get previous page group """
+        if self.page - self.segment * 2 - 1 <= 0:
             return None
 
-        return (self.page - self.segment*2 - 1)
+        return (self.page - self.segment * 2 - 1)
 
     def get_prev_page_segment(self):
+        """ get previous page segment """
         if self.page - self.segment - 1 <= 0:
             return None
 
         return (self.page - self.segment - 1)
 
     def get_next_page_group(self):
-        if self.page + self.segment*2 + 1 > self.get_page_count():
+        """ get next page group """
+        if self.page + self.segment * 2 + 1 > self.get_page_count():
             return None
 
-        return (self.page + self.segment*2 + 1)
-
+        return (self.page + self.segment * 2 + 1)
 
     def get_next_page_segment(self):
+        """ get next page segment """
         if self.page + self.segment + 1 > self.get_page_count():
             return None
 
         return (self.page + self.segment + 1)
 
     def get_last_page(self):
+        """ get last page """
         return int(self.get_page_count())
 
     def is_paginate(self):
+        """ is paginate ? """
         return (self.row_per_page != 'all' and self.get_page_count() > 1)
 
-
     def set_page_by_position(self, position):
-        self.page = int((position-1)/self.row_per_page)+1
+        """ set page by position """
+        self.page = int((position - 1) / self.row_per_page) + 1
 
     def set_inverted_page_by_position(self, position):
         """ set inverted paginator page
@@ -202,11 +215,10 @@ class Paginator(object):
 
         """
         i = self.get_rows_count() + 1
-        for p in range(1, self.get_page_count()+1): # [1,2,3,4]
+        for p in range(1, self.get_page_count() + 1):  # [1,2,3,4]
             i -= self.row_per_page
             if i <= position:
                 page = p
                 break
 
         self.page = page
-

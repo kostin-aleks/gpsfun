@@ -1,11 +1,16 @@
+"""
+redis utils
+"""
 from __future__ import with_statement
 import redis
 from datetime import datetime
-from django.conf import settings
 import json
+from django.conf import settings
 
 
 class RedisConn(object):
+    """ RedisConn """
+
     def __init__(self):
         self.conn = None
 
@@ -22,21 +27,23 @@ class RedisConn(object):
         if version:
             VERSION = tuple(version.split("."))
         else:
-            VERSION =redis.VERSION
+            VERSION = redis.VERSION
         if self.conn:
-            if (int(VERSION[0])==2 and int(VERSION[1])>=4) or \
-                   int(VERSION[0]) > 2:
+            if (int(VERSION[0]) == 2 and int(VERSION[1]) >= 4) or \
+                    int(VERSION[0]) > 2:
                 self.conn.connection_pool.disconnect()
             else:
                 self.conn.connection.disconnect()
 
 
 def fix_event(event):
+    """ fix event """
     with RedisConn() as r:
         r.zincrby('fix_events', event)
 
 
 def get_event_count(event):
+    """ get event count """
     with RedisConn() as r:
         return r.zscore('fix_events', event)
 
@@ -57,7 +64,6 @@ def get_event_month_count(event, year, month):
 def zstore_structure(formset_fact,
                      key,
                      request):
-
     """ Stores any formset structure into Redis
     sorted set object by `key`.
 
@@ -90,8 +96,8 @@ def zstore_structure(formset_fact,
                         i += 1
 
     if not request.method == 'POST' or \
-           request.method == 'POST' and \
-           (any_updated or any_deleted):
+            request.method == 'POST' and \
+            (any_updated or any_deleted):
         initial = []
         with RedisConn() as rds:
             for record in rds.zrange(key, 0, -1):
@@ -100,13 +106,14 @@ def zstore_structure(formset_fact,
 
     return formset
 
+
 def zdataset(key):
-    d=[]
+    """ data set """
+    d = []
     with RedisConn() as rds:
         for record in rds.zrange(key, 0, -1) or []:
             d.append(json.loads(record))
     return d
-
 
 
 class NonParallelLockException(Exception):
@@ -127,7 +134,9 @@ def non_parallel(name='', timeout=60, quiet_exit=False):
         with NonParallelLockException """
 
     def decorator(func):
+        """ decorator """
         def newfunc(*args, **kwargs):
+            """ new function """
             with RedisConn() as redis:
                 lock = redis.lock('lock_np_{0}'.format(name), timeout=timeout)
 
