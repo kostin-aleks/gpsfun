@@ -33,6 +33,7 @@ class GeothingAdmin(admin.ModelAdmin):
 
     def geothing_location(self, obj):
         """ render geothing location """
+
         def improve_coordinate(ltuple, suffix, alt):
             """ improve coordinate """
             if ltuple[0] < 0:
@@ -47,6 +48,7 @@ class GeothingAdmin(admin.ModelAdmin):
 
     geothing_location.short_description = 'Location'
     geosite_code.short_description = 'GeoSite'
+
 
 admin.site.register(Geosite, GeositeAdmin)
 admin.site.register(Geothing, GeothingAdmin)

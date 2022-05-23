@@ -15,8 +15,8 @@ from gpsfun.main.db_utils import get_object_or_none
 from gpsfun.main.ajax import accept_ajax
 from gpsfun.main.db_utils import iter_sql
 
-from gpsfun.main.GeoMap.models import (CACHE_TYPES, CACHE_KINDS,
-    GEOCACHING_ONMAP_TYPES)
+from gpsfun.main.GeoMap.models import (
+    CACHE_TYPES, CACHE_KINDS, GEOCACHING_ONMAP_TYPES)
 from gpsfun.main.GeoMap.models import Geothing
 from gpsfun.main.utils import MAX_POINTS
 from gpsfun.main.utils import points_rectangle
@@ -101,11 +101,11 @@ def map_cache_info(request):
 def get_points(mapbounds, type_ids):
     """ get points """
     caches = Geothing.objects.filter(
-            location__NS_degree__gt=mapbounds['bottom'],
-            location__NS_degree__lt=mapbounds['top'],
-            location__EW_degree__gt=mapbounds['left'],
-            location__EW_degree__lt=mapbounds['right'],
-            type_code__in=GEOCACHING_ONMAP_TYPES)
+        location__NS_degree__gt=mapbounds['bottom'],
+        location__NS_degree__lt=mapbounds['top'],
+        location__EW_degree__gt=mapbounds['left'],
+        location__EW_degree__lt=mapbounds['right'],
+        type_code__in=GEOCACHING_ONMAP_TYPES)
 
     type_list = types_by_kind(type_ids)
     caches = caches.filter(type_code__in=type_list)
@@ -259,7 +259,7 @@ def waypoint_mask_sql(waypoint):
 
     sql = None
     wpoint = waypoint.strip().upper()
-    pwp = re.compile('(OP|TR|MS|GC|OC|OX|GR|GL|OK|GA|OZ|TR|RH|OU|TC|OS|ON|OL|OJ|N|GE|WM|SH|TP|TB|OB)[\d,A-F]*') #OB GL
+    pwp = re.compile(r'(OP|TR|MS|GC|OC|OX|GR|GL|OK|GA|OZ|TR|RH|OU|TC|OS|ON|OL|OJ|N|GE|WM|SH|TP|TB|OB)[\d,A-F]*')  # OB GL
     if pwp.match(wpoint):
         sql = waypont_sql(wpoint)
 
@@ -311,12 +311,12 @@ def selected_caches(request):
             type_code__in=GEOCACHING_ONMAP_TYPES
         )
         caches = caches.select_related('location', 'geosite')
-        if not 'all' in user_sites:
+        if 'all' not in user_sites:
             caches = caches.filter(geosite__code__in=user_sites)
-        if not 'all' in user_region:
+        if 'all' not in user_region:
             caches = caches.filter(admin_code__in=user_region)
         if user_types:
-            if not 'all' in user_types:
+            if 'all' not in user_types:
                 type_list = types_by_kind(user_types)
                 caches = caches.filter(type_code__in=type_list)
         else:

@@ -1,4 +1,6 @@
-
+"""
+Data source
+"""
 
 
 class BaseDatasource(object):
@@ -16,6 +18,7 @@ class SqlDataSource(BaseDatasource):
     def __init__(self, sql):
         self.sql = sql
 
+
 class QSDataSource(BaseDatasource):
     def __init__(self, qs):
         self.qs = qs
@@ -30,14 +33,13 @@ class QSDataSource(BaseDatasource):
         if asc:
             self.qs = self.qs.order_by(order_ref)
         else:
-            self.qs = self.qs.order_by('-%s'%order_ref)
+            self.qs = self.qs.order_by('-%s' % order_ref)
 
     def set_limit(self, start, offset):
         self.qs = self.qs[start:offset]
 
     def count(self):
         return self.qs.count()
-            
 
     def filter(self, *kargs, **kwargs):
         self.qs = self.qs.filter(*kargs, **kwargs)
@@ -48,4 +50,3 @@ class QSDataSource(BaseDatasource):
         self.qs = self.qs.exclude(*kargs, **kwargs)
 
         return self
-        

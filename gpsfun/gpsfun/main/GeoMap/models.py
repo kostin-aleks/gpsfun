@@ -29,25 +29,24 @@ GEOCACHING_CACHE_TYPES = {
 }
 
 CACHE_TYPES = {
-    'REAL' : ('TR', 'H', 'T', 'C', 'OT', 'MO', 'DR'),
-    'VIRTUAL' : ('VI', 'P', 'Con', 'WC'),
-    'MULTISTEP' : ('MS', 'QZ', 'MT'),
-    'MULTISTEPVIRTUAL' : ('MV', 'Q',),
+    'REAL': ('TR', 'H', 'T', 'C', 'OT', 'MO', 'DR'),
+    'VIRTUAL': ('VI', 'P', 'Con', 'WC'),
+    'MULTISTEP': ('MS', 'QZ', 'MT'),
+    'MULTISTEPVIRTUAL': ('MV', 'Q',),
 }
 
 CACHE_KINDS = (
     {'code': 'REAL', 'name': _('Traditional')},
     {'code': 'VIRTUAL', 'name': _('Virtual')},
-    {'code': 'MULTISTEP', 'name':  _('Multistep')},
-    {'code': 'MULTISTEPVIRTUAL', 'name':  _('Virtual Multistep')},
-    #{'code': 'CONFL', 'name':  _('Confluence')},
-    )
+    {'code': 'MULTISTEP', 'name': _('Multistep')},
+    {'code': 'MULTISTEPVIRTUAL', 'name': _('Virtual Multistep')},
+)
 
 GEOCACHING_ONMAP_TYPES = ('MV', 'MS', 'TR', 'VI', 'Q', 'H', 'T', 'P',
                           'C', 'Con', 'QZ', 'MO', 'OT', 'WC', 'MT', 'DR')
 
 NOISE = {
-    'GC_SU' : 500,
+    'GC_SU': 500,
     'SHUKACH': 500,
 }
 
@@ -187,7 +186,7 @@ class BlockNeedBeDivided(models.Model):
         db_table = 'block_need_be_divided'
 
     def __str__(self):
-        return u'Block {self.geosite}-{self.bb}'
+        return f'Block {self.geosite}-{self.bb}'
 
     @classmethod
     def next_index(cls):
@@ -196,4 +195,3 @@ class BlockNeedBeDivided(models.Model):
         """
         return (cls.objects.aggregate(
             max_num=Max('idx')).get('max_num') or 0) + 1
-

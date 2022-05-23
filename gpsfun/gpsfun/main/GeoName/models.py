@@ -233,7 +233,7 @@ def region_by_code(country_code, region_codes):
     if len(region_codes):
         region_code = region_codes[0]
     subject = GeoCountryAdminSubject.objects.filter(country_iso=country_code,
-                                                 code=region_code)
+                                                    code=region_code)
     return subject[0].name if subject.count() else ''
 
 
@@ -246,7 +246,7 @@ def country_iso_by_iso3(iso3):
 
 
 def populate_country_subject_city(
-    field_country, field_subject, field_city, city):
+        field_country, field_subject, field_city, city):
     """ populate country subject city """
     field_country.choices = []
     field_country.choices.append(('NONE', _('-- choose country --')))
@@ -260,7 +260,7 @@ def populate_country_subject_city(
     field_country.choices = field_country.choices + sorted(lst, key=lambda x: x[1])
 
     field_subject.choices = []
-    field_subject.choices.append(('NONE',_('-- choose admin subject --')))
+    field_subject.choices.append(('NONE', _('-- choose admin subject --')))
 
     if city:
         subjects = GeoCountryAdminSubject.objects.filter(country_iso=city.country).values_list('code', 'name')
@@ -276,7 +276,7 @@ def populate_country_subject_city(
     if city:
         cities = GeoCity.objects.filter(country=city.country, admin1=city.admin1)
         lst = [(city.geonameid,
-              city.localized_name(translation.get_language())) for city in cities]
+                city.localized_name(translation.get_language())) for city in cities]
 
         field_city.choices = field_city.choices + sorted(lst, key=lambda x: x[1])
 

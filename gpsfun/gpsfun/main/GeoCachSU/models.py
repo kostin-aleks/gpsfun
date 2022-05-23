@@ -7,7 +7,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from gpsfun.main.db_utils import get_object_or_none
 from gpsfun.main.GeoName.models import GeoCountry, GeoCountryAdminSubject, \
-     country_iso_by_iso3
+    country_iso_by_iso3
 from gpsfun.main.db_utils import sql2val
 
 
@@ -93,7 +93,7 @@ class Geocacher(models.Model):
 
     def total_months(self):
         """ total months after registration of user """
-        #IMPROVE
+        # IMPROVE
         if self.register_date:
             return int(round((datetime.now() - self.register_date).days / 30.0))
         return 0
@@ -197,7 +197,7 @@ class Geocacher(models.Model):
     def ratio_recommended_caches(self):
         """ ratio for recommended caches """
         recommended = self.recommended_caches_count()
-        if self.statistics() and  self.statistics().created_count:
+        if self.statistics() and self.statistics().created_count:
             return float(recommended or 0) / self.statistics().created_count * 100.0
         return None
 
@@ -469,7 +469,7 @@ class CachStat(models.Model):
     def calculate_points(self):
         """ calculate points """
         self.points = self.multiply_factor() * \
-                (CACHE_TYPE_WEIGHT.get(self.cach.type_code) or 0)
+            (CACHE_TYPE_WEIGHT.get(self.cach.type_code) or 0)
         self.save()
 
 

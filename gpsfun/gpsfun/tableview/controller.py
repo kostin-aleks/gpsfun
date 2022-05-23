@@ -44,7 +44,7 @@ class TableController:
 
     def show_column(self, column_name):
         """ show column """
-        if not column_name in self.table.columns:
+        if column_name not in self.table.columns:
             return False
 
         if column_name in self.visible_columns:
@@ -129,12 +129,11 @@ class TableController:
             self.request.session[self.last_profile_key] = id
 
         profile_qs = TableViewProfile.objects.filter(
-                                tableview_name=self.table.id)
+            tableview_name=self.table.id)
         if self.table.global_profile:
             profile_qs = profile_qs.filter(user__isnull=True)
         else:
             profile_qs = profile_qs.filter(user=self.request.user)
-
 
         if (id is None and self.session_key not in self.request.session) or id == 'default':
             # load default state
@@ -196,7 +195,7 @@ class TableController:
             id=profile_id,
             tableview_name=self.table.id,
             is_default=False
-            )
+        )
         if self.table.global_profile:
             qs = qs.filter(user__isnull=True)
         else:
@@ -209,7 +208,7 @@ class TableController:
         """ process request """
         self.restore(self.request.GET.get('profile'))
 
-        if self.request.GET.has_key('page'):
+        if 'page' in self.request.GET:
             self.set_page(self.request.GET.get('page'))
 
         if self.request.is_ajax():
@@ -252,7 +251,7 @@ class TableController:
 
         result = self.process_form_filter()
 
-        if self.request.GET.has_key('sort_by'):
+        if 'sort_by' in self.request.GET:
             self.set_sort(self.request.GET.get('sort_by'))
             result = HttpResponseRedirect('?profile=custom')
 
@@ -302,7 +301,7 @@ class TableController:
     def iter_columns(self):
         """ iter columns """
         for key, column in self.table.columns.iteritems():
-            if  key in self.table.permanent or key in self.visible_columns:
+            if key in self.table.permanent or key in self.visible_columns:
                 yield (key, column)
 
     def iter_all_columns(self):
@@ -333,9 +332,9 @@ class TableController:
         return render_to_string(
             "table_body.html",
             RequestContext(
-            self.request,
-            {'table': self.table,
-             'filter_form': self.form_filter_instance,
-             'controller': self,
-             'base_count': (self.paginator.page - 1) * self.paginator.row_per_page,
-             }))
+                self.request,
+                {'table': self.table,
+                 'filter_form': self.form_filter_instance,
+                 'controller': self,
+                 'base_count': (self.paginator.page - 1) * self.paginator.row_per_page,
+                 }))

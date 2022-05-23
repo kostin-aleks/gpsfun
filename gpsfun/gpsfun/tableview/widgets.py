@@ -1,3 +1,7 @@
+"""
+widgets
+"""
+
 from django.utils.safestring import mark_safe
 from django.urls import reverse, NoReverseMatch
 from django.db.models.manager import Manager
@@ -49,43 +53,39 @@ class BaseWidget(object):
             value = '&nbsp'
         return mark_safe(value)
 
-
     def _dict2attr(self, attr):
         if not attr:
             return u""
 
         rc = u""
-        for key,value in attr.iteritems():
-            rc += u' %s="%s"'%(key,value)
+        for key, value in attr.iteritems():
+            rc += u' %s="%s"' % (key, value)
 
         return mark_safe(rc)
 
-
     def html_title_attr(self):
         return self._dict2attr(self.title_attr)
-
 
     def html_cell_attr(self):
         return self._dict2attr(self.cell_attr)
 
 
-
 class LabelWidget(BaseWidget):
     pass
+
 
 class DateTimeWidget(BaseWidget):
     def __init__(self, *kargs, **kwargs):
         self.format = "%d/%m/%y %H:%M"
 
         _kwargs = {}
-        for key,value in kwargs.iteritems():
+        for key, value in kwargs.iteritems():
             if key == 'format':
                 self.format = value
             else:
                 _kwargs[key] = value
 
         super(DateTimeWidget, self).__init__(*kargs, **_kwargs)
-
 
     def html_cell(self, row_index, row):
         value = self.get_value(row)
@@ -113,7 +113,6 @@ class HrefWidget(BaseWidget):
 
         super(HrefWidget, self).__init__(*kargs, **my_kwargs)
 
-
     def html_cell(self, row_index, row):
         href = ''
         value = super(HrefWidget, self).html_cell(row_index, row)
@@ -123,4 +122,4 @@ class HrefWidget(BaseWidget):
             except NoReverseMatch:
                 href = "#NoReverseMatch"
 
-        return mark_safe(u"<a href='%s'>%s</a>"%(href,value))
+        return mark_safe(u"<a href='%s'>%s</a>" % (href, value))

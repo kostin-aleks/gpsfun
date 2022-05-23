@@ -3,28 +3,38 @@ urlify
 """
 
 import re
-from .maps import *
+from .maps import (
+    latin_map, latin_symbol_map, greek_map, turkish_map, russian_map,
+    ukrainian_map, czech_map, polish_map, latvian_map)
 
-western_maps = [ latin_map, latin_symbol_map, greek_map, turkish_map, \
-                russian_map, ukrainian_map, czech_map, polish_map, latvian_map ]
 
-for i in range(len(western_maps)):
-    western_maps[i] = dict([(ord(k), v) for k, v in western_maps[i].items()])
+western_maps = [latin_map, latin_symbol_map, greek_map, turkish_map,
+                russian_map, ukrainian_map, czech_map, polish_map, latvian_map]
 
-stop_words = [u'a', u'an', u'as', u'at', u'before', u'but', u'by', u'for',
-              u'from', u'is', u'in', u'into', u'like', u'of', u'off', u'on',
-              u'onto', u'per', u'since', u'than', u'the', u'this', u'that',
-              u'to', u'up', u'via', u'with']
+for map_ in western_maps:
+    map_ = dict([(ord(k), v) for k, v in map_.items()])
 
-reserved_words = [u'blog', u'edit', u'delete', u'new', u'popular', u'wiki']
+STOP_WORDS = ['a', 'an', 'as', 'at', 'before', 'but', 'by', 'for',
+              'from', 'is', 'in', 'into', 'like', 'of', 'off', 'on',
+              'onto', 'per', 'since', 'than', 'the', 'this', 'that',
+              'to', 'up', 'via', 'with']
+
+RESERVED_WORDS = ['blog', 'edit', 'delete', 'new', 'popular', 'wiki']
 
 
 def urlify(urlstring, default='default', max_length=50,
-           stop_words=stop_words, reserved_words=reserved_words):
+           stop_words=None, reserved_words=None):
+    """
+    urlify some string
+    """
+    if stop_words is None:
+        stop_words = STOP_WORDS
+    if reserved_words is None:
+        reserved_words = RESERVED_WORDS
     slug = ''
     re_alnum = re.compile(r'[\w\s\-]+')
-    re_stop = re.compile('|'.join([r'\b%s\b' % word for word in stop_words]))
-    re_reserved = re.compile('|'.join([r'\b%s\b' % word for word in reserved_words]))
+    re_stop = re.compile('|'.join([f'\b{word}\b' for word in stop_words]))
+    re_reserved = re.compile('|'.join([f'\b{word}\b' for word in reserved_words]))
     re_space = re.compile(r'[\s_\-]+')
 
     for char in urlstring:
@@ -41,7 +51,7 @@ def urlify(urlstring, default='default', max_length=50,
 
     slug = re_stop.sub(u'', slug.lower())
     slug = re_space.sub(u'-', slug.strip())
-    if slug is '' or re_reserved.match(slug):
+    if not slug or re_reserved.match(slug):
         slug = default
 
     return slug

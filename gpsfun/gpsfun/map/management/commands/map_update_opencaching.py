@@ -116,7 +116,7 @@ OPENSITES = {
         'FIELDS': 'code|name|location|type|status|url|owner|date_created',
         'url_pattern': 'http://opencaching.nl/okapi/services/caches/shortcuts/search_and_retrieve?consumer_key=%s&search_method=services/caches/search/bbox&search_params={"bbox":"%s","limit":"500"}&retr_method=services/caches/geocaches&retr_params={"fields":"%s"}&wrap=true',
         'log_key': 'map_ocnl_caches',
-        'code_re': 'OB([\dA-F]+)$',
+        'code_re': r'OB([\dA-F]+)$',
     },
 
     'OCUK': {
@@ -163,7 +163,7 @@ OPENSITES = {
         'FIELDS': 'code|name|location|type|status|url|owner|date_created',
         'url_pattern': 'http://opencaching.org.uk/okapi/services/caches/shortcuts/search_and_retrieve?consumer_key=%s&search_method=services/caches/search/bbox&search_params={"bbox":"%s","limit":"500"}&retr_method=services/caches/geocaches&retr_params={"fields":"%s"}&wrap=true',
         'log_key': 'map_ocuk_caches',
-        'code_re': 'OK([\dA-F]+)$',
+        'code_re': r'OK([\dA-F]+)$',
     },
 
     'OCPL': {
@@ -391,7 +391,7 @@ OPENSITES = {
         'FIELDS': 'code|name|location|type|status|url|owner|date_created',
         'url_pattern': 'http://opencaching.pl/okapi/services/caches/shortcuts/search_and_retrieve?consumer_key=%s&search_method=services/caches/search/bbox&search_params={"bbox":"%s","limit":"500"}&retr_method=services/caches/geocaches&retr_params={"fields":"%s"}&wrap=true',
         'log_key': 'map_ocpl_caches',
-        'code_re': 'OP([\dA-F]+)$',
+        'code_re': r'OP([\dA-F]+)$',
     },
 }
 

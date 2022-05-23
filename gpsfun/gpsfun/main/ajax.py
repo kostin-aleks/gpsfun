@@ -1,23 +1,24 @@
-import types
+"""
+ajax utils
+"""
+
 import functools
-from django.http import HttpResponse, HttpResponseRedirect
-
 import json as simplejson
-from django.conf import settings
-from django.urls import get_callable
-import itertools
 import sys
-from django.http import Http404
+import traceback
+
+from django.conf import settings
+from django.http import HttpResponse, Http404
 
 
-def _get_traceback( exc_info=None):
-    "Helper function to return the traceback as a string"
-    import traceback
+def _get_traceback(exc_info=None):
+    """ Helper function to return the traceback as a string """
     return '\n'.join(traceback.format_exception(*(exc_info or sys.exc_info())))
 
 
 def _copy_x_headers(orig_resp, target_resp):
-    if not orig_resp or not hasattr(orig_resp,'items'):
+    """ copy headers """
+    if not orig_resp or not hasattr(orig_resp, 'items'):
         return
 
     for key, value in orig_resp.items():
@@ -26,10 +27,13 @@ def _copy_x_headers(orig_resp, target_resp):
 
 
 def _json_dump(data):
+    """ dump data as json data """
     return HttpResponse(simplejson.dumps(data, ensure_ascii=False),
                         content_type='application/javascript')
 
+
 def accept_ajax(view_func):
+    """ decorator accept_ajax """
     @functools.wraps(view_func)
     def _wrap_view_func(request, *args, **kwargs):
         is_ajax = True
@@ -39,12 +43,12 @@ def accept_ajax(view_func):
                 is_ajax = False
         else:
             # for backward compatibility with Django pre 1.0
-            if not (request.META.has_key('HTTP_ACCEPT') and 'application/javascript' in request.META['HTTP_ACCEPT']):
+            if not ('HTTP_ACCEPT' in request.META and 'application/javascript' in request.META['HTTP_ACCEPT']):
                 is_ajax = False
 
         origin_resp = None
 
-        #FIXME: require refactoring here
+        # FIXME: require refactoring here
         if not is_ajax:
             # require direct call original function (out of try/except) to proper determine error exception
             # in orinical view
@@ -71,9 +75,6 @@ def accept_ajax(view_func):
             response_dict['status'] = origin_resp.status_code
             response_dict['content'] = origin_resp.content
 
-            # if isinstance(origin_resp, HttpResponseRedirect):
-            #     response_dict['location'] = origin_resp['location']
-
         except Http404 as e:
             raise Http404(e)
         except Exception as e:
@@ -81,16 +82,17 @@ def accept_ajax(view_func):
 
             if settings.DEBUG:
                 from django.views import debug
-                rc = debug.technical_500_response(request, *sys.exc_info())
+                debug.technical_500_response(request, *sys.exc_info())
                 response_dict['debug'] = True
-                # rc.content #.replace('\n', '<br>\n')
                 response_dict['debug_msg'] = ''
             else:
                 from django.core.mail import mail_admins
 
                 exc_info = sys.exc_info()
 
-                subject = 'Error (%s IP): %s' % ((request.META.get('REMOTE_ADDR') in settings.INTERNAL_IPS and 'internal' or 'EXTERNAL'), request.path)
+                subject = 'Error (%s IP): %s' % (
+                    (request.META.get('REMOTE_ADDR')
+                     in settings.INTERNAL_IPS and 'internal' or 'EXTERNAL'), request.path)
                 try:
                     request_repr = repr(request)
                 except:
@@ -99,15 +101,12 @@ def accept_ajax(view_func):
                 message = "%s\n\n%s" % (_get_traceback(exc_info), request_repr)
                 mail_admins(subject, message, fail_silently=True)
 
-        resp = HttpResponse(simplejson.dumps(response_dict,ensure_ascii=False), content_type='application/javascript')
+        resp = HttpResponse(simplejson.dumps(response_dict, ensure_ascii=False), content_type='application/javascript')
         _copy_x_headers(origin_resp, resp)
 
         return resp
 
-
     return _wrap_view_func
-
-
 
 
 def qs_to_json(qs, map_dict):
@@ -126,9 +125,7 @@ def qs_to_json(qs, map_dict):
             return unicode(attr())
         return unicode(attr)
 
-
-    label_list = [ dict([ (key, _get_value(value, item)) for key, value in map_dict.iteritems() ])
-                   for item in qs ]
+    label_list = [dict([(key, _get_value(value, item)) for key, value in map_dict.iteritems()])
+                  for item in qs]
 
     return simplejson.dumps(label_list)
-

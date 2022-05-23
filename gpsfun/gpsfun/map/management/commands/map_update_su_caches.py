@@ -37,7 +37,7 @@ class Command(BaseCommand):
         except Exception as exception:
             print(type(exception))
             print(exception)
-            return
+            return ''
 
         cnt_new = 0
         cnt_upd = 0
@@ -70,7 +70,7 @@ class Command(BaseCommand):
                             the_geothing.created_date = datetime(
                                 int(date_[0]), int(date_[1]), int(date_[2]))
                 if the_geothing.code:
-                    preg = re.compile('(\D+)(\d+)')
+                    preg = re.compile(r'(\D+)(\d+)')
                     dgs = preg.findall(the_geothing.code)
                     if dgs:
                         code_data = dgs[0]

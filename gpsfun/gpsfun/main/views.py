@@ -9,7 +9,7 @@ from gpsfun.main.db_utils import get_object_or_none
 
 def homepage(request):
     """ homepage """
-    return render(request,'index.html', {'title': ''})
+    return render(request, 'index.html', {'title': ''})
 
 
 def update(request):
@@ -27,7 +27,7 @@ def updating():
 
 def url2su(ref):
     """ is url to geocaching.su ? """
-    pwp = re.compile('.+\/su\/.*')
+    pwp = re.compile(r'.+\/su\/.*')
     if pwp.match(ref):
         return True
     return False

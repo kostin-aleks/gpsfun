@@ -34,7 +34,7 @@ class Command(BaseCommand):
             newfile.write(data)
             newfile.close()
 
-        with open(newfilepath, 'r') as newfile:
+        with open(newfilepath, 'r', encoding="utf-8") as newfile:
             xml = newfile.read()
             newfile.close()
 
@@ -56,7 +56,7 @@ class Command(BaseCommand):
             state = int(kret.get('state')) if kret.get('state') else None
             kret_type = kret.get('type') if kret.get('type') else None
 
-            geokret, created = GeoKret.objects.get_or_create(gkid=gkid)
+            geokret = GeoKret.objects.get_or_create(gkid=gkid)[0]
             if geokret:
                 if name:
                     geokret.name = name
@@ -75,7 +75,6 @@ class Command(BaseCommand):
                 geokret.type_code = kret_type
 
                 geokret.save()
-
 
         for kret in GeoKret.objects.filter(name__isnull=True):
             with requests.Session() as session:

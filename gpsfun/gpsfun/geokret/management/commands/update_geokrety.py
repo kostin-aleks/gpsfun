@@ -47,7 +47,7 @@ class Command(BaseCommand):
                 waypoint = wpoint[0].text if wpoint else None
                 state = kret.state.text
 
-                geokret, created = GeoKret.objects.get_or_create(gkid=gkid)
+                geokret = GeoKret.objects.get_or_create(gkid=gkid)[0]
                 if geokret:
                     if name:
                         geokret.name = name

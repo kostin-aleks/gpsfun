@@ -1,7 +1,5 @@
 from django import template
 from django.template import Variable
-from django.conf import settings
-import types
 
 from gpsfun.tableview.models import TableViewProfile
 
@@ -13,7 +11,6 @@ class TicketProfilesNode(template.Node):
         self.user = Variable(user)
         self.tableview_name = Variable(tableview_name)
         self.save_to = Variable(save_to)
-
 
     def render(self, context):
         context[self.save_to.resolve(context)] = \

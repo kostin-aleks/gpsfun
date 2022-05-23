@@ -47,7 +47,6 @@ class Command(BaseCommand):
                         else:
                             print('not found author', author_uid)
 
-
         log(UpdateType.set_caches_authors, 'OK')
 
         return 'Authors of caches have updated'

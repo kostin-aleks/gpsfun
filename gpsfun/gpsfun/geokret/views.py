@@ -231,10 +231,10 @@ def waypoints_with_geokrety_rectangle(mapbounds):
 def url_by_waypoint(waypoint):
     """ get url for waypoint """
     wpoint = ''
-    su_t = re.compile('TR|MS\d+')
+    su_t = re.compile(r'TR|MS\d+')
     if waypoint and len(waypoint) > 3:
         wpoint = waypoint.upper()
-        treg = re.compile('\w{1,2}[\dA-F]+')
+        treg = re.compile(r'\w{1,2}[\dA-F]+')
         if not treg.match(wpoint):
             wpoint = ''
     if wpoint and wpoint.startswith('OB'):
@@ -311,8 +311,9 @@ def waypoint_mask_sql(waypoint):
 
     sql = None
     wpoint = waypoint.strip().upper()
-    pwp = re.compile('(OP|TR|MS|GC|OC|OX|GR|GL|OK|GA|OZ|TR|RH|OU|TC|OS|ON|OL|OJ|N|GE|WM|SH|TP|TB|OB)[\d,A-F]*') #OB GL
-    pgk = re.compile('GK([\d,A-F]+)')
+    pwp = re.compile(
+        r'(OP|TR|MS|GC|OC|OX|GR|GL|OK|GA|OZ|TR|RH|OU|TC|OS|ON|OL|OJ|N|GE|WM|SH|TP|TB|OB)[\d,A-F]*')  # OB GL
+    pgk = re.compile(r'GK([\d,A-F]+)')
     if pwp.match(wpoint) and len(wpoint) < 9:
         return waypont_sql(wpoint)
 

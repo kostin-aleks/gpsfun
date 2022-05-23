@@ -24,12 +24,11 @@ class CityForm(TemplatedForm):
                                    'onchange': 'CityWidget.reload_cities(this);'
                                    }))
     city = forms.ChoiceField(
-            required=False,
-            label=_('City'),
-            widget=forms.Select(attrs={'id': 'id_select_city',
-                                       'onchange': 'CityWidget.chosen_city(this);'
-                                       }))
-
+        required=False,
+        label=_('City'),
+        widget=forms.Select(attrs={'id': 'id_select_city',
+                                   'onchange': 'CityWidget.chosen_city(this);'
+                                   }))
 
     def __init__(self, *kargs, **kwargs):
         self.user_city = None
@@ -51,4 +50,4 @@ class CityForm(TemplatedForm):
                 self.fields['subject'],
                 self.fields['city'],
                 self.user_city,
-            )
+        )

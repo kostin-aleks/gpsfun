@@ -1,50 +1,60 @@
-# -*- coding: utf-8 -*-
+"""
+test
+"""
 
 import unittest
-from urlify import urlify
+from .urlify import urlify
+
 
 class PinYinTestCase(unittest.TestCase):
+    """
+    PinYinTestCase
+    """
 
-    def testEnglish(self):
-        self.assertEqual(urlify(u'WOW. We Say ENGLISH.'),
-                         u'wow-we-say-english')
+    def test_english(self):
+        """ test English """
+        self.assertEqual(urlify('WOW. We Say ENGLISH.'), 'wow-we-say-english')
 
-    def testWestern(self):
-        self.assertEqual(urlify(u'ÀÞβ Λğ-Ґє'),
-                         u'athb-lg-gye')
+    def test_western(self):
+        """ test Western """
+        self.assertEqual(urlify('ÀÞβ Λğ-Ґє'), 'athb-lg-gye')
 
-    def testEmpty(self):
-        self.assertEqual(urlify(u''),
-                          u'default')
+    def test_empty(self):
+        """ test Empty """
+        self.assertEqual(urlify(''), 'default')
 
-    def testStopWords(self):
-        self.assertEqual(urlify(u'hello, this is an blahblah'),
-                         u'hello-blahblah')
+    def test_stop_words(self):
+        """ test Stop Words """
+        self.assertEqual(urlify('hello, this is an blahblah'),
+                         'hello-blahblah')
 
-    def testReservedWords(self):
-        self.assertEqual(urlify(u'  blog  '),
-                         u'default')
+    def test_reserved_words(self):
+        """ test Reserved Words """
+        self.assertEqual(urlify('  blog  '), 'default')
 
-    def testMaxLengthLimit(self):
-        self.assertEqual(urlify(u'urlstring url instance class request embodies. Example, data headers, calling:'),
-                         u'urlstring-url-instance-class-request-embodies-exam')
+    def test_max_length_limit(self):
+        """ test Max Length Limit """
+        self.assertEqual(urlify('urlstring url instance class request embodies. Example, data headers, calling:'),
+                         'urlstring-url-instance-class-request-embodies-exam')
 
     # additional tests
-    def testRus(self):
-        self.assertEqual(urlify(u'русский текст'),
-                         u'russkij-tekst')
+    def test_rus(self):
+        """ test Rus """
+        self.assertEqual(urlify('русский текст'), 'russkij-tekst')
 
-    def testArabic(self):
+    def test_arabic(self):
+        """ test Arabic """
         # NOTE: arabic not supported: recognize only space in center;
         # therefore return ''
 
-        r = urlify(u'اللغة العربية')
-        self.assertEqual(r, '')
+        result = urlify('اللغة العربية')
+        self.assertEqual(result, '')
 
-    def testChines(self):
+    def test_chines(self):
+        """ test Chines """
         # NOTE: no one character in line suppoerted; return 'default'
-        r = urlify(u'漢語')
-        self.assertEqual(r, 'default')
+        result = urlify('漢語')
+        self.assertEqual(result, 'default')
 
 
 if __name__ == '__main__':

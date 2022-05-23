@@ -1,5 +1,7 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+"""
+test Geocaching SU
+"""
 
 import unittest
 import json
@@ -23,7 +25,8 @@ class GeocachingTest(unittest.TestCase):
     def test_index_page(self):
         response = self.client.get(reverse('index'))
         self.assertEqual(response.status_code, 200)
-        self.assertTrue('On this site you will find information related to entertainment which is called' in response.content)
+        self.assertTrue(
+            'On this site you will find information related to entertainment which is called' in response.content)
 
     def test_cache_by_index(self):
         response = self.client.get(reverse('cach-rate-by-index'))
@@ -49,8 +52,12 @@ class GeocachingTest(unittest.TestCase):
     def test_geocachers_activity(self):
         response = self.client.get(reverse('geocacher-activity'))
         self.assertEqual(response.status_code, 200)
-        self.assertTrue('Activities of geocachers by the years, light color for visits and dark color for creating' in response.content)
-        self.assertTrue('Creating of caches by the years, light color for traditional, dark color for virtual caches' in response.content)
+        self.assertTrue(
+            'Activities of geocachers by the years, light color for visits and dark color for creating'
+            in response.content)
+        self.assertTrue(
+            'Creating of caches by the years, light color for traditional, dark color for virtual caches'
+            in response.content)
 
     def test_geocachers_countries(self):
         response = self.client.get(reverse('geocaching-su-geocacher-stat-countries'))
@@ -85,51 +92,52 @@ class GeocachingTest(unittest.TestCase):
         response = self.client.get(reverse('geocacher-rate-all-curr'))
         self.assertEqual(response.status_code, 200)
         self.assertTrue('Geocachers activity' in response.content)
-        self.assertTrue('%s. All caches'%self.year in response.content)
+        self.assertTrue('%s. All caches' % self.year in response.content)
 
     def test_geocachers_rate_unreal_current(self):
         response = self.client.get(reverse('geocacher-rate-vi-curr'))
         self.assertEqual(response.status_code, 200)
         self.assertTrue('Geocachers activity' in response.content)
-        self.assertTrue('%s. Unreal caches'%self.year in response.content)
+        self.assertTrue('%s. Unreal caches' % self.year in response.content)
 
     def test_geocachers_rate_real_current(self):
         response = self.client.get(reverse('geocacher-rate-tr-curr'))
         self.assertEqual(response.status_code, 200)
         self.assertTrue('Geocachers activity' in response.content)
-        self.assertTrue('%s. Real caches'%self.year in response.content)
+        self.assertTrue('%s. Real caches' % self.year in response.content)
 
     def test_geocachers_rate_all_last(self):
         response = self.client.get(reverse('geocacher-rate-all-last'))
         self.assertEqual(response.status_code, 200)
         self.assertTrue('Geocachers activity' in response.content)
-        self.assertTrue('%s. All caches'%self.previous_year in response.content)
+        self.assertTrue('%s. All caches' % self.previous_year in response.content)
 
     def test_geocachers_rate_unreal_last(self):
         response = self.client.get(reverse('geocacher-rate-vi-last'))
         self.assertEqual(response.status_code, 200)
         self.assertTrue('Geocachers activity' in response.content)
-        self.assertTrue('%s. Unreal caches'%self.previous_year in response.content)
+        self.assertTrue('%s. Unreal caches' % self.previous_year in response.content)
 
     def test_geocachers_rate_real_last(self):
         response = self.client.get(reverse('geocacher-rate-tr-last'))
         self.assertEqual(response.status_code, 200)
         self.assertTrue('Geocachers activity' in response.content)
-        self.assertTrue('%s. Real caches'%self.previous_year in response.content)
+        self.assertTrue('%s. Real caches' % self.previous_year in response.content)
 
     def test_converter(self):
         post_data = {'input': '-45.77777'}
-        kwargs = {'HTTP_X_REQUESTED_WITH':'XMLHttpRequest'}
-        response = self.client.post(reverse('ajax-converter'), post_data,  **kwargs)
+        kwargs = {'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest'}
+        response = self.client.post(reverse('ajax-converter'), post_data, **kwargs)
         r = json.loads(response.content)
 
-        self.assertTrue(r['status']=='OK')
-        self.assertTrue(r['dm']==u"45\xb0 46.666'")
-        self.assertTrue(r['dms']==u'45\xb0 46\' 39.97"')
-        self.assertTrue(r['d']=="45.777770")
+        self.assertTrue(r['status'] == 'OK')
+        self.assertTrue(r['dm'] == "45\xb0 46.666'")
+        self.assertTrue(r['dms'] == '45\xb0 46\' 39.97"')
+        self.assertTrue(r['d'] == "45.777770")
 
     def tearDown(self):
         pass
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -35,7 +35,7 @@ def get_rectangle(lat_min, lat_max, lng_min, lng_max):
             'lat_max': lat_max or 0.1,
             'lng_min': lng_min or -0.1,
             'lng_max': lng_max or 0.1
-            }
+        }
     return rect
 
 
@@ -57,12 +57,13 @@ def points_rectangle(points):
 
 def get_degree(string):
     """ get degree """
-    p_dms = re.compile("^[\-\+\sNESW]*(1|0[0-8]\d|\d{1,2})[\°\s]+(\d|[0-5]\d)[\'\s](\d|[0-5]\d)[\.\,](\d*)[\sNESW\°\"]*$")
-    p_dms_int = re.compile("^[\-\+\sNESW]*(1|0[0-8]\d|\d{1,2})[\°\s]+(\d|[0-5]\d)[\'\s](\d|[0-5]\d)[\sNESW\°\"]*$")
-    p_d = re.compile("^[\-\+\sNESW]*(1[0-8]\d|\d{1,2})[\.\,](\d*)[\sNESW\°]*$")
-    p_dm = re.compile("^[\-\+\sNESW]*(1|0[0-8]\d|\d{1,2})[\°\s]+(\d|[0-5]\d)[\.\,](\d*)[\sNESW\°\']*$")
-    p_dm_int = re.compile("^[\-\+\sNESW]*(1|0[0-8]\d|\d{1,2})[\°\s]+(\d|[0-5]\d)[\sNESW\°\']*$")
-    p_d_int = re.compile("^[\-\+\sNESW]*(1[0-8]\d|\d{1,2})[\sNESW\°]*$")
+    p_dms = re.compile(
+        r"^[\-\+\sNESW]*(1|0[0-8]\d|\d{1,2})[\°\s]+(\d|[0-5]\d)[\'\s](\d|[0-5]\d)[\.\,](\d*)[\sNESW\°\"]*$")
+    p_dms_int = re.compile(r"^[\-\+\sNESW]*(1|0[0-8]\d|\d{1,2})[\°\s]+(\d|[0-5]\d)[\'\s](\d|[0-5]\d)[\sNESW\°\"]*$")
+    p_d = re.compile(r"^[\-\+\sNESW]*(1[0-8]\d|\d{1,2})[\.\,](\d*)[\sNESW\°]*$")
+    p_dm = re.compile(r"^[\-\+\sNESW]*(1|0[0-8]\d|\d{1,2})[\°\s]+(\d|[0-5]\d)[\.\,](\d*)[\sNESW\°\']*$")
+    p_dm_int = re.compile(r"^[\-\+\sNESW]*(1|0[0-8]\d|\d{1,2})[\°\s]+(\d|[0-5]\d)[\sNESW\°\']*$")
+    p_d_int = re.compile(r"^[\-\+\sNESW]*(1[0-8]\d|\d{1,2})[\sNESW\°]*$")
 
     deg_ = min_ = sec_ = None
 
@@ -105,1156 +106,1157 @@ def get_degree(string):
 
     return deg_
 
+
 country_list = [
-_("Ukraine"),
+    _("Ukraine"),
 
 
-_("Armenia"),
+    _("Armenia"),
 
 
-_("Azerbaijan"),
+    _("Azerbaijan"),
 
 
-_("Belarus"),
+    _("Belarus"),
 
 
-_("Estonia"),
+    _("Estonia"),
 
 
-_("Georgia"),
+    _("Georgia"),
 
 
-_("Kazakhstan"),
+    _("Kazakhstan"),
 
 
-_("Kyrgyzstan"),
+    _("Kyrgyzstan"),
 
 
-_("Latvia"),
+    _("Latvia"),
 
 
-_("Lithuania"),
+    _("Lithuania"),
 
 
-_("Moldova"),
+    _("Moldova"),
 
 
-_("Tajikistan"),
+    _("Tajikistan"),
 
 
-_("Turkmenistan"),
+    _("Turkmenistan"),
 
 
-_("Uzbekistan"),
+    _("Uzbekistan"),
 
 ]
 
 regions_list = [
-_("Zhytomyrs'ka Oblast'"),
+    _("Zhytomyrs'ka Oblast'"),
 
 
-_("Zaporiz'ka Oblast'"),
+    _("Zaporiz'ka Oblast'"),
 
 
-_("Zakarpats'ka Oblast'"),
+    _("Zakarpats'ka Oblast'"),
 
 
-_("Volyns'ka Oblast'"),
+    _("Volyns'ka Oblast'"),
 
 
-_("Vinnyts'ka Oblast'"),
+    _("Vinnyts'ka Oblast'"),
 
 
-_("Ternopil's'ka Oblast'"),
+    _("Ternopil's'ka Oblast'"),
 
 
-_("Sumy"),
+    _("Sumy"),
 
 
-_("Misto Sevastopol'"),
+    _("Misto Sevastopol'"),
 
 
-_("Rivnens'ka Oblast'"),
+    _("Rivnens'ka Oblast'"),
 
 
-_("Poltava"),
+    _("Poltava"),
 
 
-_("Odessa"),
+    _("Odessa"),
 
 
-_("Mykolayivs'ka Oblast'"),
+    _("Mykolayivs'ka Oblast'"),
 
 
-_("L'vivs'ka Oblast'"),
+    _("L'vivs'ka Oblast'"),
 
 
-_("Luhans'ka Oblast'"),
+    _("Luhans'ka Oblast'"),
 
 
-_("Kiev"),
+    _("Kiev"),
 
 
-_("Misto Kyyiv"),
+    _("Misto Kyyiv"),
 
 
-_("Avtonomna Respublika Krym"),
+    _("Avtonomna Respublika Krym"),
 
 
-_("Kirovohrads'ka Oblast'"),
+    _("Kirovohrads'ka Oblast'"),
 
 
-_("Khmel'nyts'ka Oblast'"),
+    _("Khmel'nyts'ka Oblast'"),
 
 
-_("Kherson"),
+    _("Kherson"),
 
 
-_("Kharkivs'ka Oblast'"),
+    _("Kharkivs'ka Oblast'"),
 
 
-_("Ivano-Frankivs'ka Oblast'"),
+    _("Ivano-Frankivs'ka Oblast'"),
 
 
-_("Donets'ka Oblast'"),
+    _("Donets'ka Oblast'"),
 
 
-_("Dnipropetrovska Oblast'"),
+    _("Dnipropetrovska Oblast'"),
 
 
-_("Chernivets'ka Oblast'"),
+    _("Chernivets'ka Oblast'"),
 
 
-_("Chernihivs'ka Oblast'"),
+    _("Chernihivs'ka Oblast'"),
 
 
-_("Cherkas'ka Oblast'"),
+    _("Cherkas'ka Oblast'"),
 
 
-_("Yaroslavskaya Oblast'"),
+    _("Yaroslavskaya Oblast'"),
 
 
-_("Voronezhskaya Oblast'"),
+    _("Voronezhskaya Oblast'"),
 
 
-_("Vologodskaya Oblast'"),
+    _("Vologodskaya Oblast'"),
 
 
-_("Volgogradskaya Oblast'"),
+    _("Volgogradskaya Oblast'"),
 
 
-_("Ul'yanovskaya Oblast'"),
+    _("Ul'yanovskaya Oblast'"),
 
 
-_("Udmurtskaya Respublika"),
+    _("Udmurtskaya Respublika"),
 
 
-_("Tverskaya Oblast'"),
+    _("Tverskaya Oblast'"),
 
 
-_("Tul'skaya Oblast'"),
+    _("Tul'skaya Oblast'"),
 
 
-_("Respublika Tatarstan"),
+    _("Respublika Tatarstan"),
 
 
-_("Tambovskaya Oblast'"),
+    _("Tambovskaya Oblast'"),
 
 
-_("Stavropol'skiy Kray"),
+    _("Stavropol'skiy Kray"),
 
 
-_("Smolenskaya Oblast'"),
+    _("Smolenskaya Oblast'"),
 
 
-_("Saratovskaya Oblast'"),
+    _("Saratovskaya Oblast'"),
 
 
-_("Samarskaya Oblast'"),
+    _("Samarskaya Oblast'"),
 
 
-_("Ryazanskaya Oblast'"),
+    _("Ryazanskaya Oblast'"),
 
 
-_("Rostovskaya Oblast'"),
+    _("Rostovskaya Oblast'"),
 
 
-_("Pskovskaya Oblast'"),
+    _("Pskovskaya Oblast'"),
 
 
-_("Perm Krai"),
+    _("Perm Krai"),
 
 
-_("Penzenskaya Oblast'"),
+    _("Penzenskaya Oblast'"),
 
 
-_("Orlovskaya Oblast'"),
+    _("Orlovskaya Oblast'"),
 
 
-_("Orenburgskaya Oblast'"),
+    _("Orenburgskaya Oblast'"),
 
 
-_("Novgorodskaya Oblast'"),
+    _("Novgorodskaya Oblast'"),
 
 
-_("Respublika Severnaya Osetiya-Alaniya"),
+    _("Respublika Severnaya Osetiya-Alaniya"),
 
 
-_("Nenetskiy Avtonomnyy Okrug"),
+    _("Nenetskiy Avtonomnyy Okrug"),
 
 
-_("Murmansk"),
+    _("Murmansk"),
 
 
-_("Moscow"),
+    _("Moscow"),
 
 
-_("Moskovskaya"),
+    _("Moskovskaya"),
 
 
-_("Respublika Mordoviya"),
+    _("Respublika Mordoviya"),
 
 
-_("Respublika Mariy-El"),
+    _("Respublika Mariy-El"),
 
 
-_("Lipetskaya Oblast'"),
+    _("Lipetskaya Oblast'"),
 
 
-_("Leningrad"),
+    _("Leningrad"),
 
 
-_("Sankt-Peterburg"),
+    _("Sankt-Peterburg"),
 
 
-_("Kurskaya Oblast'"),
+    _("Kurskaya Oblast'"),
 
 
-_("Krasnodarskiy Kray"),
+    _("Krasnodarskiy Kray"),
 
 
-_("Kostromskaya Oblast'"),
+    _("Kostromskaya Oblast'"),
 
 
-_("Respublika Komi"),
+    _("Respublika Komi"),
 
 
-_("Kirovskaya Oblast'"),
+    _("Kirovskaya Oblast'"),
 
 
-_("Respublika Kareliya"),
+    _("Respublika Kareliya"),
 
 
-_("Karachayevo-Cherkesskaya Respublika"),
+    _("Karachayevo-Cherkesskaya Respublika"),
 
 
-_("Kaluzhskaya Oblast'"),
+    _("Kaluzhskaya Oblast'"),
 
 
-_("Respublika Kalmykiya"),
+    _("Respublika Kalmykiya"),
 
 
-_("Kaliningradskaya Oblast'"),
+    _("Kaliningradskaya Oblast'"),
 
 
-_("Kabardino-Balkarskaya Respublika"),
+    _("Kabardino-Balkarskaya Respublika"),
 
 
-_("Ivanovskaya Oblast'"),
+    _("Ivanovskaya Oblast'"),
 
 
-_("Respublika Ingushetiya"),
+    _("Respublika Ingushetiya"),
 
 
-_("Nizhegorodskaya Oblast'"),
+    _("Nizhegorodskaya Oblast'"),
 
 
-_("Dagestan"),
+    _("Dagestan"),
 
 
-_("Chuvashia"),
+    _("Chuvashia"),
 
 
-_("Chechnya"),
+    _("Chechnya"),
 
 
-_("Bryanskaya Oblast'"),
+    _("Bryanskaya Oblast'"),
 
 
-_("Belgorodskaya Oblast'"),
+    _("Belgorodskaya Oblast'"),
 
 
-_("Respublika Bashkortostan"),
+    _("Respublika Bashkortostan"),
 
 
-_("Astrakhanskaya Oblast'"),
+    _("Astrakhanskaya Oblast'"),
 
 
-_("Arkhangelskaya"),
+    _("Arkhangelskaya"),
 
 
-_("Respublika Adygeya"),
+    _("Respublika Adygeya"),
 
 
-_("Vladimirskaya Oblast'"),
+    _("Vladimirskaya Oblast'"),
 
 
-_("Yamalo-Nenetskiy Avtonomnyy Okrug"),
+    _("Yamalo-Nenetskiy Avtonomnyy Okrug"),
 
 
-_("Tyumenskaya Oblast'"),
+    _("Tyumenskaya Oblast'"),
 
 
-_("Respublika Tyva"),
+    _("Respublika Tyva"),
 
 
-_("Tomskaya Oblast'"),
+    _("Tomskaya Oblast'"),
 
 
-_("Sverdlovskaya Oblast'"),
+    _("Sverdlovskaya Oblast'"),
 
 
-_("Omskaya Oblast'"),
+    _("Omskaya Oblast'"),
 
 
-_("Novosibirskaya Oblast'"),
+    _("Novosibirskaya Oblast'"),
 
 
-_("Kurganskaya Oblast'"),
+    _("Kurganskaya Oblast'"),
 
 
-_("Krasnoyarskiy Kray"),
+    _("Krasnoyarskiy Kray"),
 
 
-_("Khanty-Mansiyskiy Avtonomnyy Okrug"),
+    _("Khanty-Mansiyskiy Avtonomnyy Okrug"),
 
 
-_("Respublika Khakasiya"),
+    _("Respublika Khakasiya"),
 
 
-_("Kemerovskaya Oblast'"),
+    _("Kemerovskaya Oblast'"),
 
 
-_("Respublika Altay"),
+    _("Respublika Altay"),
 
 
-_("Chelyabinskaya Oblast'"),
+    _("Chelyabinskaya Oblast'"),
 
 
-_("Altayskiy Kray"),
+    _("Altayskiy Kray"),
 
 
-_("Respublika Sakha (Yakutiya)"),
+    _("Respublika Sakha (Yakutiya)"),
 
 
-_("Primorskiy Kray"),
+    _("Primorskiy Kray"),
 
 
-_("Khabarovsk Krai"),
+    _("Khabarovsk Krai"),
 
 
-_("Irkutskaya Oblast'"),
+    _("Irkutskaya Oblast'"),
 
 
-_("Zabaikalski Kray"),
+    _("Zabaikalski Kray"),
 
 
-_("Jewish Autonomous Oblast"),
+    _("Jewish Autonomous Oblast"),
 
 
-_("Amurskaya Oblast'"),
+    _("Amurskaya Oblast'"),
 
 
-_("Respublika Buryatiya"),
+    _("Respublika Buryatiya"),
 
 
-_("Sakhalinskaya Oblast'"),
+    _("Sakhalinskaya Oblast'"),
 
 
-_("Magadanskaya Oblast'"),
+    _("Magadanskaya Oblast'"),
 
 
-_("Kamtchatski Kray"),
+    _("Kamtchatski Kray"),
 
 
-_("Chukotskiy Avtonomnyy Okrug"),
+    _("Chukotskiy Avtonomnyy Okrug"),
 
 ]
 
 more_countries = [
-_("Afghanistan"),
+    _("Afghanistan"),
 
 
-_("Aland Islands"),
+    _("Aland Islands"),
 
 
-_("Albania"),
+    _("Albania"),
 
 
-_("Algeria"),
+    _("Algeria"),
 
 
-_("American Samoa"),
+    _("American Samoa"),
 
 
-_("Andorra"),
+    _("Andorra"),
 
 
-_("Angola"),
+    _("Angola"),
 
 
-_("Anguilla"),
+    _("Anguilla"),
 
 
-_("Antarctica"),
+    _("Antarctica"),
 
 
-_("Antigua and Barbuda"),
+    _("Antigua and Barbuda"),
 
 
-_("Argentina"),
+    _("Argentina"),
 
 
-_("Aruba"),
+    _("Aruba"),
 
 
-_("Australia"),
+    _("Australia"),
 
 
-_("Austria"),
+    _("Austria"),
 
 
-_("Bahamas"),
+    _("Bahamas"),
 
 
-_("Bahrain"),
+    _("Bahrain"),
 
 
-_("Bangladesh"),
+    _("Bangladesh"),
 
 
-_("Barbados"),
+    _("Barbados"),
 
 
-_("Belgium"),
+    _("Belgium"),
 
 
-_("Belize"),
+    _("Belize"),
 
 
-_("Benin"),
+    _("Benin"),
 
 
-_("Bermuda"),
+    _("Bermuda"),
 
 
-_("Bhutan"),
+    _("Bhutan"),
 
 
-_("Bolivia"),
+    _("Bolivia"),
 
 
-_("Bosnia and Herzegovina"),
+    _("Bosnia and Herzegovina"),
 
 
-_("Botswana"),
+    _("Botswana"),
 
 
-_("Bouvet Island"),
+    _("Bouvet Island"),
 
 
-_("Brazil"),
+    _("Brazil"),
 
 
-_("British Indian Ocean Territory"),
+    _("British Indian Ocean Territory"),
 
 
-_("British Virgin Islands"),
+    _("British Virgin Islands"),
 
 
-_("Brunei"),
+    _("Brunei"),
 
 
-_("Bulgaria"),
+    _("Bulgaria"),
 
 
-_("Burkina Faso"),
+    _("Burkina Faso"),
 
 
-_("Burundi"),
+    _("Burundi"),
 
 
-_("Cambodia"),
+    _("Cambodia"),
 
 
-_("Cameroon"),
+    _("Cameroon"),
 
 
-_("Canada"),
+    _("Canada"),
 
 
-_("Cape Verde"),
+    _("Cape Verde"),
 
 
-_("Cayman Islands"),
+    _("Cayman Islands"),
 
 
-_("Central African Republic"),
+    _("Central African Republic"),
 
 
-_("Chad"),
+    _("Chad"),
 
 
-_("Chile"),
+    _("Chile"),
 
 
-_("China"),
+    _("China"),
 
 
-_("Christmas Island"),
+    _("Christmas Island"),
 
 
-_("Cocos Islands"),
+    _("Cocos Islands"),
 
 
-_("Colombia"),
+    _("Colombia"),
 
 
-_("Comoros"),
+    _("Comoros"),
 
 
-_("Cook Islands"),
+    _("Cook Islands"),
 
 
-_("Costa Rica"),
+    _("Costa Rica"),
 
 
-_("Croatia"),
+    _("Croatia"),
 
 
-_("Cuba"),
+    _("Cuba"),
 
 
-_("Cyprus"),
+    _("Cyprus"),
 
 
-_("Czech Republic"),
+    _("Czech Republic"),
 
 
-_("Democratic Republic of the Congo"),
+    _("Democratic Republic of the Congo"),
 
 
-_("Denmark"),
+    _("Denmark"),
 
 
-_("Dominica"),
+    _("Dominica"),
 
 
-_("Dominican Republic"),
+    _("Dominican Republic"),
 
 
-_("East Timor"),
+    _("East Timor"),
 
 
-_("Ecuador"),
+    _("Ecuador"),
 
 
-_("Egypt"),
+    _("Egypt"),
 
 
-_("El Salvador"),
+    _("El Salvador"),
 
 
-_("Equatorial Guinea"),
+    _("Equatorial Guinea"),
 
 
-_("Eritrea"),
+    _("Eritrea"),
 
 
-_("Ethiopia"),
+    _("Ethiopia"),
 
 
-_("Falkland Islands"),
+    _("Falkland Islands"),
 
 
-_("Faroe Islands"),
+    _("Faroe Islands"),
 
 
-_("Fiji"),
+    _("Fiji"),
 
 
-_("Finland"),
+    _("Finland"),
 
 
-_("France"),
+    _("France"),
 
 
-_("French Guiana"),
+    _("French Guiana"),
 
 
-_("French Polynesia"),
+    _("French Polynesia"),
 
 
-_("French Southern Territories"),
+    _("French Southern Territories"),
 
 
-_("Gabon"),
+    _("Gabon"),
 
 
-_("Gambia"),
+    _("Gambia"),
 
 
-_("Germany"),
+    _("Germany"),
 
 
-_("Ghana"),
+    _("Ghana"),
 
 
-_("Gibraltar"),
+    _("Gibraltar"),
 
 
-_("Greece"),
+    _("Greece"),
 
 
-_("Greenland"),
+    _("Greenland"),
 
 
-_("Grenada"),
+    _("Grenada"),
 
 
-_("Guadeloupe"),
+    _("Guadeloupe"),
 
 
-_("Guam"),
+    _("Guam"),
 
 
-_("Guatemala"),
+    _("Guatemala"),
 
 
-_("Guernsey"),
+    _("Guernsey"),
 
 
-_("Guinea"),
+    _("Guinea"),
 
 
-_("Guinea-Bissau"),
+    _("Guinea-Bissau"),
 
 
-_("Guyana"),
+    _("Guyana"),
 
 
-_("Haiti"),
+    _("Haiti"),
 
 
-_("Heard Island and McDonald Islands"),
+    _("Heard Island and McDonald Islands"),
 
 
-_("Honduras"),
+    _("Honduras"),
 
 
-_("Hong Kong"),
+    _("Hong Kong"),
 
 
-_("Hungary"),
+    _("Hungary"),
 
 
-_("Iceland"),
+    _("Iceland"),
 
 
-_("India"),
+    _("India"),
 
 
-_("Indonesia"),
+    _("Indonesia"),
 
 
-_("Iran"),
+    _("Iran"),
 
 
-_("Iraq"),
+    _("Iraq"),
 
 
-_("Ireland"),
+    _("Ireland"),
 
 
-_("Isle of Man"),
+    _("Isle of Man"),
 
 
-_("Israel"),
+    _("Israel"),
 
 
-_("Italy"),
+    _("Italy"),
 
 
-_("Ivory Coast"),
+    _("Ivory Coast"),
 
 
-_("Jamaica"),
+    _("Jamaica"),
 
 
-_("Japan"),
+    _("Japan"),
 
 
-_("Jersey"),
+    _("Jersey"),
 
 
-_("Jordan"),
+    _("Jordan"),
 
 
-_("Kenya"),
+    _("Kenya"),
 
 
-_("Kiribati"),
+    _("Kiribati"),
 
 
-_("Kuwait"),
+    _("Kuwait"),
 
 
-_("Laos"),
+    _("Laos"),
 
 
-_("Lebanon"),
+    _("Lebanon"),
 
 
-_("Lesotho"),
+    _("Lesotho"),
 
 
-_("Liberia"),
+    _("Liberia"),
 
 
-_("Libya"),
+    _("Libya"),
 
 
-_("Liechtenstein"),
+    _("Liechtenstein"),
 
 
-_("Luxembourg"),
+    _("Luxembourg"),
 
 
-_("Macao"),
+    _("Macao"),
 
 
-_("Macedonia"),
+    _("Macedonia"),
 
 
-_("Madagascar"),
+    _("Madagascar"),
 
 
-_("Malawi"),
+    _("Malawi"),
 
 
-_("Malaysia"),
+    _("Malaysia"),
 
 
-_("Maldives"),
+    _("Maldives"),
 
 
-_("Mali"),
+    _("Mali"),
 
 
-_("Malta"),
+    _("Malta"),
 
 
-_("Marshall Islands"),
+    _("Marshall Islands"),
 
 
-_("Martinique"),
+    _("Martinique"),
 
 
-_("Mauritania"),
+    _("Mauritania"),
 
 
-_("Mauritius"),
+    _("Mauritius"),
 
 
-_("Mayotte"),
+    _("Mayotte"),
 
 
-_("Mexico"),
+    _("Mexico"),
 
 
-_("Micronesia"),
+    _("Micronesia"),
 
 
-_("Monaco"),
+    _("Monaco"),
 
 
-_("Mongolia"),
+    _("Mongolia"),
 
 
-_("Montenegro"),
+    _("Montenegro"),
 
 
-_("Montserrat"),
+    _("Montserrat"),
 
 
-_("Morocco"),
+    _("Morocco"),
 
 
-_("Mozambique"),
+    _("Mozambique"),
 
 
-_("Myanmar"),
+    _("Myanmar"),
 
 
-_("Namibia"),
+    _("Namibia"),
 
 
-_("Nauru"),
+    _("Nauru"),
 
 
-_("Nepal"),
+    _("Nepal"),
 
 
-_("Netherlands"),
+    _("Netherlands"),
 
 
-_("Netherlands Antilles"),
+    _("Netherlands Antilles"),
 
 
-_("New Caledonia"),
+    _("New Caledonia"),
 
 
-_("New Zealand"),
+    _("New Zealand"),
 
 
-_("Nicaragua"),
+    _("Nicaragua"),
 
 
-_("Niger"),
+    _("Niger"),
 
 
-_("Nigeria"),
+    _("Nigeria"),
 
 
-_("Niue"),
+    _("Niue"),
 
 
-_("Norfolk Island"),
+    _("Norfolk Island"),
 
 
-_("North Korea"),
+    _("North Korea"),
 
 
-_("Northern Mariana Islands"),
+    _("Northern Mariana Islands"),
 
 
-_("Norway"),
+    _("Norway"),
 
 
-_("Oman"),
+    _("Oman"),
 
 
-_("Pakistan"),
+    _("Pakistan"),
 
 
-_("Palau"),
+    _("Palau"),
 
 
-_("Palestinian Territory"),
+    _("Palestinian Territory"),
 
 
-_("Panama"),
+    _("Panama"),
 
 
-_("Papua New Guinea"),
+    _("Papua New Guinea"),
 
 
-_("Paraguay"),
+    _("Paraguay"),
 
 
-_("Peru"),
+    _("Peru"),
 
 
-_("Philippines"),
+    _("Philippines"),
 
 
-_("Pitcairn"),
+    _("Pitcairn"),
 
 
-_("Poland"),
+    _("Poland"),
 
 
-_("Portugal"),
+    _("Portugal"),
 
 
-_("Puerto Rico"),
+    _("Puerto Rico"),
 
 
-_("Qatar"),
+    _("Qatar"),
 
 
-_("Republic of the Congo"),
+    _("Republic of the Congo"),
 
 
-_("Reunion"),
+    _("Reunion"),
 
 
-_("Romania"),
+    _("Romania"),
 
 
-_("Rwanda"),
+    _("Rwanda"),
 
 
-_("Saint Barthelemy"),
+    _("Saint Barthelemy"),
 
 
-_("Saint Helena"),
+    _("Saint Helena"),
 
 
-_("Saint Kitts and Nevis"),
+    _("Saint Kitts and Nevis"),
 
 
-_("Saint Lucia"),
+    _("Saint Lucia"),
 
 
-_("Saint Martin"),
+    _("Saint Martin"),
 
 
-_("Saint Pierre and Miquelon"),
+    _("Saint Pierre and Miquelon"),
 
 
-_("Saint Vincent and the Grenadines"),
+    _("Saint Vincent and the Grenadines"),
 
 
-_("Samoa"),
+    _("Samoa"),
 
 
-_("San Marino"),
+    _("San Marino"),
 
 
-_("Sao Tome and Principe"),
+    _("Sao Tome and Principe"),
 
 
-_("Saudi Arabia"),
+    _("Saudi Arabia"),
 
 
-_("Senegal"),
+    _("Senegal"),
 
 
-_("Serbia"),
+    _("Serbia"),
 
 
-_("Serbia and Montenegro"),
+    _("Serbia and Montenegro"),
 
 
-_("Seychelles"),
+    _("Seychelles"),
 
 
-_("Sierra Leone"),
+    _("Sierra Leone"),
 
 
-_("Singapore"),
+    _("Singapore"),
 
 
-_("Slovakia"),
+    _("Slovakia"),
 
 
-_("Slovenia"),
+    _("Slovenia"),
 
 
-_("Solomon Islands"),
+    _("Solomon Islands"),
 
 
-_("Somalia"),
+    _("Somalia"),
 
 
-_("South Africa"),
+    _("South Africa"),
 
 
-_("South Georgia and the South Sandwich Islands"),
+    _("South Georgia and the South Sandwich Islands"),
 
 
-_("South Korea"),
+    _("South Korea"),
 
 
-_("Spain"),
+    _("Spain"),
 
 
-_("Sri Lanka"),
+    _("Sri Lanka"),
 
 
-_("Sudan"),
+    _("Sudan"),
 
 
-_("Suriname"),
+    _("Suriname"),
 
 
-_("Svalbard and Jan Mayen"),
+    _("Svalbard and Jan Mayen"),
 
 
-_("Swaziland"),
+    _("Swaziland"),
 
 
-_("Sweden"),
+    _("Sweden"),
 
 
-_("Switzerland"),
+    _("Switzerland"),
 
 
-_("Syria"),
+    _("Syria"),
 
 
-_("Taiwan"),
+    _("Taiwan"),
 
 
-_("Tanzania"),
+    _("Tanzania"),
 
 
-_("Thailand"),
+    _("Thailand"),
 
 
-_("Togo"),
+    _("Togo"),
 
 
-_("Tokelau"),
+    _("Tokelau"),
 
 
-_("Tonga"),
+    _("Tonga"),
 
 
-_("Trinidad and Tobago"),
+    _("Trinidad and Tobago"),
 
 
-_("Tunisia"),
+    _("Tunisia"),
 
 
-_("Turkey"),
+    _("Turkey"),
 
 
-_("Turks and Caicos Islands"),
+    _("Turks and Caicos Islands"),
 
 
-_("Tuvalu"),
+    _("Tuvalu"),
 
 
-_("U.S. Virgin Islands"),
+    _("U.S. Virgin Islands"),
 
 
-_("Uganda"),
+    _("Uganda"),
 
 
-_("United Arab Emirates"),
+    _("United Arab Emirates"),
 
 
-_("United Kingdom"),
+    _("United Kingdom"),
 
 
-_("United States"),
+    _("United States"),
 
 
-_("United States Minor Outlying Islands"),
+    _("United States Minor Outlying Islands"),
 
 
-_("Uruguay"),
+    _("Uruguay"),
 
 
-_("Vanuatu"),
+    _("Vanuatu"),
 
 
-_("Vatican"),
+    _("Vatican"),
 
 
-_("Vatican City"),
+    _("Vatican City"),
 
 
-_("Venezuela"),
+    _("Venezuela"),
 
 
-_("Vietnam"),
+    _("Vietnam"),
 
 
-_("Wallis and Futuna"),
+    _("Wallis and Futuna"),
 
 
-_("Western Sahara"),
+    _("Western Sahara"),
 
 
-_("Yemen"),
+    _("Yemen"),
 
 
-_("Russia"),
+    _("Russia"),
 
 
-_("Zambia"),
+    _("Zambia"),
 
 
-_("Zimbabwe"),
+    _("Zimbabwe"),
 
 
-_("Aland Islands"),
+    _("Aland Islands"),
 ]
 
 more_regions = [
-_("Zapadno-Kazakhstanskaya Oblast'"),
+    _("Zapadno-Kazakhstanskaya Oblast'"),
 
 
-_("Mangistauskaya Oblast'"),
+    _("Mangistauskaya Oblast'"),
 
 
-_("Atyrau Oblysy"),
+    _("Atyrau Oblysy"),
 
 
-_("Aktyubinskaya Oblast'"),
+    _("Aktyubinskaya Oblast'"),
 
 
-_("East Kazakhstan"),
+    _("East Kazakhstan"),
 
 
-_("Akmolinskaya Oblast'"),
+    _("Akmolinskaya Oblast'"),
 
 
-_("Severo-Kazakhstanskaya Oblast'"),
+    _("Severo-Kazakhstanskaya Oblast'"),
 
 
-_("Pavlodarskaya Oblast'"),
+    _("Pavlodarskaya Oblast'"),
 
 
-_("Qyzylorda Oblysy"),
+    _("Qyzylorda Oblysy"),
 
 
-_("Qostanay Oblysy"),
+    _("Qostanay Oblysy"),
 
 
-_("Karagandinskaya Oblast'"),
+    _("Karagandinskaya Oblast'"),
 
 
-_("Zhambyl Oblysy"),
+    _("Zhambyl Oblysy"),
 
 
-_("Yuzhno-Kazakhstanskaya Oblast'"),
+    _("Yuzhno-Kazakhstanskaya Oblast'"),
 
 
-_("Almaty Qalasy"),
+    _("Almaty Qalasy"),
 
 
-_("Almaty Oblysy"),
+    _("Almaty Oblysy"),
 
 
-_("Bayqongyr Qalasy"),
+    _("Bayqongyr Qalasy"),
 
 
-_("Astana Qalasy"),
+    _("Astana Qalasy"),
 
 
-_("Vitsyebskaya Voblasts'"),
+    _("Vitsyebskaya Voblasts'"),
 
 
-_("Mahilyowskaya Voblasts'"),
+    _("Mahilyowskaya Voblasts'"),
 
 
-_("Minskaya Voblasts'"),
+    _("Minskaya Voblasts'"),
 
 
-_("Horad Minsk"),
+    _("Horad Minsk"),
 
 
-_("Hrodzyenskaya Voblasts'"),
+    _("Hrodzyenskaya Voblasts'"),
 
 
-_("Homyel'skaya Voblasts'"),
+    _("Homyel'skaya Voblasts'"),
 
 
-_("Brestskaya Voblasts'"),
+    _("Brestskaya Voblasts'"),
 
 ]
 
@@ -1355,7 +1357,7 @@ def get_uid(tbl):
     for anchor in a_list:
         href = anchor.get('href', '')
         if href.startswith('javascript:indstat('):
-            preg = re.compile('javascript:indstat\((\d+)\,\d+\)')
+            preg = re.compile(r'javascript:indstat\((\d+)\,\d+\)')
             dgs = preg.findall(href)
             if len(dgs):
                 uid = int(dgs[0])
@@ -1384,7 +1386,7 @@ def strdate_or_none(cell):
     """ get date or None """
     def year_from_text(string):
         """ get year from text """
-        preg = re.compile('\d+')
+        preg = re.compile(r'\d+')
         dgs = preg.findall(string)
         if dgs and len(dgs):
             result = int(dgs[0])
@@ -1452,6 +1454,7 @@ def date_or_none(cell):
 def utf8(text):
     """ convert text into utf8 """
     return ''.join([char for char in text if len(char.encode('utf-8')) < 4])
+
 
 def parse_header(text):
     """ parse header """

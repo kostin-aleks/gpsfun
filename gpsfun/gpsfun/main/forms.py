@@ -8,7 +8,7 @@ from django.template import Context, loader
 __all__ = ['RequestModelForm', 'RequestForm']
 
 
-class _Form(object):
+class _Form:
     """ Form """
 
     def __init__(self, *kargs, **kwargs):
@@ -29,7 +29,7 @@ class _Form(object):
         my_kwargs = {}
 
         # hack with iterators, because deepcopy not workin on production server
-        for key, value in kwargs.iteritems():
+        for key, value in kwargs.items():
             if key == 'request':
                 self._request = value
             elif key == 'template':
@@ -41,7 +41,7 @@ class _Form(object):
 
         super(self._ref_class, self).__init__(*kargs, **my_kwargs)
 
-        if (hasattr(self, 'init')):
+        if hasattr(self, 'init'):
             init = getattr(self, 'init')
             if callable(init):
                 init()
@@ -84,7 +84,7 @@ class _Form(object):
         """
         data = self.cleaned_data
         for key in data:
-            if key in instance._meta.get_all_field_names() and not key in exclude_fields:
+            if key in instance._meta.get_all_field_names() and key not in exclude_fields:
                 setattr(instance, f'{key}', data[key])
 
     def set_initial(self, instance):
@@ -130,7 +130,7 @@ class RequestFormSet(forms.formsets.BaseFormSet):
         if self.is_bound:
             defaults['data'] = self.data
             defaults['files'] = self.files
-        if self.initial and not 'initial' in kwargs:
+        if self.initial and 'initial' not in kwargs:
             try:
                 defaults['initial'] = self.initial[i]
             except IndexError:

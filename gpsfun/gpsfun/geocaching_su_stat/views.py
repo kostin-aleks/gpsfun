@@ -29,14 +29,13 @@ from django_tables2.config import RequestConfig
 
 from gpsfun.tableview import table, widgets, datasource, controller
 from gpsfun.main.db_utils import iter_sql
-from gpsfun.main.forms import RequestForm
 from gpsfun.main.db_utils import get_object_or_none
 from gpsfun.main.ajax import accept_ajax
 
 from gpsfun.main.GeoCachSU.models import Cach, CachStat, Geocacher, \
-     GEOCACHING_SU_CACH_TYPES, GEOCACHING_SU_REAL_TYPES, \
-     GEOCACHING_SU_UNREAL_TYPES, LogSeekCach, LogCreateCach, \
-     GeocacherStat, GEOCACHING_SU_ONMAP_TYPES, GeocacherSearchStat
+    GEOCACHING_SU_CACH_TYPES, GEOCACHING_SU_REAL_TYPES, \
+    GEOCACHING_SU_UNREAL_TYPES, LogSeekCach, LogCreateCach, \
+    GeocacherStat, GEOCACHING_SU_ONMAP_TYPES, GeocacherSearchStat
 from gpsfun.main.GeoCachSU.utils import (
     populate_cach_type, populate_country_iso3, populate_subjects,
     populate_countries_iso3, countries_iso, cache_types, countries_iso3)
@@ -44,7 +43,7 @@ from gpsfun.main.GeoName.models import GeoCountry, GeoCountryAdminSubject, \
     country_iso_by_iso3, geocountry_by_code
 from gpsfun.main.models import LogUpdate
 from gpsfun.main.db_utils import sql2list, sql2val
-from gpsfun.geocaching_su_stat.decorators import  it_isnt_updating, geocacher_su
+from gpsfun.geocaching_su_stat.decorators import it_isnt_updating, geocacher_su
 from gpsfun.main.utils import get_degree
 from gpsfun.geocaching_su_stat.sql import RAWSQL
 
@@ -123,8 +122,8 @@ class GPSFunTableController(controller.TableController):
             if selected_values:
                 selected_values = distinct_types_list(selected_values)
 
-            types = [GEOCACHING_SU_CACH_TYPES.get(type_) \
-                     for type_ in selected_values \
+            types = [GEOCACHING_SU_CACH_TYPES.get(type_)
+                     for type_ in selected_values
                      if GEOCACHING_SU_CACH_TYPES.get(type_) is not None]
 
             if len(types) == 0:
@@ -389,7 +388,7 @@ class GeocacherRateList(table.TableView):
         if country and country != "ALL":
             qs.filter(geocacher__country_iso3=country)
 
-        subject = filter.get('subject','')
+        subject = filter.get('subject', '')
         if subject and subject != 'ALL':
             if subject == '777':
                 qs.filter(
@@ -1527,10 +1526,10 @@ def geocaching_su_cache_per_type_chart(request):
     # linecolor1= '#987'
     # linecolor2= '#876'
 
-    chart= QuickChart()
+    chart = QuickChart()
     chart.width = 700
     chart.height = 250
-    chart.device_pixel_ratio= 2.0
+    chart.device_pixel_ratio = 2.0
 
     datasets = []
     labels = []
@@ -1579,7 +1578,6 @@ def geocaching_su_cache_per_type_chart(request):
         for row in cache_per_year:
             dataset['data'].append(row['types'][code])
         datasets.append(dataset)
-
 
     chart.config = {
         'type': 'line',
@@ -1990,7 +1988,7 @@ def selected_caches(request):
 @it_isnt_updating
 def map_import_caches_wpt(request):
     """ import caches as WPT file """
-    return  HttpResponse('')
+    return HttpResponse('')
     caches = selected_caches(request)
 
     response_text = render_to_string('caches.wpt', {'caches': caches})
@@ -2005,7 +2003,7 @@ def map_import_caches_wpt(request):
 @it_isnt_updating
 def map_import_caches_kml(request):
     """ import caches as KML file """
-    return  HttpResponse('')
+    return HttpResponse('')
 
     def style_by_type(type_):
         if type_ == 'TR':
@@ -2029,7 +2027,7 @@ def map_import_caches_kml(request):
         {'id': 'virt', 'href': "http://www.geocaching.su/images/ctypes/icons/maps/vi.png"},
         {'id': 'multi', 'href': "http://www.geocaching.su/images/ctypes/icons/maps/ms.png"},
         {'id': 'multiv', 'href': "http://www.geocaching.su/images/ctypes/icons/maps/mv.png"},
-        ]
+    ]
     for style in styles:
         style_tradi_tree = etree.SubElement(document_tree, 'Style')
         style_tradi_tree.attrib['id'] = style.get('id')
@@ -2056,10 +2054,11 @@ def map_import_caches_kml(request):
         </tr>
         <tr><td>: Difficulty %(diff)s<br />Terrain: %(terr)s</td></tr>
         </table>
-        """ % {'url': cache.url, 'code': cache.code,
-                'author': cache.author.nickname,
-               'type': cache.cach_type, 'size': cache.size,
-               'diff': cache.dostupnost, 'terr': cache.mestnost}
+        """ % {
+            'url': cache.url, 'code': cache.code,
+            'author': cache.author.nickname,
+            'type': cache.cach_type, 'size': cache.size,
+            'diff': cache.dostupnost, 'terr': cache.mestnost}
         name_tree = etree.SubElement(placemark_tree, 'name')
         name_tree.text = cache.name
         lookat_tree = etree.SubElement(placemark_tree, 'LookAt')
@@ -2133,7 +2132,7 @@ def gcsu_found_my_caches_stat(request):
 def gcsu_i_found_caches_stat(request):
     """ statistics for caches found by me """
     geocacher, geocachers, all_types = get_found_statistics(
-                                            request, i_found=True)
+        request, i_found=True)
 
     return render(
         request,
@@ -2196,11 +2195,11 @@ def gcsu_regions_found_caches_stat(request):
             'iso': item[0],
             'code': item[1],
             'count': item[2],
-            })
+        })
 
     for my_region in regions:
         for region in all_regions:
-            if  region['iso'] == my_region['iso'] and region['code'] == my_region['code']:
+            if region['iso'] == my_region['iso'] and region['code'] == my_region['code']:
                 region['count'] = my_region['count']
 
     countries = []
@@ -2281,7 +2280,7 @@ def geocaching_su_personal_charts(request):
                 'type': item[0],
                 'description': GEOCACHING_SU_CACH_TYPES.get(item[0]) or 'undefined',
                 'count': item[1],
-                'percent': float(item[1])/caches_count*100})
+                'percent': float(item[1]) / caches_count * 100})
 
         year_ = date.today().year
         last_year = year_ - 1
@@ -2332,7 +2331,7 @@ def geocaching_su_personal_charts(request):
                 'type': item[0],
                 'description': GEOCACHING_SU_CACH_TYPES.get(item[0]) or 'undefined',
                 'count': item[1],
-                'percent': float(item[1]) / caches_count*100})
+                'percent': float(item[1]) / caches_count * 100})
 
         current_created_count = LogCreateCach.objects.filter(
             author_uid=geocacher.uid)
@@ -2699,11 +2698,11 @@ def get_caches(request, country_code, region_ids, type_ids, related_ids):
     if not type_ids:
         caches = []
     else:
-        if not 'all' in type_ids:
+        if 'all' not in type_ids:
             caches = caches.filter(type_code__in=type_ids)
     if related_ids:
         user_pid = request.session.get('pid')
-        if not 'all' in related_ids and user_pid:
+        if 'all' not in related_ids and user_pid:
             if 'mine' in related_ids:
                 caches = caches.filter(created_by=user_pid)
             if 'vis' in related_ids:
@@ -2720,13 +2719,13 @@ def geocacher_year_statistics(geocacher, year_, last_year, creation=False):
     """ year statistics for the geocacher """
     counter_current_year = \
         get_geocacher_year_statistics(
-            RAWSQL['geocacher_one_year_created_by_months'] \
+            RAWSQL['geocacher_one_year_created_by_months']
             if creation else RAWSQL['geocacher_one_year_found_by_months'],
             year_, geocacher)
 
     counter_last_year = \
         get_geocacher_year_statistics(
-            RAWSQL['geocacher_one_year_created_by_months'] \
+            RAWSQL['geocacher_one_year_created_by_months']
             if creation else RAWSQL['geocacher_one_year_found_by_months'],
             last_year, geocacher)
 
@@ -2859,8 +2858,7 @@ def get_geocacher_year_statistics(sql, year, geocacher):
 
 def get_piechart(sql, width, height):
     """ create pie chart """
-    colors = ['#f83c38', '#e61a16', '#1a7ddd', '#3c9fff',
-        '#9dd872', '#d67b31', '#7bb650', '#f89d53']
+    colors = ['#f83c38', '#e61a16', '#1a7ddd', '#3c9fff', '#9dd872', '#d67b31', '#7bb650', '#f89d53']
     data = []
     labels = []
 

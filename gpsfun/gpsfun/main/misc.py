@@ -1,8 +1,11 @@
-
+"""
+misc utils
+"""
 
 def atoi(value, default=None):
+    """ return integer from string or None """
     try:
-        rc = int(value)
+        result = int(value)
     except (ValueError, TypeError):
-        rc = default
-    return rc
+        result = default
+    return result

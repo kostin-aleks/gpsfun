@@ -17,4 +17,5 @@ class GeoKretAdmin(admin.ModelAdmin):
     ordering = ('-id',)
     raw_id_fields = ('location',)
 
+
 admin.site.register(GeoKret, GeoKretAdmin)

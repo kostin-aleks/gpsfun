@@ -31,15 +31,13 @@ class Command(BaseCommand):
                 print('Authorization failed')
             else:
                 ids = LogCreateCach.objects.all().values_list('author_uid', flat=True)
-                for uid in Geocacher.objects.exclude(
-                    uid__in=ids).values_list('uid', flat=True):
+                for uid in Geocacher.objects.exclude(uid__in=ids).values_list('uid', flat=True):
                     response = session.get(
                         'http://www.geocaching.su/site/popup/userstat.php',
                         params={'s': 1, 'uid': uid}
                     )
 
-                    for (cid, found_date, grade, coauthor) in \
-                        get_caches_data(uid, response.text):
+                    for (cid, found_date, grade, coauthor) in get_caches_data(uid, response.text):
                         cache = get_object_or_none(Cach, pid=cid)
 
                         if cache:

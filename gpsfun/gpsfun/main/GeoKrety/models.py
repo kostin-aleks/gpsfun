@@ -22,7 +22,6 @@ class GeoKret(models.Model):
     country_code = models.CharField(max_length=2, blank=True, null=True)
     admin_code = models.CharField(max_length=6, blank=True, null=True)
 
-
     class Meta:
         db_table = u'geokret'
 
@@ -78,21 +77,21 @@ class GeoKret(models.Model):
     def html_refnum(self):
         """ reference number of geokret """
         refnum = f'{self.reference_number:07s}'
-        refnum = refnum.replace(' ','&nbsp;')
+        refnum = refnum.replace(' ', '&nbsp;')
         return refnum
 
     @property
     def html_distance(self):
         """ distance """
         distance = f'{self.distance:6s}'
-        distance = distance.replace(' ','&nbsp;')
+        distance = distance.replace(' ', '&nbsp;')
         return distance
 
     @property
     def waypoint_url(self):
         """ url to geokret waypoint """
         wpoint = self.waypoint.upper()
-        treg = re.compile('\w{1,2}[\dA-F]+')
+        treg = re.compile(r'\w{1,2}[\dA-F]+')
         if not treg.match(wpoint):
             wpoint = ''
         if wpoint[:2] in ('TR', 'MS', 'MV', 'VI', 'LT', 'LV'):

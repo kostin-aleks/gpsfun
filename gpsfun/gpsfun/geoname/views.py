@@ -6,8 +6,9 @@ from django.utils import translation
 
 from gpsfun.main.db_utils import get_object_or_none
 from gpsfun.main.ajax import accept_ajax
-from gpsfun.main.GeoName.models import (GeoCountry, GeoCountryAdminSubject,
-     GeoCity, country_by_code, region_by_code, get_city_by_geoname)
+from gpsfun.main.GeoName.models import (
+    GeoCountry, GeoCountryAdminSubject,
+    GeoCity, country_by_code, region_by_code, get_city_by_geoname)
 
 
 @accept_ajax
@@ -59,9 +60,10 @@ def get_region_cities(request):
     cities = cities.filter(admin1=region_code)
     cities = cities.exclude(name='').exclude(name__isnull=True)
     cities = cities.order_by('name')
-    cities = [{'code': city.geonameid,
-               'name': city.localized_name(translation.get_language())} \
-              for city in cities]
+    cities = [{
+        'code': city.geonameid,
+        'name': city.localized_name(translation.get_language())}
+        for city in cities]
 
     result['cities'] = sorted(cities, key=lambda x: x['name'])
     result['address'] = address

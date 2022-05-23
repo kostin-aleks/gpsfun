@@ -15,7 +15,7 @@ def _populate(model, field, request, filter_=None, exclude=None, add_empty=False
     field.choices = []
 
     if add_empty:
-        field.choices.append(('','-------'))
+        field.choices.append(('', '-------'))
 
     qs = model.objects.all().order_by('name')
     if filter_:
@@ -27,12 +27,12 @@ def _populate(model, field, request, filter_=None, exclude=None, add_empty=False
         field.choices.append((item.id, item.name))
 
 
-def populate_cach_type(field, *kargs, **kwargs):
+def populate_cach_type(field, **kwargs):
     """ populate cache types """
     field.choices = []
-    field.choices.append(('ALL',_('all')))
-    field.choices.append(('REAL',_('all real')))
-    field.choices.append(('UNREAL',_('all unreal')))
+    field.choices.append(('ALL', _('all')))
+    field.choices.append(('REAL', _('all real')))
+    field.choices.append(('UNREAL', _('all unreal')))
 
     sql = """
     SELECT DISTINCT type_code
@@ -56,7 +56,7 @@ def cache_types():
     return choices
 
 
-def populate_country(field, *kargs, **kwargs):
+def populate_country(field, **kwargs):
     """ populate country """
     field.choices = []
     field.choices.append(('ALL', _('all')))
@@ -105,10 +105,10 @@ def countries_iso3():
     return choices + sorted(lst, key=lambda x: x[1])
 
 
-def populate_country_iso3(field, *kargs, **kwargs):
+def populate_country_iso3(field, **kwargs):
     """ populate country """
     field.choices = []
-    field.choices.append(('',_('all')))
+    field.choices.append(('', _('all')))
 
     sql = """
     SELECT DISTINCT c.iso3, c.name
@@ -125,10 +125,10 @@ def populate_country_iso3(field, *kargs, **kwargs):
     field.choices = field.choices + sorted(lst, key=lambda x: x[1])
 
 
-def populate_countries_iso3(field, *kargs, **kwargs):
+def populate_countries_iso3(field, **kwargs):
     """ populate countries """
     field.choices = []
-    field.choices.append(('ALL',_('all')))
+    field.choices.append(('ALL', _('all')))
 
     sql = """
     SELECT DISTINCT c.iso3, c.name
@@ -144,7 +144,7 @@ def populate_countries_iso3(field, *kargs, **kwargs):
     field.choices = field.choices + sorted(lst, key=lambda x: x[1])
 
 
-def populate_subjects(field, *kargs, **kwargs):
+def populate_subjects(field, **kwargs):
     """ populate subjects """
     field.choices = []
     field.choices.append(('ALL', _('all')))

@@ -3,9 +3,7 @@ new forms
 """
 import copy
 import hashlib
-import types
 
-from django.utils.translation import ugettext_lazy as _
 from django.template import Context, loader
 from django.db import models
 from django.utils.html import escape
@@ -13,7 +11,6 @@ from django.utils.safestring import mark_safe
 
 try:
     # just for ident version of Django
-    from django.forms import Manipulator as _OldManipulator
     from django import newforms as forms
 except ImportError:
     from django import forms
@@ -103,10 +100,7 @@ class BoundRow(object):
         m = hashlib.md5()
         for field in self.row:
             data = self.row[field]
-            if type(data) == types.UnicodeType:
-                data = data.encode('utf-8')
-            else:
-                data = str(data)
+            data = str(data)
             m.update(data)
         return m.hexdigest()
 
@@ -271,7 +265,7 @@ class BaseTable(object):
 
     def get_fields(self, field_name):
         """ get fields """
-        if not self.fields.has_key(field_name):
+        if field_name not in self.fields:
             return None
         return self.fields[field_name]
 
@@ -339,7 +333,7 @@ class BaseTable(object):
 
             label = ''
             if bf.label:
-                label = escape(force_unicode(bf.label))
+                label = escape(bf.label)
 
             yield {
                 'id': self.add_prefix(name),

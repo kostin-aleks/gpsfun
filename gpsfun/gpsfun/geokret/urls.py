@@ -7,7 +7,8 @@ from gpsfun.geokret.views import (
     geokrety_api_who_in_cache, geokrety_map_get_geokrety
 )
 
-urlpatterns = [path('geokret/info/', map_geokret_info, name="map-geokret-info"),
+urlpatterns = [
+    path('geokret/info/', map_geokret_info, name="map-geokret-info"),
     path('change/country/', geokrety_map_change_country, name="geokrety-map-change-country"),
     path('search/waypoint/', geokrety_map_search_waypoint, name="geokret-map-search-by-waypoint"),
     path('map/', geokrety_map, name="geokrety-map"),

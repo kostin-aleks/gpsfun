@@ -32,8 +32,7 @@ class Command(BaseCommand):
             else:
                 ids = LogRecommendCach.objects.all().values_list(
                     'cacher_uid', flat=True)
-                for uid in Geocacher.objects.exclude(
-                    uid__in=ids).values_list('uid', flat=True):
+                for uid in Geocacher.objects.exclude(uid__in=ids).values_list('uid', flat=True):
                     response = session.get(
                         'http://www.geocaching.su/site/popup/userstat.php',
                         params={'s': 3, 'uid': uid}

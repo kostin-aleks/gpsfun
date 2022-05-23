@@ -1,7 +1,9 @@
+"""
+Table
+"""
+
 from copy import deepcopy
 import collections
-from django.template.loader import render_to_string
-#from django.utils.datastructures import SortedDict
 from django.db.models import Q
 
 from gpsfun.tableview import widgets
@@ -18,7 +20,8 @@ def get_declared_fields(bases, attrs, with_base_columns=True):
     used. The distinction is useful in ModelForm subclassing.
     Also integrates any additional media definitions
     """
-    columns = [(column_name, attrs.pop(column_name)) for column_name, obj in attrs.items() if isinstance(obj, widgets.BaseWidget)]
+    columns = [(column_name, attrs.pop(column_name))
+               for column_name, obj in attrs.items() if isinstance(obj, widgets.BaseWidget)]
     columns.sort(lambda x, y: cmp(x[1].creation_counter, y[1].creation_counter))
 
     # If this class is subclassing another Form, add that Form's fields.
@@ -69,8 +72,7 @@ class DeclarativeFieldsMetaclass(type):
         attrs['global_profile'] = global_profile
 
         new_class = super(DeclarativeFieldsMetaclass,
-                     cls).__new__(cls, name, bases, attrs)
-
+                          cls).__new__(cls, name, bases, attrs)
 
         return new_class
 
@@ -83,7 +85,6 @@ class BaseTableView(object):
     def get_id(self):
         return self.id
 
-
     def get_row_class(self, row):
         return ''
 
@@ -93,9 +94,9 @@ class BaseTableView(object):
     def apply_search(self, search_value, source):
         if not search_value:
             return
-        search_filter=[]
+        search_filter = []
         for orm_field_name in self.search:
-            filter_name="%s__icontains"%orm_field_name
+            filter_name = "%s__icontains" % orm_field_name
             search_filter.append(Q(**{filter_name: search_value}))
 
         if search_filter:
@@ -133,7 +134,6 @@ class CellTitle(object):
         return self.key in self.controller.visible_columns
 
 
-
 class BoundCell(object):
     def __init__(self, row_index, key, bound_row, column):
         self.row_index = row_index
@@ -143,23 +143,28 @@ class BoundCell(object):
         self.row_index = row_index
 
     def get_cell_class(self):
-        if hasattr(self.bound_row.controller.table, 'cell_class_%s'%self.key):
-            cb = getattr(self.bound_row.controller.table, 'cell_class_%s'%self.key)
-            return cb(self.bound_row.controller.table, self.row_index, self.bound_row.row, self.column.get_value(self.bound_row.row) )
+        if hasattr(self.bound_row.controller.table, 'cell_class_%s' % self.key):
+            cb = getattr(self.bound_row.controller.table, 'cell_class_%s' % self.key)
+            return cb(
+                self.bound_row.controller.table, self.row_index, self.bound_row.row,
+                self.column.get_value(self.bound_row.row))
         return ''
 
     def get_cell_style(self):
-        if hasattr(self.bound_row.controller.table, 'cell_style_%s'%self.key):
-            cb = getattr(self.bound_row.controller.table, 'cell_style_%s'%self.key)
-            return cb(self.bound_row.controller.table, self.row_index, self.bound_row.row, self.column.get_value(self.bound_row.row) )
+        if hasattr(self.bound_row.controller.table, 'cell_style_%s' % self.key):
+            cb = getattr(self.bound_row.controller.table, 'cell_style_%s' % self.key)
+            return cb(
+                self.bound_row.controller.table, self.row_index, self.bound_row.row,
+                self.column.get_value(self.bound_row.row))
         return ''
-
 
     def as_html(self):
 
-        if hasattr(self.bound_row.controller.table, 'render_%s'%self.key):
-            cb = getattr(self.bound_row.controller.table, 'render_%s'%self.key)
-            return cb(self.bound_row.controller.table, self.row_index, self.bound_row.row, self.column.get_value(self.bound_row.row) )
+        if hasattr(self.bound_row.controller.table, 'render_%s' % self.key):
+            cb = getattr(self.bound_row.controller.table, 'render_%s' % self.key)
+            return cb(
+                self.bound_row.controller.table, self.row_index, self.bound_row.row,
+                self.column.get_value(self.bound_row.row))
 
         return self.column.html_cell(self.row_index, self.bound_row.row)
 
@@ -170,7 +175,6 @@ class BoundCell(object):
         return self.key
 
 
-
 class BoundRow(object):
     def __init__(self, controller, row_index, row):
         self.controller = controller
@@ -178,14 +182,13 @@ class BoundRow(object):
         self.row_index = row_index
 
     def __iter__(self):
-        for key,column in self.controller.iter_columns():
+        for key, column in self.controller.iter_columns():
             yield BoundCell(self.row_index, key, self, column)
-
 
     def get_id(self):
         table_id = self.controller.table.get_id() or 'table'
 
-        return u"%s_row_%d"%(table_id, self.row_index)
+        return u"%s_row_%d" % (table_id, self.row_index)
 
     def get_row_class(self):
         return self.controller.table.get_row_class(self.controller, self.row)

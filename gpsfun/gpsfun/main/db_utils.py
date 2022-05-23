@@ -1,7 +1,7 @@
 """
 DB utils
 """
-from django.db import connection
+from django.db import connection, connections
 from django.shortcuts import _get_queryset
 
 
@@ -102,10 +102,11 @@ def get_object_or_none(klass, *args, **kwargs):
         return None
 
 
-def iter_sql(sql, args=[], database='default'):
+def iter_sql(sql, args=None, database='default'):
     """ iterate sql """
+    if args is None:
+        args = []
     if database != 'default':
-        from django.db import connections
         cursor = connections[database].cursor()
     else:
         cursor = connection.cursor()

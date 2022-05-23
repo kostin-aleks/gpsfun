@@ -37,7 +37,6 @@ class Command(BaseCommand):
             )
             cache_stat.calculate_points()
 
-
         queries = [
             """
             insert into geocacher_search_stat

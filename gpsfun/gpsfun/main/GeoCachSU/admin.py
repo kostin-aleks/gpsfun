@@ -20,6 +20,7 @@ class GeocacherAdmin(admin.ModelAdmin):
     search_fields = ('nickname', 'name', 'uid')
     ordering = ('id', )
 
+
 admin.site.register(Geocacher, GeocacherAdmin)
 
 
@@ -36,6 +37,7 @@ class CachAdmin(admin.ModelAdmin):
     search_fields = ('code', 'name', 'pid')
     ordering = ('id', )
 
+
 admin.site.register(Cach, CachAdmin)
 
 
@@ -46,6 +48,7 @@ class LogCreateCachAdmin(admin.ModelAdmin):
     )
     search_fields = ('author_uid', 'cach_pid')
     ordering = ('id', )
+
 
 admin.site.register(LogCreateCach, LogCreateCachAdmin)
 
@@ -58,6 +61,7 @@ class LogSeekCachAdmin(admin.ModelAdmin):
     search_fields = ('cacher_uid', 'cach_pid')
     ordering = ('id', )
 
+
 admin.site.register(LogSeekCach, LogSeekCachAdmin)
 
 
@@ -68,6 +72,7 @@ class LogRecommendCachAdmin(admin.ModelAdmin):
     )
     search_fields = ('cacher_uid', 'cach_pid')
     ordering = ('id', )
+
 
 admin.site.register(LogRecommendCach, LogRecommendCachAdmin)
 
@@ -81,6 +86,7 @@ class CachStatAdmin(admin.ModelAdmin):
     search_fields = ('cach_pid', )
     raw_id_fields = ('geocacher', 'cach')
     ordering = ('id', )
+
 
 admin.site.register(CachStat, CachStatAdmin)
 
@@ -104,6 +110,7 @@ class GeocacherStatAdmin(admin.ModelAdmin):
     raw_id_fields = ('geocacher', )
     ordering = ('id', )
 
+
 admin.site.register(GeocacherStat, GeocacherStatAdmin)
 
 
@@ -116,5 +123,6 @@ class GeocacherSearchStatAdmin(admin.ModelAdmin):
     search_fields = ('geocacher_uid', )
     raw_id_fields = ('geocacher', )
     ordering = ('id', )
+
 
 admin.site.register(GeocacherSearchStat, GeocacherSearchStatAdmin)

@@ -43,10 +43,7 @@ class Command(BaseCommand):
                         cache.oblast = country['region']
                         cache.save()
 
-
-                for cache in Cach.objects.filter(
-                    admin_code__isnull=True
-                    ).order_by('pid'):
+                for cache in Cach.objects.filter(admin_code__isnull=True).order_by('pid'):
                     response = session.get(
                         'http://www.geocaching.su/',
                         params={'pn': 101, 'cid': cache.pid}

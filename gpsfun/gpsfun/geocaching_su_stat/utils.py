@@ -491,7 +491,6 @@ def set_oblast_code(uid, oblast):
         'Ямало-Ненецкий авт. окр.': ['RUS', '87'],
         'Ярославская обл.': ['RUS', '88']}
 
-
     geocacher = Geocacher.objects.filter(uid=uid).first()
     if geocacher and geocacher.admin_code is None and oblast:
         data = d_oblast.get(oblast)

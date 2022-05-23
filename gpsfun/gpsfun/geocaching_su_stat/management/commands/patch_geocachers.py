@@ -82,7 +82,6 @@ class Command(BaseCommand):
                 names.add(oblast)
                 set_oblast_code(uid, oblast)
 
-
         log(UpdateType.geocacher_patch, 'OK')
 
         return 'Geocachers data are updated'

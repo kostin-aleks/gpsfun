@@ -22,8 +22,7 @@ class Command(BaseCommand):
             {'slug': 'svidovets', 'name': 'Свидовецкий хребет'},
             {'slug': 'gorgany', 'name': 'Горганы'}]
         for item in items:
-            ridge, created = Ridge.objects.get_or_create(
-                slug=item['slug'])
+            ridge = Ridge.objects.get_or_create(slug=item['slug'])[0]
             ridge.name = item['name']
             ridge.save()
 
@@ -88,8 +87,8 @@ class Command(BaseCommand):
         ]
         for item in items:
             ridge = Ridge.objects.get(slug=item['ridge'])
-            peak, created = Peak.objects.get_or_create(
-                slug=item['slug'], ridge=ridge)
+            peak = Peak.objects.get_or_create(
+                slug=item['slug'], ridge=ridge)[0]
             peak.name = item['name']
             peak.height = item['height']
             peak.point = GeoPoint.objects.create(

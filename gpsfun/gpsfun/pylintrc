@@ -8,7 +8,9 @@ ignore = .git,migrations,node_modules,settings,settings.py,manage.py
 ignore-patterns = example-.*
 persistent = yes
 load-plugins = pylint_django
-init-hook="import sys, os; sys.path.append(os.path.join(sys.path[0].split('env')[0], 'flashcross/')); from pylint.config import find_pylintrc; sys.path.append(os.path.dirname(find_pylintrc()));"
+init-hook="import sys, os; sys.path.append(os.path.join(sys.path[0].split('env')[0], 'gpsfun/')); from pylint.config import find_pylintrc; sys.path.append(os.path.dirname(find_pylintrc()));"
+django-settings-module=gpsfun.settings
+max-line-length=120
 
 [MESSAGES CONTROL]
 disable =

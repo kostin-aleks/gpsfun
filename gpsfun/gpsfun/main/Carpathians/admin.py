@@ -27,6 +27,7 @@ class RidgeAdmin(admin.ModelAdmin):
     search_fields = ('slug', 'name', 'description')
     ordering = ('name',)
 
+
 admin.site.register(Ridge, RidgeAdmin)
 
 
@@ -34,12 +35,14 @@ class GeoPointAdmin(admin.ModelAdmin):
     """ GeoPointAdmin """
     list_display = ('id', 'latitude', 'longitude')
 
+
 admin.site.register(GeoPoint, GeoPointAdmin)
 
 
 class RidgeInfoLinkAdmin(admin.ModelAdmin):
     """ RidgeInfoLinkAdmin """
     list_display = ('id', 'ridge', 'link', 'description')
+
 
 admin.site.register(RidgeInfoLink, RidgeInfoLinkAdmin)
 
@@ -60,6 +63,7 @@ class PeakAdmin(admin.ModelAdmin):
     inlines = [PeakPhotoInline, ]
     ordering = ('name', )
 
+
 admin.site.register(Peak, PeakAdmin)
 
 
@@ -68,6 +72,7 @@ class PeakPhotoAdmin(admin.ModelAdmin):
     list_display = ('id', 'peak', 'photo', 'description')
     search_fields = ('description', )
     ordering = ('-id', )
+
 
 admin.site.register(PeakPhoto, PeakPhotoAdmin)
 
@@ -99,6 +104,7 @@ class RouteAdmin(admin.ModelAdmin):
     inlines = [SectionInline, RoutePointInline, RoutePhotoInline]
     ordering = ('peak__name', 'name')
 
+
 admin.site.register(Route, RouteAdmin)
 
 
@@ -108,6 +114,7 @@ class RouteSectionAdmin(admin.ModelAdmin):
                     'length', 'angle')
     ordering = ('route__name', 'num')
 
+
 admin.site.register(RouteSection, RouteSectionAdmin)
 
 
@@ -115,6 +122,7 @@ class RoutePhotoAdmin(admin.ModelAdmin):
     """ RoutePhotoAdmin """
     list_display = ('id', 'route', 'photo', 'description')
     ordering = ('route__name', '-id')
+
 
 admin.site.register(RoutePhoto, RoutePhotoAdmin)
 
@@ -124,5 +132,6 @@ class RoutePointAdmin(admin.ModelAdmin):
     list_display = ('id', 'route', 'point', 'description')
     raw_id_fields = ('point', )
     ordering = ('route__name', '-id')
+
 
 admin.site.register(RoutePoint, RoutePointAdmin)
