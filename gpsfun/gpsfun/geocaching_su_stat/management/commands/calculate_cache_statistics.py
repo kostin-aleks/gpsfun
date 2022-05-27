@@ -16,7 +16,7 @@ from gpsfun.main.models import log, UpdateType
 def patch_it(name):
     """ patch sql queries from file with name """
     pathtofile = os.path.join(settings.SCRIPTS_ROOT, name)
-    with open(pathtofile, 'r') as f:
+    with open(pathtofile, 'r', encoding="utf-8") as f:
         text = f.read()
         queries = text.split(';')
         for sql in queries:

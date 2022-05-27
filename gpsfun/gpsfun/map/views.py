@@ -101,10 +101,10 @@ def map_cache_info(request):
 def get_points(mapbounds, type_ids):
     """ get points """
     caches = Geothing.objects.filter(
-        location__NS_degree__gt=mapbounds['bottom'],
-        location__NS_degree__lt=mapbounds['top'],
-        location__EW_degree__gt=mapbounds['left'],
-        location__EW_degree__lt=mapbounds['right'],
+        location__ns_degree__gt=mapbounds['bottom'],
+        location__ns_degree__lt=mapbounds['top'],
+        location__ew_degree__gt=mapbounds['left'],
+        location__ew_degree__lt=mapbounds['right'],
         type_code__in=GEOCACHING_ONMAP_TYPES)
 
     type_list = types_by_kind(type_ids)
@@ -240,15 +240,15 @@ def all_caches_sql():
     return """
         select
            kret.waypoint,
-           l.NS_degree,
-           l.EW_degree,
+           l.ns_degree,
+           l.ew_degree,
            COUNT(kret.id) as cnt,
            MAX(kret.distance) as distance
         from geokret kret
         left join location l on kret.location_id=l.id
         where kret.state in (0,3) and kret.waypoint is not null
             and length(kret.waypoint) > 0 and l.id is not null
-        group by kret.waypoint, l.NS_degree, l.EW_degree
+        group by kret.waypoint, l.ns_degree, l.ew_degree
         """
 
 

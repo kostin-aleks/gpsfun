@@ -74,7 +74,7 @@ def process_point(point, all_points_count):
                 sql = f"""
                 INSERT INTO _temp_geothing
                 (pid, code, name, created_date, author,
-                type_code, NS_degree, EW_degree)
+                type_code, ns_degree, ew_degree)
                 VALUES
                 ({pid},'{code}','{name_}','{date_str}', '{author}',
                  '{type_code}', {ns_str}, {ew_str})
@@ -134,12 +134,12 @@ class Command(BaseCommand):
                 LEFT JOIN geothing as gt ON l.id=gt.location_id
                 LEFT JOIN _temp_geothing as t
                  ON gt.pid=t.pid
-            SET l.NS_degree=t.NS_degree,
-                l.EW_degree=t.EW_degree
+            SET l.ns_degree=t.ns_degree,
+                l.ew_degree=t.ew_degree
             WHERE gt.geosite_id={shukach_id} AND
                 t.code IS NOT NULL AND
-                ((ABS(l.NS_degree - t.NS_degree) > 0.00001) OR
-                 (ABS(l.EW_degree - t.EW_degree) > 0.00001))
+                ((ABS(l.ns_degree - t.ns_degree) > 0.00001) OR
+                 (ABS(l.ew_degree - t.ew_degree) > 0.00001))
             """
             return execute_query(sql)
 
@@ -149,7 +149,7 @@ class Command(BaseCommand):
             # insert new geothings
             sql = f"""
             SELECT t.pid, t.code, t.name, t.created_date, t.author,
-                   t.country_code, t.type_code, t.NS_degree, t.EW_degree
+                   t.country_code, t.type_code, t.ns_degree, t.ew_degree
             FROM _temp_geothing as t
                  LEFT JOIN geothing gt ON gt.pid=t.pid AND gt.geosite_id={shukach_id}
             WHERE gt.pid IS NULL
@@ -162,7 +162,7 @@ class Command(BaseCommand):
 
                 sql = f"""
                 INSERT INTO location
-                (NS_degree, EW_degree)
+                (ns_degree, ew_degree)
                 VALUES
                 ({row[7]}, {row[8]})
                 """

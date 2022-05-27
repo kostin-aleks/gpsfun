@@ -291,10 +291,10 @@ def waypoints_rectangle(mapbounds):
     sql = all_krety_sql()
     if len(mapbounds.keys()):
         sql += f"""
-        HAVING l.NS_degree > {mapbounds['bottom']}
-            and l.NS_degree < {mapbounds['top']}
-            and l.EW_degree > {mapbounds['left']}
-            and l.EW_degree < {mapbounds['right']}
+        HAVING l.ns_degree > {mapbounds['bottom']}
+            and l.ns_degree < {mapbounds['top']}
+            and l.ew_degree > {mapbounds['left']}
+            and l.ew_degree < {mapbounds['right']}
         """
 
     sql += f" LIMIT {MAX_POINTS + 1}"
@@ -370,19 +370,19 @@ def get_rectangle_sql(mapbounds):
     return f"""
         select
            kret.waypoint,
-           l.NS_degree as latitude,
-           l.EW_degree as longitude,
+           l.ns_degree as latitude,
+           l.ew_degree as longitude,
            COUNT(kret.id) as cnt,
            MAX(kret.distance) as distance
         from geokret kret
         left join location l on kret.location_id=l.id
         where kret.state in (0,3) and kret.waypoint is not null
             and length(kret.waypoint) > 0 and l.id is not null
-            and l.NS_degree > {mapbounds['bottom']}
-            and l.NS_degree < {mapbounds['top']}
-            and l.EW_degree > {mapbounds['left']}
-            and l.EW_degree < {mapbounds['right']}
-        group by kret.waypoint, l.NS_degree, l.EW_degree
+            and l.ns_degree > {mapbounds['bottom']}
+            and l.ns_degree < {mapbounds['top']}
+            and l.ew_degree > {mapbounds['left']}
+            and l.ew_degree < {mapbounds['right']}
+        group by kret.waypoint, l.ns_degree, l.ew_degree
         """
 
 
@@ -391,15 +391,15 @@ def all_krety_sql():
     return """
         select
            kret.waypoint,
-           l.NS_degree,
-           l.EW_degree,
+           l.ns_degree,
+           l.ew_degree,
            COUNT(kret.id) as cnt,
            MAX(kret.distance) as distance
         from geokret kret
         left join location l on kret.location_id=l.id
         where kret.state in (0,3) and kret.waypoint is not null
             and length(kret.waypoint) > 0 and l.id is not null
-        group by kret.waypoint, l.NS_degree, l.EW_degree
+        group by kret.waypoint, l.ns_degree, l.ew_degree
         """
 
 
@@ -408,8 +408,8 @@ def get_country_sql(user_country):
     return f"""
         select
            kret.waypoint,
-           l.NS_degree,
-           l.EW_degree,
+           l.ns_degree,
+           l.ew_degree,
            COUNT(kret.id) as cnt,
            MAX(kret.distance) as distance
         from geokret kret
@@ -417,7 +417,7 @@ def get_country_sql(user_country):
         where kret.country_code='{user_country}' and
             kret.state in (0,3) and kret.waypoint is not null
             and length(kret.waypoint) > 0 and l.id is not null
-        group by kret.waypoint, l.NS_degree, l.EW_degree
+        group by kret.waypoint, l.ns_degree, l.ew_degree
         """
 
 
@@ -426,8 +426,8 @@ def get_all_countries_sql():
     return """
         select
             kret.waypoint,
-            l.NS_degree,
-            l.EW_degree,
+            l.ns_degree,
+            l.ew_degree,
             COUNT(kret.id) as cnt,
             MAX(kret.distance) as distance
         from geokret kret
@@ -435,7 +435,7 @@ def get_all_countries_sql():
         where
             kret.state in (0,3) and kret.waypoint is not null
             and length(kret.waypoint) > 0 and l.id is not null
-        group by kret.waypoint, l.NS_degree, l.EW_degree
+        group by kret.waypoint, l.ns_degree, l.ew_degree
         """
 
 
@@ -444,8 +444,8 @@ def get_no_country_sql():
     return """
         select
             kret.waypoint,
-            l.NS_degree,
-            l.EW_degree,
+            l.ns_degree,
+            l.ew_degree,
             COUNT(kret.id) as cnt,
             MAX(kret.distance) as distance
         from geokret kret
@@ -453,7 +453,7 @@ def get_no_country_sql():
         where kret.country_code IS NULL and
             kret.state in (0,3) and kret.waypoint is not null
             and length(kret.waypoint) > 0 and l.id is not null
-        group by kret.waypoint, l.NS_degree, l.EW_degree
+        group by kret.waypoint, l.ns_degree, l.ew_degree
         """
 
 
@@ -462,8 +462,8 @@ def waypont_sql(waypoint):
     return f"""
         select
             kret.waypoint,
-            l.NS_degree,
-            l.EW_degree,
+            l.ns_degree,
+            l.ew_degree,
             COUNT(kret.id) as cnt,
             MAX(kret.distance) as distance
         from geokret kret
@@ -472,7 +472,7 @@ def waypont_sql(waypoint):
             and kret.waypoint RLIKE '^{waypoint}.*' and
             kret.state in (0,3)
             and l.id is not null
-        group by kret.waypoint, l.NS_degree, l.EW_degree
+        group by kret.waypoint, l.ns_degree, l.ew_degree
         """
 
 
@@ -481,8 +481,8 @@ def geokret_sql(kret_id):
     return f"""
             select
                 kret.waypoint,
-                l.NS_degree,
-                l.EW_degree,
+                l.ns_degree,
+                l.ew_degree,
                 COUNT(kret.id) as cnt,
                 MAX(kret.distance) as distance
             from geokret kret
@@ -491,7 +491,7 @@ def geokret_sql(kret_id):
                 and kret.gkid = {kret_id} and
                 kret.state in (0,3)
                 and l.id is not null
-            group by kret.waypoint, l.NS_degree, l.EW_degree
+            group by kret.waypoint, l.ns_degree, l.ew_degree
             """
 
 
@@ -501,8 +501,8 @@ def kret_name_sql(name):
     return f"""
             select
                 kret.waypoint,
-                l.NS_degree,
-                l.EW_degree,
+                l.ns_degree,
+                l.ew_degree,
                 COUNT(kret.id) as cnt,
                 MAX(kret.distance) as distance
             from geokret kret
@@ -511,7 +511,7 @@ def kret_name_sql(name):
                 and kret.name LIKE '%{name}%' and
                 kret.state in (0,3)
                 and l.id is not null
-            group by kret.waypoint, l.NS_degree, l.EW_degree
+            group by kret.waypoint, l.ns_degree, l.ew_degree
             """
 
 

@@ -37,13 +37,13 @@ class Command(BaseCommand):
                         params={'s': 1, 'uid': uid}
                     )
 
-                    for (cid, found_date, grade, coauthor) in get_caches_data(uid, response.text):
+                    for (cid, found_date, grade, coauthor) in get_caches_data(response.text):
                         cache = get_object_or_none(Cach, pid=cid)
 
                         if cache:
-                            the_log, created = LogCreateCach.objects.get_or_create(
+                            the_log = LogCreateCach.objects.get_or_create(
                                 author_uid=uid,
-                                cach_pid=cid)
+                                cach_pid=cid)[0]
 
                             the_log.created_date = cache.created_date
                             the_log.coauthor = coauthor

@@ -41,7 +41,7 @@ class Command(BaseCommand):
                         params={'s': 1, 'uid': uid}
                     )
 
-                    for (cid, found_date, grade, coauthor) in get_caches_data(uid, response.text):
+                    for (cid, found_date, grade, coauthor) in get_caches_data(response.text):
                         cache = get_object_or_none(Cach, pid=cid)
 
                         if cache:

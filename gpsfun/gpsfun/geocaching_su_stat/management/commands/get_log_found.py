@@ -38,13 +38,12 @@ class Command(BaseCommand):
                         'http://www.geocaching.su/site/popup/userstat.php',
                         params={'s': 2, 'uid': uid}
                     )
-                    for (cid, found_date, grade, any_x) in get_caches_data(uid, response.text):
+                    for (cid, found_date, grade, any_x) in get_caches_data(response.text):
                         cache = get_object_or_none(Cach, pid=cid)
 
                         if cache and found_date:
-                            the_log, created = LogSeekCach.objects.get_or_create(
-                                cacher_uid=uid,
-                                cach_pid=cid)
+                            the_log = LogSeekCach.objects.get_or_create(
+                                cacher_uid=uid, cach_pid=cid)[0]
 
                             the_log.found_date = found_date
                             the_log.grade = grade

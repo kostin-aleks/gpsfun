@@ -63,11 +63,11 @@ class Command(BaseCommand):
                 geokret.distance = distance
                 if geokret.location is None:
                     geokret.location = Location.objects.create(
-                        NS_degree=latitude,
-                        EW_degree=longitude)
+                        ns_degree=latitude,
+                        ew_degree=longitude)
                 else:
-                    geokret.location.NS_degree = latitude
-                    geokret.location.EW_degree = longitude
+                    geokret.location.ns_degree = latitude
+                    geokret.location.ew_degree = longitude
                     geokret.location.save()
 
                 geokret.waypoint = waypoint

@@ -447,9 +447,9 @@ def process(rectangle, geosite, params, run_index):
         the_location = TheLocation()
         locations = cache.get('location').split('|')
         lat_degree = float(locations[0])
-        the_location.NS_degree = lat_degree
+        the_location.ns_degree = lat_degree
         lon_degree = float(locations[1])
-        the_location.EW_degree = lon_degree
+        the_location.ew_degree = lon_degree
         the_geothing.code = cache.get('code')
         the_geothing.name = cache.get('name')
 

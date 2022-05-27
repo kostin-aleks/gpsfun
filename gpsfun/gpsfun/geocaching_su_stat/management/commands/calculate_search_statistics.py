@@ -30,11 +30,11 @@ class Command(BaseCommand):
         """ handle """
 
         for cache in Cach.objects.exclude(author__isnull=True):
-            cache_stat, created = CachStat.objects.get_or_create(
+            cache_stat = CachStat.objects.get_or_create(
                 cach=cache,
                 cach_pid=cache.pid,
                 geocacher=cache.author
-            )
+            )[0]
             cache_stat.calculate_points()
 
         queries = [

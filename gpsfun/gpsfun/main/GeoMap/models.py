@@ -58,14 +58,14 @@ def random_noise(noise):
 
 class Location(models.Model):
     """ Location """
-    NS_degree = models.FloatField(blank=True, null=True)
-    EW_degree = models.FloatField(blank=True, null=True)
+    ns_degree = models.FloatField(blank=True, null=True)
+    ew_degree = models.FloatField(blank=True, null=True)
 
     class Meta:
         db_table = 'location'
 
     def __str__(self):
-        return f'location {self.id}: {self.NS_degree} / {self.EW_degree}'
+        return f'location {self.id}: {self.ns_degree} / {self.ew_degree}'
 
 
 class Geosite(models.Model):
@@ -117,19 +117,19 @@ class Geothing(models.Model):
     @property
     def latitude_degree(self):
         """ latitude degree """
-        return self.location.NS_degree + random_noise(NOISE.get(self.geosite.code) or 1)
+        return self.location.ns_degree + random_noise(NOISE.get(self.geosite.code) or 1)
 
     @property
     def longitude_degree(self):
         """ longitude degree """
-        return self.location.EW_degree + random_noise(NOISE.get(self.geosite.code) or 1)
+        return self.location.ew_degree + random_noise(NOISE.get(self.geosite.code) or 1)
 
     @property
     def latitude_degree_minutes(self):
         """ latitude degree minutes """
         degree = (None, None)
-        if self.location and self.location.NS_degree is not None:
-            degree = point_degree_minutes(self.location.NS_degree)
+        if self.location and self.location.ns_degree is not None:
+            degree = point_degree_minutes(self.location.ns_degree)
 
         return degree
 

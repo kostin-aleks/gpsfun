@@ -21,7 +21,7 @@ from gpsfun.geocaching_su_stat.utils import (
 def patch_it(name):
     """ patch sql queries """
     pathtofile = os.path.join(settings.SCRIPTS_ROOT, name)
-    with open(pathtofile, 'r') as f:
+    with open(pathtofile, 'r', encoding="utf-8") as f:
         text = f.read()
         queries = text.split(';')
         for sql in queries:
@@ -69,7 +69,7 @@ class Command(BaseCommand):
                     'http://www.geocaching.su/site/popup/userstat.php',
                     params={'s': 2, 'uid': uid}
                 )
-                country = get_found_caches_countries(uid, response.text)
+                country = get_found_caches_countries(response.text)
                 set_country_code(uid, country)
             names = {''}
             for uid in Geocacher.objects.filter(
@@ -78,7 +78,7 @@ class Command(BaseCommand):
                     'http://www.geocaching.su/site/popup/userstat.php',
                     params={'s': 2, 'uid': uid}
                 )
-                oblast = get_found_caches_oblast(uid, response.text)
+                oblast = get_found_caches_oblast(response.text)
                 names.add(oblast)
                 set_oblast_code(uid, oblast)
 

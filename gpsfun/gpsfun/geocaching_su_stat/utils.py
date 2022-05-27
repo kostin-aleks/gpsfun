@@ -105,8 +105,8 @@ def get_user_profile(uid, text):
         if int(user.get('found', 0)):
             geocacher = Geocacher.objects.filter(uid=uid).first()
             if geocacher is None:
-                geocacher, created = Geocacher.objects.get_or_create(
-                    uid=uid, nickname=user.get('nickname'))
+                geocacher = Geocacher.objects.get_or_create(
+                    uid=uid, nickname=user.get('nickname'))[0]
                 geocacher.name = user.get('name')
                 geocacher.birstday = strdate_or_none(user.get('birstday'))
                 geocacher.sex = sex_or_none(user.get('sex'))
@@ -250,9 +250,7 @@ def get_caches(last_max_cid=None):
 
                 if last_max_cid is None or (int(dcache['cid'] or 0) > last_max_cid):
                     print('added', dcache)
-                    cache, created = Cach.objects.get_or_create(
-                        pid=dcache['cid'],
-                    )
+                    cache = Cach.objects.get_or_create(pid=dcache['cid'])[0]
                     cache.type_code = dcache['type_code']
                     cache.code = dcache['code']
                     dtime = datetime.strptime(dcache['created'], '%m/%d/%Y')
@@ -269,7 +267,7 @@ def get_caches(last_max_cid=None):
                     cache.save()
 
 
-def get_caches_data(uid, text):
+def get_caches_data(text):
     """ get caches """
     data = []
 
@@ -500,7 +498,7 @@ def set_oblast_code(uid, oblast):
             geocacher.save()
 
 
-def get_found_caches_countries(uid, text):
+def get_found_caches_countries(text):
     """ get list of countries where caches are found """
     countries = []
     soup = BeautifulSoup(text, 'lxml')
@@ -527,7 +525,7 @@ def get_found_caches_countries(uid, text):
     return None
 
 
-def get_found_caches_oblast(uid, text):
+def get_found_caches_oblast(text):
     """ get list of oblast where caches are found """
     oblasti = []
     soup = BeautifulSoup(text, 'lxml')
@@ -590,3 +588,4 @@ def get_country(text):
                 'country': string[0] if len(string) else '',
                 'region': string[1] if len(string) > 1 else '',
             }
+    return {}

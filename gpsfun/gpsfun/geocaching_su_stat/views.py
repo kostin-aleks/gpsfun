@@ -45,6 +45,7 @@ from gpsfun.main.models import LogUpdate
 from gpsfun.main.db_utils import sql2list, sql2val
 from gpsfun.geocaching_su_stat.decorators import it_isnt_updating, geocacher_su
 from gpsfun.main.utils import get_degree
+from gpsfun.main.forms import RequestForm
 from gpsfun.geocaching_su_stat.sql import RAWSQL
 
 
@@ -168,14 +169,12 @@ class RankingFilter(RequestForm):
         if self.country_ is None:
             self.country_ = self.data.get('country')
 
-        populate_cach_type(
-            self.fields['cach_type'], self._request, add_empty=True)
+        populate_cach_type(self.fields['cach_type'], request=self._request, add_empty=True)
 
-        populate_countries_iso3(
-            self.fields['country'], self._request, add_empty=True)
+        populate_countries_iso3(self.fields['country'], request=self._request, add_empty=True)
         populate_subjects(
             self.fields['subject'],
-            self._request,
+            request=self._request,
             add_empty=True,
             selected_country_iso=self.country_)
 
@@ -200,10 +199,10 @@ class RateFilter(RequestForm):
             self.country_ = self.data.get('country')
 
         populate_country_iso3(
-            self.fields['country'], self._request, add_empty=True)
+            self.fields['country'], request=self._request, add_empty=True)
         populate_subjects(
             self.fields['subject'],
-            self._request,
+            request=self._request,
             add_empty=True,
             selected_country_iso=self.country_)
 
@@ -212,7 +211,7 @@ class RateFilter(RequestForm):
         self.country_ = country
         populate_subjects(
             self.fields['subject'],
-            self._request,
+            request=self._request,
             selected_country_iso=self.country_)
 
 

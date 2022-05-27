@@ -98,15 +98,11 @@ def set_user_location(user, data):
     lon_sign = data.get('lon_sign')
 
     degree = get_degree(latitude)
-    if degree:
-        if lat_sign == 'S':
-            degree = -degree
-        position['latitude'] = degree
+    if degree is not None:
+        position['latitude'] = -degree if lat_sign == 'S' else degree
     degree = get_degree(longitude)
-    if degree:
-        if lon_sign == 'W':
-            degree = -degree
-        position['longitude'] = degree
+    if degree is not None:
+        position['longitude'] = -degree if lon_sign == 'W' else degree
 
     if is_valid_position(position):
         if user.gpsfunuser.location is None:

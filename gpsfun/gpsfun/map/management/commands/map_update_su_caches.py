@@ -59,9 +59,9 @@ class Command(BaseCommand):
                         the_geothing.name = tag_.text
                     if tag_.tag == 'position':
                         lat_degree = float(tag_.get('lat'))
-                        the_location.NS_degree = lat_degree
+                        the_location.ns_degree = lat_degree
                         lon_degree = float(tag_.get('lon'))
-                        the_location.EW_degree = lon_degree
+                        the_location.ew_degree = lon_degree
                     if tag_.tag == 'cdate':
                         date_str = tag_.text
                         date_ = date_str.split('-')

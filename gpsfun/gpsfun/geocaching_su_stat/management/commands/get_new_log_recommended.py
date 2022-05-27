@@ -40,13 +40,12 @@ class Command(BaseCommand):
                         'http://www.geocaching.su/site/popup/userstat.php',
                         params={'s': 3, 'uid': uid}
                     )
-                    for (cid, any_x, any_y, any_z) in get_caches_data(uid, response.text):
+                    for (cid, any_x, any_y, any_z) in get_caches_data(response.text):
                         cache = get_object_or_none(Cach, pid=cid)
 
                         if cache:
-                            the_log, created = LogRecommendCach.objects.get_or_create(
-                                cacher_uid=uid,
-                                cach_pid=cid)
+                            the_log = LogRecommendCach.objects.get_or_create(
+                                cacher_uid=uid, cach_pid=cid)[0]
 
         log(UpdateType.gcsu_new_logs_recommended, 'OK')
         return 'List of recommended caches has updated'
