@@ -1511,7 +1511,7 @@ def geocaching_su_cach_pertype_stat_chart(request):
             dmax = row['unreal']
 
     chart = create_chart(
-        data_real, data_unreal, legend, dmax, name1=_('real'), name2=_('virtual'))
+        data_real, data_unreal, legend, name1=_('real'), name2=_('virtual'))
 
     return HttpResponseRedirect(chart.get_url())
 
