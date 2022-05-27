@@ -1274,18 +1274,18 @@ class TheGeothing:
 
 class TheLocation:
     """ TheLocation """
-    NS_degree = None
-    EW_degree = None
-    NS_minute = None
-    EW_minute = None
+    ns_degree = None
+    ew_degree = None
+    ns_minute = None
+    ew_minute = None
 
 
 def location_was_changed(location, the_location):
     """ location was changed ? """
     location_changed = False
-    if int(location.NS_degree * 1000000) != int(the_location.NS_degree * 1000000):
+    if int(location.ns_degree * 1000000) != int(the_location.ns_degree * 1000000):
         location_changed = True
-    if int(location.EW_degree * 1000000) != int(the_location.EW_degree * 1000000):
+    if int(location.ew_degree * 1000000) != int(the_location.ew_degree * 1000000):
         location_changed = True
     return location_changed
 
@@ -1294,10 +1294,10 @@ def create_new_geothing(the_geothing, the_location, geosite):
     """ create new geothing """
     geothing = Geothing(geosite=geosite)
     location = Location()
-    location.NS_degree = the_location.NS_degree
-    location.EW_degree = the_location.EW_degree
-    location.NS_minute = the_location.NS_minute
-    location.EW_minute = the_location.EW_minute
+    location.ns_degree = the_location.ns_degree
+    location.ew_degree = the_location.ew_degree
+    location.ns_minute = the_location.ns_minute
+    location.ew_minute = the_location.ew_minute
     location.save()
 
     geothing.location = location
@@ -1330,12 +1330,12 @@ def update_geothing(geothing, the_geothing, the_location):
         geothing.code = the_geothing.code
 
     location_changed = False
-    if int(geothing.location.NS_degree * 1000000) != int(the_location.NS_degree * 1000000):
+    if int(geothing.location.ns_degree * 1000000) != int(the_location.ns_degree * 1000000):
         location_changed = True
-        geothing.location.NS_degree = the_location.NS_degree
-    if int(geothing.location.EW_degree * 1000000) != int(the_location.EW_degree * 1000000):
+        geothing.location.ns_degree = the_location.ns_degree
+    if int(geothing.location.ew_degree * 1000000) != int(the_location.ew_degree * 1000000):
         location_changed = True
-        geothing.location.EW_degree = the_location.EW_degree
+        geothing.location.ew_degree = the_location.ew_degree
 
     if location_changed:
         geothing.location.save()
