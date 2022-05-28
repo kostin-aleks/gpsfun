@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-28 10:22+0100\n"
+"POT-Creation-Date: 2022-05-28 17:10+0100\n"
 "PO-Revision-Date: 2013-02-07 21:50\n"
 "Last-Translator: Aleksandr Kostin <galdor@ukr.net>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -286,6 +286,7 @@ msgid "Search rating. All years"
 msgstr "Рейтинг по поиску. Все годы"
 
 #: geocaching_su_stat/views.py:2473
+#, python-format
 msgid "Search rating. Current year %s"
 msgstr "Рейтинг по поиску. Текущий год %s"
 
@@ -2266,6 +2267,12 @@ msgstr "График"
 msgid "Statistics"
 msgstr "Статистика"
 
+#: templates/Geocaching_su/cache_stat.html:113
+#, fuzzy
+#| msgid "Chart"
+msgid "Chart ==="
+msgstr "График"
+
 #: templates/Geocaching_su/cache_statistics.html:16
 msgid "Rating by the integrated index"
 msgstr "Рейтинг тайников по индексу"
@@ -2313,8 +2320,8 @@ msgid ""
 "Creating of caches by the years, light color for traditional (TR, MS, LT), "
 "dark color for virtual caches (VI, MV, LV, CT, EV)"
 msgstr ""
-"Создание тайников по годам, светлый цвет для традиционных (TR, MS, LT), темный для "
-"виртуальных (VI, MV, LV, CT, EV)"
+"Создание тайников по годам, светлый цвет для традиционных (TR, MS, LT), "
+"темный для виртуальных (VI, MV, LV, CT, EV)"
 
 #: templates/Geocaching_su/geocacher_activity.html:42
 msgid "Month"
@@ -2400,8 +2407,8 @@ msgstr "GEOCACHING.SU. Статистика"
 
 #: templates/Geocaching_su/geocaching_su_index.html:38
 msgid ""
-"I place here some statistics for <a href=\"https://geocaching.su"
-"\">geocaching.su</a>.<br/>\n"
+"I place here some statistics for <a href=\"https://geocaching.su\" target="
+"\"_blank\">geocaching.su</a>.<br/>\n"
 "The statistical information is obtained by direct collection through "
 "crawling of pages.<br/>\n"
 "That is done with the permission of the site administration.<br/>\n"
@@ -2410,8 +2417,8 @@ msgid ""
 "The second consequence - it is impossible to guarantee completeness.<br/>\n"
 "I would be grateful for information about mistakes in the data."
 msgstr ""
-"На сайте <a href=\"geocaching.su\" target=\"_blank\">geocaching.su</a> "
-"закрыта статистика.<br/>\n"
+"На сайте <a href=\"https://geocaching.su\" target=\"_blank\">geocaching.su</"
+"a> закрыта статистика.<br/>\n"
 "Я попробую заполнить эту нишу.<br/><br/>\n"
 "Замечу, что статистическая информация получается прямым сбором через обход "
 "страниц сайта. Это делается с разрешения администрации сайта.<br/><br>\n"
@@ -2786,6 +2793,7 @@ msgstr "Активируйте Ваш аккаунт – %(site)s"
 
 #: templates/django_registration/login.html:9
 #: templates/registration/login.html:9
+#, python-format
 msgid ""
 "\n"
 "You are signed in as <strong>%(username)s</strong>.\n"
