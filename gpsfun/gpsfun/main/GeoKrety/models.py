@@ -32,19 +32,19 @@ class GeoKret(models.Model):
     @property
     def latitude_degree(self):
         """ latitude degree """
-        return self.location.NS_degree
+        return self.location.ns_degree
 
     @property
     def longitude_degree(self):
         """ longitude degree """
-        return self.location.EW_degree
+        return self.location.ew_degree
 
     @property
     def latitude_degree_minutes(self):
         """ latitude degree and minutes """
         degree = (None, None)
-        if self.location and self.location.NS_degree is not None:
-            degree = point_degree_minutes(self.location.NS_degree)
+        if self.location and self.location.ns_degree is not None:
+            degree = point_degree_minutes(self.location.ns_degree)
 
         return degree
 
@@ -52,8 +52,8 @@ class GeoKret(models.Model):
     def longitude_degree_minutes(self):
         """ longitude degree and minutes """
         degree = (None, None)
-        if self.location and self.location.EW_degree is not None:
-            degree = point_degree_minutes(self.location.EW_degree)
+        if self.location and self.location.ew_degree is not None:
+            degree = point_degree_minutes(self.location.ew_degree)
 
         return degree
 

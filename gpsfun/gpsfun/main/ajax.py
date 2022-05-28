@@ -8,7 +8,9 @@ import sys
 import traceback
 
 from django.conf import settings
+from django.core.mail import mail_admins
 from django.http import HttpResponse, Http404
+from django.views import debug
 
 
 def _get_traceback(exc_info=None):
@@ -53,17 +55,16 @@ def accept_ajax(view_func):
             # require direct call original function (out of try/except) to proper determine error exception
             # in orinical view
             origin_resp = view_func(request, *args, **kwargs)
-            if isinstance(origin_resp, dict) or isinstance(origin_resp, list):
+            if isinstance(origin_resp, (dict, list)):
                 return _json_dump(origin_resp)
-            else:
-                return origin_resp
+            return origin_resp
 
         response_dict = {}
         response_dict['debug'] = False
         try:
             origin_resp = view_func(request, *args, **kwargs)
 
-            if isinstance(origin_resp, dict) or isinstance(origin_resp, list):
+            if isinstance(origin_resp, (dict, list)):
                 if isinstance(origin_resp, dict):
                     if 'status' not in origin_resp:
                         origin_resp['status'] = 200
@@ -75,33 +76,31 @@ def accept_ajax(view_func):
             response_dict['status'] = origin_resp.status_code
             response_dict['content'] = origin_resp.content
 
-        except Http404 as e:
-            raise Http404(e)
-        except Exception as e:
+        except Http404 as the_exception:
+            raise Http404(the_exception)
+        except Exception as the_exception:
             response_dict['status'] = 500
 
             if settings.DEBUG:
-                from django.views import debug
                 debug.technical_500_response(request, *sys.exc_info())
                 response_dict['debug'] = True
                 response_dict['debug_msg'] = ''
             else:
-                from django.core.mail import mail_admins
-
                 exc_info = sys.exc_info()
 
-                subject = 'Error (%s IP): %s' % (
-                    (request.META.get('REMOTE_ADDR')
-                     in settings.INTERNAL_IPS and 'internal' or 'EXTERNAL'), request.path)
+                remote_addr = (request.META.get('REMOTE_ADDR') in settings.INTERNAL_IPS and 'internal' or 'EXTERNAL')
+                subject = f'Error ({remote_addr} IP): {request.path}'
                 try:
                     request_repr = repr(request)
                 except:
                     request_repr = "Request repr() unavailable"
 
-                message = "%s\n\n%s" % (_get_traceback(exc_info), request_repr)
+                message = f"{_get_traceback(exc_info)}\n\n{request_repr}"
                 mail_admins(subject, message, fail_silently=True)
 
-        resp = HttpResponse(simplejson.dumps(response_dict, ensure_ascii=False), content_type='application/javascript')
+        resp = HttpResponse(
+            simplejson.dumps(response_dict, ensure_ascii=False),
+            content_type='application/javascript')
         _copy_x_headers(origin_resp, resp)
 
         return resp
@@ -122,8 +121,8 @@ def qs_to_json(qs, map_dict):
     def _get_value(name, obj):
         attr = getattr(obj, name)
         if callable(attr):
-            return unicode(attr())
-        return unicode(attr)
+            return attr()
+        return attr
 
     label_list = [dict([(key, _get_value(value, item)) for key, value in map_dict.iteritems()])
                   for item in qs]

@@ -137,8 +137,8 @@ class Geothing(models.Model):
     def longitude_degree_minutes(self):
         """ longitude degree minutes """
         degree = (None, None)
-        if self.location and self.location.EW_degree is not None:
-            degree = point_degree_minutes(self.location.EW_degree)
+        if self.location and self.location.ew_degree is not None:
+            degree = point_degree_minutes(self.location.ew_degree)
 
         return degree
 
