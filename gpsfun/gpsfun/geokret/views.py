@@ -57,7 +57,7 @@ def geokrety_map(request):
 
     user_waypoint = request.session.get('geokrety_map_waypoint', '')
     geokret_waypoint = request.session.get('geokret_waypoint')
-    mapbounds = request.session.get('geokrety_mapbounds') or {default_mapbounds}
+    mapbounds = request.session.get('geokrety_mapbounds') or default_mapbounds
     map_center = request.session.get(
         'geokrety_center') or rectagle_center(default_mapbounds)
     krety = waypoints_rectangle(mapbounds)
