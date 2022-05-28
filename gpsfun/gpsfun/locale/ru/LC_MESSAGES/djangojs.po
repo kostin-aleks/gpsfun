@@ -1593,15 +1593,3 @@ msgstr "-- выберите город --"
 #: htdocs/js/su_map.js:211
 msgid "found"
 msgstr "найдено"
-
-#~ msgid "all"
-#~ msgstr "все"
-
-#~ msgid "Regions"
-#~ msgstr "Регионы"
-
-#~ msgid "Åland Islands"
-#~ msgstr "Эландские Острова"
-
-#~ msgid "undefined subject"
-#~ msgstr "регион неизвестен"
