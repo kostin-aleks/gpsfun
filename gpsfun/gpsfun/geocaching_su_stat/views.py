@@ -11,9 +11,7 @@ from lxml import etree
 from pygooglechart import SimpleLineChart, StackedHorizontalBarChart
 from pygooglechart import Axis
 from quickchart import QuickChart
-
 from django.urls import reverse
-from django import forms
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
@@ -27,7 +25,6 @@ from django.utils.translation import ugettext_lazy as _
 import django_tables2 as tables
 from django_tables2.config import RequestConfig
 
-from gpsfun.tableview import table, widgets, datasource, controller
 from gpsfun.main.db_utils import iter_sql
 from gpsfun.main.db_utils import get_object_or_none
 from gpsfun.main.ajax import accept_ajax
@@ -36,16 +33,13 @@ from gpsfun.main.GeoCachSU.models import Cach, CachStat, Geocacher, \
     GEOCACHING_SU_CACH_TYPES, GEOCACHING_SU_REAL_TYPES, \
     GEOCACHING_SU_UNREAL_TYPES, LogSeekCach, LogCreateCach, \
     GeocacherStat, GEOCACHING_SU_ONMAP_TYPES, GeocacherSearchStat
-from gpsfun.main.GeoCachSU.utils import (
-    populate_cach_type, populate_country_iso3, populate_subjects,
-    populate_countries_iso3, countries_iso, cache_types, countries_iso3)
+from gpsfun.main.GeoCachSU.utils import (countries_iso, cache_types, countries_iso3)
 from gpsfun.main.GeoName.models import GeoCountry, GeoCountryAdminSubject, \
-    country_iso_by_iso3, geocountry_by_code
+    country_iso_by_iso3
 from gpsfun.main.models import LogUpdate
 from gpsfun.main.db_utils import sql2list, sql2val
 from gpsfun.geocaching_su_stat.decorators import it_isnt_updating, geocacher_su
 from gpsfun.main.utils import get_degree
-from gpsfun.main.forms import RequestForm
 from gpsfun.geocaching_su_stat.sql import RAWSQL
 
 
@@ -63,605 +57,6 @@ def geocaching_su_cach_url(pid):
 def geocaching_su_geocacher_url(pid):
     """ geocacher url """
     return f"http://www.geocaching.su/profile.php?pid={pid}"
-
-
-class GPSFunTableController(controller.TableController):
-    """ Table controller """
-    kind = None
-
-    def filter_description(self):
-        """ description """
-        def valid_keys(afilter, kind):
-            """ valid keys """
-            if kind == 'geocacher_rate':
-                if 'country' in afilter and 'subject' in afilter:
-                    return True
-            if kind == 'cache_rate':
-                if 'country' in afilter and 'cach_type' in afilter:
-                    return True
-            return False
-
-        def country_description(country):
-            """ country description """
-            by_country = {'title': _('Country'), 'value': _("All")}
-            if country and country != 'ALL':
-                geocountry = geocountry_by_code(country)
-                if geocountry:
-                    by_country['value'] = _(geocountry.name)
-                else:
-                    by_country['value'] = country
-            return by_country
-
-        def subject_description(admin_subject, country):
-            """ subject description """
-            by_subject = {'title': _('Admin Subject'), 'value': _("All")}
-            if admin_subject and admin_subject != 'ALL':
-                geoadmin_subject = get_object_or_none(
-                    GeoCountryAdminSubject,
-                    country_iso=country_iso_by_iso3(country),
-                    code=admin_subject)
-                if geoadmin_subject:
-                    by_subject['value'] = _(geoadmin_subject.name)
-                else:
-                    by_subject['value'] = admin_subject
-            return by_subject
-
-        if not self.filter.keys():
-            return None
-        if not valid_keys(self.filter, self.kind):
-            return None
-
-        description = []
-        if self.kind == 'cache_rate':
-            selected_values = self.filter.get('cach_type')
-            if selected_values == ['']:
-                selected_values = []
-
-            if not selected_values or ('ALL' in selected_values) or \
-               ('REAL' in selected_values and 'UNREAL' in selected_values):
-                selected_values = []
-            if selected_values:
-                selected_values = distinct_types_list(selected_values)
-
-            types = [GEOCACHING_SU_CACH_TYPES.get(type_)
-                     for type_ in selected_values
-                     if GEOCACHING_SU_CACH_TYPES.get(type_) is not None]
-
-            if len(types) == 0:
-                types = [_("Any")]
-            if types:
-                description.append({
-                    'title': _('Cach Type'),
-                    'value': types,
-                    'type': 'list'})
-            country = self.filter.get('country')
-            description.append(country_description(country))
-            description.append(subject_description(self.filter.get('subject'), country))
-
-        if self.kind == 'geocacher_rate':
-            country = self.filter.get('country')
-            description.append(country_description(country))
-            description.append(subject_description(self.filter.get('subject'), country))
-
-        return description
-
-
-class RankingFilter(RequestForm):
-    """ Ranking Filter """
-    country_ = None
-    cach_type = forms.MultipleChoiceField(
-        required=False,
-        label=_('Cach Type'),
-        widget=forms.SelectMultiple(attrs={'size': '6'}))
-    country = forms.ChoiceField(
-        required=False,
-        label=_('Country'),
-        widget=forms.Select(
-            attrs={'onchange': 'RateFilter.reload_subjects(this);'}))
-    subject = forms.ChoiceField(
-        required=False,
-        label=_('Admin Subject'),
-        widget=forms.Select(attrs={'id': 'ratefilter_subjects'}))
-
-    def init(self):
-        """ init """
-        self.country_ = self.initial.get('country')
-        if self.country_ is None:
-            self.country_ = self.data.get('country')
-
-        populate_cach_type(self.fields['cach_type'], request=self._request, add_empty=True)
-
-        populate_countries_iso3(self.fields['country'], request=self._request, add_empty=True)
-        populate_subjects(
-            self.fields['subject'],
-            request=self._request,
-            add_empty=True,
-            selected_country_iso=self.country_)
-
-
-class RateFilter(RequestForm):
-    """ Rate Filter """
-    country_ = None
-    country = forms.ChoiceField(
-        required=False,
-        label=_('Country'),
-        widget=forms.Select(
-            attrs={'onchange': 'RateFilter.reload_subjects(this);'}))
-    subject = forms.ChoiceField(
-        required=False,
-        label=_('Admin Subject'),
-        widget=forms.Select(attrs={'id': 'ratefilter_subjects'}))
-
-    def init(self):
-        """ init """
-        self.country_ = self.initial.get('country')
-        if self.country_ is None:
-            self.country_ = self.data.get('country')
-
-        populate_country_iso3(
-            self.fields['country'], request=self._request, add_empty=True)
-        populate_subjects(
-            self.fields['subject'],
-            request=self._request,
-            add_empty=True,
-            selected_country_iso=self.country_)
-
-    def set_country(self, country):
-        """ set country """
-        self.country_ = country
-        populate_subjects(
-            self.fields['subject'],
-            request=self._request,
-            selected_country_iso=self.country_)
-
-
-class BaseRankTable(table.TableView):
-    """ Base Rank Table """
-    _filter = None
-
-    def apply_filter(self, filter, qs):
-        """ apply filter """
-        self._filter = {}
-        for key, value in filter.iteritems():
-            self._filter[key] = value
-        selected_values = filter.get('cach_type') or []
-        if selected_values and ('REAL' in selected_values) \
-           and ('UNREAL' in selected_values):
-            pass
-        elif selected_values and ('ALL' in selected_values):
-            pass
-        else:
-            selected_values = distinct_types_list(selected_values)
-            if selected_values:
-                qs.filter(cach__type_code__in=selected_values)
-
-        country = filter.get('country')
-        if country and country != 'ALL':
-            country = get_iso_by_iso3(country)
-            qs.filter(cach__country_code=country)
-            self._filter = filter
-
-        subject = filter.get('subject', '')
-        if subject and subject != 'ALL':
-            if subject == '777':
-                qs.filter(cach__country_code=country,
-                          cach__admin_code__isnull=True)
-            else:
-                qs.filter(cach__country_code=country,
-                          cach__admin_code=subject)
-
-    def filtered(self):
-        """ filtered or not """
-        if hasattr(self, '_filter'):
-            return self._filter is not None
-        return False
-
-
-class RankByList(BaseRankTable):
-    """ Rank By List Table """
-    pid = widgets.HrefWidget(
-        'ID',
-        width="55px",
-        refname='cach__code',
-        reverse='geocaching-su-cach-view',
-        reverse_column='cach_pid')
-    cach_name = widgets.LabelWidget(_('Cach'), refname='cach__name')
-    created = widgets.LabelWidget(_('Created'), refname='cach__created_date')
-    author = widgets.HrefWidget(
-        _('Author'),
-        refname='geocacher__nickname',
-        reverse='geocaching-su-geocacher-view',
-        reverse_column='geocacher__pid')
-    recommend_count = widgets.LabelWidget(
-        _('Recommendations'),
-        refname='recommend_count')
-    grade = widgets.LabelWidget(_('Grade'), refname='cach__grade')
-
-
-class RankByComputedList(RankByList):
-    """ Table RankByComputedList """
-    found_count = widgets.LabelWidget(_('Found'), refname='found_count')
-    rank = widgets.LabelWidget(_('Rank'), refname='rank')
-
-    class Meta:
-        use_keyboard = True
-        global_profile = True
-        permanent = (
-            'pid', 'cach_name', 'author', 'created',
-            'recommend_count', 'found_count', 'rank', 'grade')
-        search = ('cach__name', 'geocacher__nickname', 'cach__code')
-        filter_form = RankingFilter
-
-    def render_rank(self, table, row_index, row, value):
-        """ render field rank """
-        return f'{value:.0f}' if value else ''
-
-    def render_grade(self, table, row_index, row, value):
-        """ render field grade """
-        return f'{value:.2f}' if value else None
-
-    def render_created(self, table, row_index, row, value):
-        """ render field created """
-        return value.strftime("%d.%m.%Y") if value else ''
-
-
-class RankByFoundList(RankByList):
-    """ Table RankByFoundList """
-    found_count = widgets.LabelWidget(_('Found'), refname='found_count')
-    points = widgets.LabelWidget(_('Points'), refname='points')
-
-    class Meta:
-        use_keyboard = True
-        global_profile = True
-        permanent = ('pid', 'cach_name', 'author', 'created',
-                     'recommend_count', 'found_count', 'grade', 'points')
-        search = ('cach__name', 'geocacher__nickname', 'cach__code')
-        filter_form = RankingFilter
-
-    def render_created(self, table, row_index, row, value):
-        """ render field created """
-        return value.strftime("%d.%m.%Y") if value else ''
-
-    def render_points(self, table, row_index, row, value):
-        """ render field points """
-        return round(value, 1) if value else 0
-
-
-class RankByRecommendedList(RankByList):
-    """ Table RankByRecommendedList """
-
-    class Meta:
-        use_keyboard = True
-        global_profile = True
-        permanent = (
-            'pid', 'cach_name', 'author', 'created',
-            'recommend_count', 'grade')
-        search = ('cach__name', 'geocacher__nickname', 'cach__code')
-        filter_form = RankingFilter
-
-    def render_grade(self, table, row_index, row, value):
-        """ render field grade """
-        value = value or 0
-        return '{value:.2f}'
-
-    def render_created(self, table, row_index, row, value):
-        """ render field created """
-        return value.strftime("%d.%m.%Y") if value else ''
-
-
-class GeocacherRateList(table.TableView):
-    """ Table GeocacherRateList """
-    nickname = widgets.HrefWidget(
-        _('Nickname'),
-        refname='geocacher__nickname',
-        reverse='geocaching-su-geocacher-view',
-        reverse_column='geocacher__pid')
-    country = widgets.LabelWidget(_('Country'), refname='country')
-    region = widgets.LabelWidget(_('Region'), refname='region')
-    registered = widgets.LabelWidget(_('Registered'),
-                                     refname='geocacher__register_date')
-    created_count = widgets.LabelWidget(_('Created by'), refname='created_count')
-    found_count = widgets.LabelWidget(_('Found'), refname='found_count')
-    av_grade = widgets.LabelWidget(_('Average grade'), refname='av_grade')
-    av_his_cach_grade = widgets.LabelWidget(_('Av. grade of his caches'),
-                                            refname='av_his_cach_grade')
-
-    class Meta:
-        use_keyboard = True
-        global_profile = True
-        permanent = (
-            'nickname', 'country', 'region', 'registered',
-            'created_count', 'found_count', 'av_grade',
-            'av_his_cach_grade')
-        search = ('geocacher__nickname',)
-        sortable = ('created_count', 'found_count')
-        filter_form = RateFilter
-
-    def apply_filter(self, filter, qs):
-        """ apply_filter """
-        self._filter = {}
-        for key, value in filter.iteritems():
-            self._filter[key] = value
-
-        country = filter.get('country', '')
-        if country and country != "ALL":
-            qs.filter(geocacher__country_iso3=country)
-
-        subject = filter.get('subject', '')
-        if subject and subject != 'ALL':
-            if subject == '777':
-                qs.filter(
-                    geocacher__country_iso3=country,
-                    geocacher__admin_code__isnull=True)
-            else:
-                qs.filter(
-                    geocacher__country_iso3=country,
-                    geocacher__admin_code=subject)
-
-    def filtered(self):
-        """ filtered or not """
-        if '_filter' in self:
-            return self._filter is not None
-        return False
-
-    def render_av_grade(self, table, row_index, row, value):
-        """ render field av_grade """
-        value = value or 0
-        return f'{value:.1f}'
-
-    def render_av_his_cach_grade(self, table, row_index, row, value):
-        """ render field av_his_cach_grade """
-        value = value or 0
-        return f'{value:.1f}'
-
-    def render_registered(self, table, row_index, row, value):
-        """ render field registered """
-        return value.strftime("%Y") if value else ''
-
-    def render_country(self, table, row_index, row, value):
-        """ render field country """
-        return _(value) if value else ''
-
-    def render_region(self, table, row_index, row, value):
-        """ render field region """
-        return _(value) if value else ''
-
-
-class GeocacherRankListBase(table.TableView):
-    """ Table GeocacherRankListBase """
-    nickname = widgets.HrefWidget(
-        _('Nickname'),
-        refname='geocacher__nickname',
-        reverse='geocaching-su-geocacher-view',
-        reverse_column='geocacher__pid')
-    country = widgets.LabelWidget(_('Country'), refname='country')
-    region = widgets.LabelWidget(_('Region'), refname='region')
-    registered = widgets.LabelWidget(
-        _('Registered'), refname='geocacher__register_date')
-    created_count = None
-    found_count = None
-
-    class Meta:
-        use_keyboard = True
-        global_profile = True
-        permanent = (
-            'nickname', 'country', 'region', 'registered',
-            'created_count', 'found_count')
-        search = ('geocacher__nickname',)
-        sortable = ('created_count', 'found_count')
-        filter_form = RateFilter
-
-    def apply_filter(self, filter, qs):
-        """ apply filter """
-        self._filter = None
-
-        country = filter.get('country')
-        if country and country != 'ALL':
-            qs.filter(geocacher__country_iso3=country)
-            self._filter = filter
-
-        subject = filter.get('subject', '')
-        if subject and subject != 'ALL':
-            if subject == '777':
-                qs.filter(
-                    geocacher__country_iso3=country,
-                    geocacher__admin_code__isnull=True)
-            else:
-                qs.filter(
-                    geocacher__country_iso3=country,
-                    geocacher__admin_code=subject)
-            self._filter = filter
-
-    def filtered(self):
-        """ filtered or not """
-        if '_filter' in self:
-            return self._filter is not None
-        return False
-
-    def render_registered(self, table, row_index, row, value):
-        """ render field registered """
-        return value.strftime("%Y") if value else ''
-
-    def render_country(self, table, row_index, row, value):
-        """ render field country """
-        return _(value) if value else ''
-
-    def render_region(self, table, row_index, row, value):
-        """ render field region """
-        return _(value) if value else ''
-
-
-class GeocacherVirtRankList(GeocacherRankListBase):
-    """ Table GeocacherVirtRankList """
-    created_count = widgets.LabelWidget(
-        _('Created by'), refname='vi_created_count')
-    found_count = widgets.LabelWidget(_('Found'), refname='vi_found_count')
-
-
-class GeocacherTradRankList(GeocacherRankListBase):
-    """ Table  GeocacherTradRankList """
-    created_count = widgets.LabelWidget(
-        _('Created by'), refname='tr_created_count')
-    found_count = widgets.LabelWidget(_('Found'), refname='tr_found_count')
-
-
-class GeocacherCurrYearRateList(GeocacherRankListBase):
-    """ Table GeocacherCurrYearRankList """
-    created_count = widgets.LabelWidget(
-        _('Created by'), refname='curr_created_count')
-    found_count = widgets.LabelWidget(_('Found'), refname='curr_found_count')
-
-
-class GeocacherCurrYearVirtRankList(GeocacherRankListBase):
-    """ Table GeocacherCurrYearVirtRankList """
-    created_count = widgets.LabelWidget(
-        _('Created by'), refname='vi_curr_created_count')
-    found_count = widgets.LabelWidget(_('Found'), refname='vi_curr_found_count')
-
-
-class GeocacherCurrYearTradRankList(GeocacherRankListBase):
-    """ Table GeocacherCurrYearTradRankList """
-    created_count = widgets.LabelWidget(
-        _('Created by'), refname='tr_curr_created_count')
-    found_count = widgets.LabelWidget(_('Found'), refname='tr_curr_found_count')
-
-
-class GeocacherLastYearRateList(GeocacherRankListBase):
-    """ Table GeocacherLastYearRankList """
-    created_count = widgets.LabelWidget(
-        _('Created by'), refname='last_created_count')
-    found_count = widgets.LabelWidget(_('Found'), refname='last_found_count')
-
-
-class GeocacherLastYearVirtRankList(GeocacherRankListBase):
-    """ Table GeocacherLastYearVirtRankList """
-    created_count = widgets.LabelWidget(
-        _('Created by'), refname='vi_last_created_count')
-    found_count = widgets.LabelWidget(_('Found'), refname='vi_last_found_count')
-
-
-class GeocacherLastYearTradRankList(GeocacherRankListBase):
-    """ Table GeocacherLastYearTradRankList """
-    created_count = widgets.LabelWidget(
-        _('Created by'), refname='tr_last_created_count')
-    found_count = widgets.LabelWidget(
-        _('Found'), refname='tr_last_found_count')
-
-
-class GeocacherSearchRankListBase(table.TableView):
-    """ Table GeocacherSearchRankListBase """
-    nickname = widgets.HrefWidget(
-        _('Nickname'),
-        refname='geocacher__nickname',
-        reverse='geocaching-su-geocacher-view',
-        reverse_column='geocacher__pid')
-    country = widgets.LabelWidget(_('Country'), refname='country')
-    region = widgets.LabelWidget(_('Region'), refname='region')
-    points = widgets.LabelWidget(_('Points'), refname='points')
-
-    class Meta:
-        use_keyboard = True
-        global_profile = True
-        permanent = ('nickname', 'country', 'region', 'points')
-        search = ('geocacher__nickname',)
-        filter_form = RateFilter
-
-    def apply_filter(self, filter, qs):
-        """ apply_filter """
-        self._filter = None
-
-        country = filter.get('country')
-        if country and country != 'ALL':
-            qs.filter(geocacher__country_iso3=country)
-            self._filter = filter
-
-        subject = filter.get('subject', '')
-        if subject and subject != 'ALL':
-            if subject == '777':
-                qs.filter(
-                    geocacher__country_iso3=country,
-                    geocacher__admin_code__isnull=True)
-            else:
-                qs.filter(
-                    geocacher__country_iso3=country,
-                    geocacher__admin_code=subject)
-            self._filter = filter
-
-    def filtered(self):
-        """ filtered or not """
-        if '_filter' in self:
-            return self._filter is not None
-        return False
-
-    def render_country(self, table, row_index, row, value):
-        """ render field country """
-        return _(value) if value else ''
-
-    def render_region(self, table, row_index, row, value):
-        """ render field region """
-        return _(value) if value else ''
-
-
-class GeocacherSearchRankListYear(table.TableView):
-    """ Table GeocacherSearchRankListYear """
-    nickname = widgets.HrefWidget(
-        _('Nickname'),
-        refname='geocacher__nickname',
-        reverse='geocaching-su-geocacher-view',
-        reverse_column='geocacher__pid')
-    country = widgets.LabelWidget(_('Country'), refname='country')
-    region = widgets.LabelWidget(_('Region'), refname='region')
-    points = widgets.LabelWidget(_('Points'), refname='year_points')
-
-    class Meta:
-        use_keyboard = True
-        global_profile = True
-        permanent = ('nickname', 'country', 'region', 'points')
-        search = ('geocacher__nickname',)
-        filter_form = RateFilter
-
-    def apply_filter(self, filter, qs):
-        """ apply filter """
-        self._filter = None
-
-        country = filter.get('country')
-        if country and country != 'ALL':
-            qs.filter(geocacher__country_iso3=country)
-            self._filter = filter
-
-        subject = filter.get('subject', '')
-        if subject and subject != 'ALL':
-            if subject == '777':
-                qs.filter(
-                    geocacher__country_iso3=country,
-                    geocacher__admin_code__isnull=True)
-            else:
-                qs.filter(
-                    geocacher__country_iso3=country,
-                    geocacher__admin_code=subject)
-            self._filter = filter
-
-    def filtered(self):
-        """ filtered or not """
-        if '_filter' in self:
-            return self._filter is not None
-        return False
-
-    def render_country(self, table, row_index, row, value):
-        """ render field country """
-        return _(value) if value else ''
-
-    def render_region(self, table, row_index, row, value):
-        """ render field region """
-        return _(value) if value else ''
-
-
-def get_base_count(request):
-    """ get base count """
-    page = int(request.GET.get('page') or 0)
-    if page:
-        return (page - 1) * settings.ROW_PER_PAGE
-    return 0
 
 
 class CacheTable(tables.Table):
@@ -797,37 +192,6 @@ def cach_rate_by_index(request):
         request,
         'Geocaching_su/dt2-cache_rank_by_index.html',
         {'table': the_table, 'filter': filtr})
-
-
-@it_isnt_updating
-def activity_table(request, qset, table_class, title, table_slug, additional_meta=True):
-    """ get list of geocachers with activity data """
-    source = datasource.QSDataSource(qset)
-
-    the_table = table_class(table_slug)
-    if additional_meta:
-        the_table.use_keyboard = True
-        the_table.global_profile = True
-        the_table.permanent = (
-            'nickname', 'country', 'region', 'registered',
-            'created_count', 'found_count')
-        the_table.search = ('geocacher__nickname',)
-        the_table.sortable = ('created_count', 'found_count')
-        the_table.filter_form = RateFilter
-
-    cnt = get_controller(the_table, source, request, settings.ROW_PER_PAGE)
-
-    result = cnt.process_request()
-    if result:
-        return result
-
-    return render(
-        request,
-        'Geocaching_su/geocacher_list.html',
-        {'table': cnt,
-         'title': title,
-         'curr_year': datetime.now().year,
-         'last_year': datetime.now().year - 1})
 
 
 class GeocacherStatFilter(django_filters.FilterSet):
@@ -1246,6 +610,7 @@ def find_item_by_year(items, year):
     for item in items:
         if item.get('year') == year:
             return item
+    return None
 
 
 @it_isnt_updating
@@ -1434,7 +799,7 @@ def geocaching_su_cach_stat_pie(request):
 
 @it_isnt_updating
 @geocacher_su
-def geocaching_su_personal_found_cache_pie(request, geocacher_uid):
+def geocaching_su_personal_found_cache_pie(request):
     """ pie chart for found caches """
     chart = get_personal_caches_bar(
         request, RAWSQL['geocacher_found_caches_by_type'])
@@ -1444,7 +809,7 @@ def geocaching_su_personal_found_cache_pie(request, geocacher_uid):
 
 @it_isnt_updating
 @geocacher_su
-def geocaching_su_personal_created_cache_pie(request, geocacher_uid):
+def geocaching_su_personal_created_cache_pie(request):
     """ pie chart for created cache """
     chart = get_personal_caches_bar(
         request, RAWSQL['geocacher_created_caches_by_type'])
@@ -1668,7 +1033,7 @@ def geocaching_su_geocacher_activity_chart(request):
 
 @it_isnt_updating
 @cache_page(60 * 60 * 8)
-def geocaching_su_geocacher_activity_creating_chart(request):
+def geocaching_su_geocacher_creating_chart(request):
     """ chart for activity of geocachers, creating """
     data_table = activity_creating_per_month(last_years=6)
 
@@ -2541,6 +1906,7 @@ def get_iso_by_iso3(iso3):
             iso3=iso3)
         if country:
             return country.iso
+    return None
 
 
 def get_nickname(request):
@@ -2793,33 +2159,6 @@ def get_personal_caches_bar(request, sql):
     return chart
 
 
-def cach_rate(request, order_by, table_class, template):
-    """ Caches statistics """
-    qs = CachStat.objects.all().order_by(order_by)
-    source = datasource.QSDataSource(qs)
-
-    rate_table = table_class('cach_search')
-    the_controller = GPSFunTableController(
-        rate_table,
-        source,
-        request,
-        settings.ROW_PER_PAGE)
-    the_controller.kind = 'cache_rate'
-    the_controller.allow_manage_profiles = False
-
-    result = the_controller.process_request()
-
-    if result:
-        return result
-
-    return render(
-        request,
-        template,
-        {
-            'table': the_controller,
-        })
-
-
 def geocaching_su_profile(request, nickname):
     """ profile of geocachers """
     geocacher = get_object_or_none(Geocacher, nickname=nickname)
@@ -2828,15 +2167,6 @@ def geocaching_su_profile(request, nickname):
     else:
         url = 'https://geocaching.su/?pn=108'
     return HttpResponseRedirect(url)
-
-
-def get_controller(the_table, source, request, rows_per_page):
-    """ get table controller """
-    the_controller = GPSFunTableController(the_table, source, request, rows_per_page)
-    the_controller.kind = 'geocacher_rate'
-    the_controller.allow_manage_profiles = False
-
-    return the_controller
 
 
 def get_geocacher_year_statistics(sql, year, geocacher):
