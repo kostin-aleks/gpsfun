@@ -3,32 +3,34 @@ forms related to app user
 """
 
 from django import forms
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
-from gpsfun.main.newforms import TemplatedForm
 from gpsfun.main.GeoName.models import populate_country_subject_city
 
 
-class CityForm(TemplatedForm):
+class CityForm(forms.Form):
     """ Form City """
     country = forms.ChoiceField(
         required=False,
         label=_('Country'),
-        widget=forms.Select(attrs={'id': 'id_select_country',
-                                   'onchange': 'CityWidget.reload_subjects(this);'
-                                   }))
+        widget=forms.Select(
+            attrs={
+                'id': 'id_select_country',
+                'onchange': 'CityWidget.reload_subjects(this);'}))
     subject = forms.ChoiceField(
         required=False,
         label=_('Admin Subject'),
-        widget=forms.Select(attrs={'id': 'id_select_subject',
-                                   'onchange': 'CityWidget.reload_cities(this);'
-                                   }))
+        widget=forms.Select(
+            attrs={
+                'id': 'id_select_subject',
+                'onchange': 'CityWidget.reload_cities(this);'}))
     city = forms.ChoiceField(
         required=False,
         label=_('City'),
-        widget=forms.Select(attrs={'id': 'id_select_city',
-                                   'onchange': 'CityWidget.chosen_city(this);'
-                                   }))
+        widget=forms.Select(
+            attrs={
+                'id': 'id_select_city',
+                'onchange': 'CityWidget.chosen_city(this);'}))
 
     def __init__(self, *kargs, **kwargs):
         self.user_city = None

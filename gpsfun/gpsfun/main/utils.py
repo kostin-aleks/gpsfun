@@ -4,7 +4,7 @@ utils for main
 
 import re
 from datetime import datetime
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from gpsfun.main.GeoMap.models import Geothing, Location
 
 

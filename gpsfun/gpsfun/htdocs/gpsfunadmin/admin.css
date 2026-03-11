@@ -1,0 +1,336 @@
+body
+{
+  background: #272727 url(/img/YP4_hp/yp_home_bg_01.gif) repeat-x 0 0;
+}
+
+a:visited {
+            color: #37e468;
+            }
+
+.info
+{
+  font-size: 80%;
+  font-style: italic;
+}
+
+.question
+{
+  font-style: italic;
+  font-size: 110%;
+}
+
+
+.errorlist
+{
+  color: red;
+  margin: -5px 0px 0px 0px;
+  text-align: left;
+  font-style: italic;
+  list-style-type: none;
+}
+
+
+
+#ypcontent form, form
+{
+  /* background: #dcdad5; */
+  /* border: 2px solid #04302e; */
+  /* margin-left: 20px; */
+  /* margin-right: 20px; */
+  /* padding-left: 20px; */
+  /* padding: 10px 10px 10px 10px; */
+}
+
+#ypcontent form td {
+          font-family: arial;
+          font-size: 80%;
+          font-style: italic;
+ }
+
+
+
+
+
+#ypcontent #content {
+           font-family: arial, helvetica;
+           border: 1px solid #808a8b;
+           color: white;
+           margin-left: 20px;
+           margin-right: 20px;
+           padding-left: 20px;
+           padding: 10px 10px 10px 10px;
+           }
+
+
+
+#ypcontent #content table
+{
+  /* background: #ccc; */
+  text-align: center;
+  color: white;
+  margin-bottom: 10px;
+  margin-top: 5px;
+  }
+
+#ypcontent #content .student table {
+                          width: 100%;
+}
+
+#ypcontent #content .teacher table {
+                          width: 100%;
+}
+
+#ypcontent #content table th, div.breadcrumbs  {
+                    font-style: italic;
+                    background: url(/gpsfunadmin/tablebg.gif) center center repeat-x;
+ }
+
+#ypcontent #content table     { border-collapse: collapse;
+                     font-size: 90%;
+                     }
+#ypcontent  #content table th, #content table  td {  */
+                         padding: 2px 2px 2px 2px;
+ }
+
+#ypcontent #content table td {
+  border: 1px solid #413a3d;
+}
+
+#ypcontent #value-input  {
+               display: inline;
+ }
+
+#ypcontent #addfilterform #add-filter-submit {
+                                    display: none;
+}
+
+
+#ypcontent form th
+{
+  text-align: right;
+  /* font-weight: normal; */
+  font-family: arial;
+  font-size: 80%;
+  padding: 5px 5px 5px 5px;
+  vertical-align: top;
+  /* color: #1e3c53; */
+  padding: 5px 5px 5px 5px;
+ }
+
+#ypcontent  .buttons {
+                text-align: right;
+ }
+
+#ypcontent .left_th {
+          text-align: left;
+ }
+
+#ypcontent form input , form input, textarea
+{
+  background: #ddd;
+  color: #000;
+ }
+
+
+#ypcontent form input:focus, form input:focus {
+  background: yellow;
+ }
+
+#ypcontent .warning
+{
+  font-family: times;
+  font-style: italic;
+  color: #e00;
+  font-weight: bold;
+  font-size: 90%;
+
+}
+
+#ypcontent form input[type=submit]
+{
+  text-align: right;
+  font-weight: bold;
+  }
+
+#ypcontent form input[type=submit]:active
+{
+  /* background: #ffffff; */
+  color: #04302e;
+  }
+
+#ypcontent h1,h2,h3,h4
+{
+  font-family: arial, helvetica;
+  color: #36acc3;
+  text-align: center;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+#ypcontent h3 {
+text-align: left;
+ }
+.invisible { display: none; }
+
+
+#ypcontent .pagination, #content-main .paginator
+{
+  text-align: right;
+  font-family: arial;
+  margin-right: 10px;
+  padding-bottom: 5px;
+  font-size: 80%;
+}
+
+#ypcontent .pagination .next img
+{
+  border: 0px solid green;
+}
+
+#ypcontent .pagination .next, #ypcontent .pagination .prev, #ypcontent .pagination .page, .submit-row input , #content-main .paginator a
+{
+  padding-left: 12px;
+  padding-right: 12px;
+  border: 2px solid #2d2d2d;
+  color: white;
+  /* background: #272727 url(/img/YP4_hp/yp_home_bg_01.gif) repeat-x 0 0; */
+
+}
+
+#ypcontent .pagination .next:hover, #ypcontent .pagination .prev:hover, #ypcontent .pagination .current-page, #ypcontent .pagination .page:hover,
+.paginator .this-page, .paginator a:hover
+{
+  color: black;
+  background: url(/gpsfunadmin/menubgover.gif) center center repeat-x;
+  padding-left: 12px;
+  padding-right: 12px;
+  border: 2px solid #2d2d2d;
+  font-weight: bold;
+  font-style: arial;
+}
+
+#ypcontent .pagination a {
+                color: white;
+                text-decoration: none;
+ }
+
+
+#ypcontent .pagination .controls
+{
+  float: left;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: yellow;
+}
+
+#ypcontent .pagination .controls .search, #ypcontent .pagination  .preferences
+{
+  margin-right: 5px;
+}
+
+#ypcontent .pagination .controls a, #container .object-tools a {
+                          padding: 2px 3px 2px 3px;
+                          border: 1px solid #413a3d;
+ }
+#ypcontent .pagination .controls a:hover , #container .object-tools a:hover
+{
+  color: black;
+  background: url(/gpsfunadmin/menubgover.gif) center center repeat-x;
+}
+
+#ypcontent #add-new-filter select, #ypcontent #add-new-filter input {
+                                                display: inline;
+                                                float: left;
+ }
+
+#ypcontent #add-new-filter  {
+                   min-height: 30px;
+}
+
+.invisible { display: none; }
+
+#ypcontent #search-form .filter-rule .condition
+{
+  color: green;
+  font-style: italic;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+#ypcontent #search-form #addfilterform #start-search-submit {
+                                            display: none;
+ }
+
+#ypcontent #search-form .filter-rule a, #ypcontent #search-form .filter-rule a:visited {
+                                                                   color: #00f;
+                                                                   margin-left: 10px;
+                                                                   font-size: 80%;
+                              }
+
+
+
+#ypcontent #content table .actions
+{
+  color:
+  border: 1px solid red;
+  list-style-type: none;
+  margin: 5 5 5 5 ;
+  padding: 0 0 0 0;
+}
+
+
+#ypcontent #content table .actions a {
+                            font-family: arial;
+                            font-size: 80%;
+                            font-weight: bold;
+                            color: white;
+                            padding: 2px 3px 2px 3px;
+                            border: 1px solid #413a3d;
+                            text-decoration: none;
+ }
+
+#ypcontent #content table .actions a:hover
+{
+  color: black;
+  background: url(/gpsfunadmin/menubgover.gif) center center repeat-x;
+}
+
+table td, table th
+{
+  padding: 10px;
+ }
+
+
+#ypcontent table th
+{
+  text-align: right;
+  padding-top: 0px;
+}
+
+#ypcontent table th label
+{
+  position: relative;
+  top: 10px;
+  left: 10px;
+}
+
+#ypcontent table tr
+{
+
+ }
+
+#ypcontent #content form table
+{
+ }
+
+#ypcontent #content form table td
+{
+  border: 0px solid red;
+  text-align: left;
+ }
+
+#ypcontent #content form th
+{
+  background-image: none;
+ }
+

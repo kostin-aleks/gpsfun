@@ -11,8 +11,8 @@ class AdministratorPreferences(models.Model):
     """
     Administrator Preferences
     """
-    user = models.ForeignKey(
-        get_user_model(), unique=True, null=True, blank=True, on_delete=models.CASCADE)
+    user = models.OneToOneField(
+        get_user_model(), on_delete=models.CASCADE)
     skin = models.FilePathField(
         path=settings.SITE_ROOT + 'htdocs/gpsfun-admin/', match=r'skin.*\.css')
     rows_per_page = models.IntegerField(default=15)

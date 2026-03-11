@@ -8,7 +8,7 @@ import re
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.template.defaultfilters import slugify
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.http import HttpResponse
 
 from gpsfun.main.db_utils import get_object_or_none
