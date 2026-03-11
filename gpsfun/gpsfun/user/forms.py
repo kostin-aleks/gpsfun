@@ -3,7 +3,7 @@ forms related to app user
 """
 
 from django import forms
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from gpsfun.main.GeoName.models import populate_country_subject_city
 

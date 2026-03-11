@@ -12,6 +12,7 @@ lxml
 #twill
 #python-memcached
 pygooglechart
+python-dotenv==1.2.2
 #ez_setup
 django-google-charts
 django-registration

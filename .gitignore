@@ -1,5 +1,7 @@
 .venv/*
 venv/*
+.env
+
 *.pyc
 # .gitignore
 gpsfun/gpsfun/data/*

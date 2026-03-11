@@ -4,7 +4,7 @@ models for main.User
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.db.models import signals
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from gpsfun.main.signals import create_custom_user
 from gpsfun.main.GeoName.models import GeoCity

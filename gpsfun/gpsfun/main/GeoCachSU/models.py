@@ -4,7 +4,7 @@ Models GeoCachSU
 from datetime import datetime
 from django.db import models
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from gpsfun.main.db_utils import get_object_or_none
 from gpsfun.main.GeoName.models import GeoCountry, GeoCountryAdminSubject, \
     country_iso_by_iso3

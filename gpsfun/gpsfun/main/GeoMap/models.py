@@ -4,7 +4,7 @@ GeoMap models
 import random
 from django.db import models
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.db.models import Max
 
 GEOCACHING_CACHE_TYPES = {

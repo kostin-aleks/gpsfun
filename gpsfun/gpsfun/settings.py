@@ -3,6 +3,10 @@ Django settings for te project.
 """
 
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
@@ -64,8 +68,7 @@ MIDDLEWARE = (
     # 'gpsfun.main.views.MaintenanceMiddleware',
 )
 
-SECRET_KEY = 'AeW9aisaup8ahGheTheix6Xexe3Vei3CAenai0oilaTh9juirech4OosZou2ahSi'
-CSSVERSION = 4
+SECRET_KEY = os.environ['SECRET_KEY']
 
 ROOT_URLCONF = 'gpsfun.urls'
 

@@ -3,7 +3,7 @@
 import math
 
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from gpsfun.utils import get_image_path
 

@@ -4,7 +4,7 @@ views related to application user
 
 from django.contrib import messages
 from django.shortcuts import render
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from gpsfun.main.misc import atoi
 from gpsfun.main.GeoName.models import get_city_by_geoname
