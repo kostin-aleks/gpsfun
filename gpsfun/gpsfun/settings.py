@@ -109,22 +109,38 @@ INSTALLED_APPS = (
     'gpsfun.main.GeoMap',
     'gpsfun.main.GeoKrety',
     'gpsfun.main.User',
-    'gpsfun.main.Carpathians',
+    # 'gpsfun.main.Carpathians',
     'gpsfun.gpsfun_admin',
     'gpsfun.main',
     'gpsfun.geocaching_su_stat',
     'gpsfun.geokret',
-    'gpsfun.geoname',
+    # 'gpsfun.geoname',
     'gpsfun.map',
     'gpsfun.user',
-    'gpsfun.carpathians',
     'django_registration',
     'profiles',
     'django_tables2',
     'django_filters',
     'crispy_forms',
 )
+os.environ['SECRET_KEY']
+DATABASE_ENGINE = 'mysql'  # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+DATABASE_NAME = os.environ['DATABASE_NAME']
+DATABASE_USER = os.environ['DATABASE_USER']
+DATABASE_PASSWORD = os.environ['DATABASE_PASSWORD']
+DATABASE_HOST = os.environ['DATABASE_HOST']
+DATABASE_PORT = os.environ['DATABASE_PORT']
 
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": DATABASE_NAME,
+        "USER": DATABASE_USER,
+        "PASSWORD": DATABASE_PASSWORD,
+        "HOST": DATABASE_HOST,
+        "PORT": DATABASE_PORT,
+    }
+}
 
 DATE_FORMAT = "d.m.Y"
 TIME_FORMAT = "H:i"
@@ -140,12 +156,12 @@ CUSTOM_USER_MODEL = 'User.GPSFunUser'
 ACCOUNT_ACTIVATION_DAYS = 2
 
 EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'gpsfun.info@gmail.com'
-EMAIL_HOST_PASSWORD = 'utjrtibyuUTJRTIBYU'
+EMAIL_HOST = os.environ['EMAIL_HOST']
+EMAIL_PORT = int(os.environ['EMAIL_PORT'])
+EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
+EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
 
-DEFAULT_FROM_EMAIL = 'gpsfun.info@gmail.com'
+DEFAULT_FROM_EMAIL = os.environ['DEFAULT_FROM_EMAIL']
 
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/accounts/login/'
@@ -163,29 +179,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 ROW_PER_PAGE = 100
 
-TWITTER_CONSUMER_KEY = ''
-TWITTER_CONSUMER_SECRET = ''
-FACEBOOK_APP_ID = ''
-FACEBOOK_API_SECRET = ''
-LINKEDIN_CONSUMER_KEY = ''
-LINKEDIN_CONSUMER_SECRET = ''
-ORKUT_CONSUMER_KEY = ''
-ORKUT_CONSUMER_SECRET = ''
-GOOGLE_CONSUMER_KEY = ''
-GOOGLE_CONSUMER_SECRET = ''
-GOOGLE_OAUTH2_CLIENT_ID = ''
-GOOGLE_OAUTH2_CLIENT_SECRET = ''
-FOURSQUARE_CONSUMER_KEY = ''
-FOURSQUARE_CONSUMER_SECRET = ''
-VK_APP_ID = ''
-VK_API_SECRET = ''
-LIVE_CLIENT_ID = ''
-LIVE_CLIENT_SECRET = ''
-SKYROCK_CONSUMER_KEY = ''
-SKYROCK_CONSUMER_SECRET = ''
-YAHOO_CONSUMER_KEY = ''
-YAHOO_CONSUMER_SECRET = ''
-
 LOCALE_PATHS = (SITE_ROOT + 'gpsfun/locale/',)
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
@@ -205,13 +198,13 @@ CUSTOM_USER_MODEL = 'User.GPSFunUser'
 
 ACCOUNT_ACTIVATION_DAYS = 2
 
-EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'gpsfun.info@gmail.com'
-EMAIL_HOST_PASSWORD = 'utjrtibyuUTJRTIBYU'
-
-DEFAULT_FROM_EMAIL = 'gpsfun.info@gmail.com'
+# EMAIL_USE_TLS = True
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
+# EMAIL_HOST_USER = 'gpsfun.info@gmail.com'
+# EMAIL_HOST_PASSWORD = 'utjrtibyuUTJRTIBYU'
+#
+# DEFAULT_FROM_EMAIL = 'gpsfun.info@gmail.com'
 
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/accounts/login/'
@@ -229,35 +222,12 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 
 ROW_PER_PAGE = 100
 
-TWITTER_CONSUMER_KEY = ''
-TWITTER_CONSUMER_SECRET = ''
-FACEBOOK_APP_ID = ''
-FACEBOOK_API_SECRET = ''
-LINKEDIN_CONSUMER_KEY = ''
-LINKEDIN_CONSUMER_SECRET = ''
-ORKUT_CONSUMER_KEY = ''
-ORKUT_CONSUMER_SECRET = ''
-GOOGLE_CONSUMER_KEY = ''
-GOOGLE_CONSUMER_SECRET = ''
-GOOGLE_OAUTH2_CLIENT_ID = ''
-GOOGLE_OAUTH2_CLIENT_SECRET = ''
-FOURSQUARE_CONSUMER_KEY = ''
-FOURSQUARE_CONSUMER_SECRET = ''
-VK_APP_ID = ''
-VK_API_SECRET = ''
-LIVE_CLIENT_ID = ''
-LIVE_CLIENT_SECRET = ''
-SKYROCK_CONSUMER_KEY = ''
-SKYROCK_CONSUMER_SECRET = ''
-YAHOO_CONSUMER_KEY = ''
-YAHOO_CONSUMER_SECRET = ''
-
 LOCALE_PATHS = (SITE_ROOT + 'gpsfun/locale/',)
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 
 PYBB_TEMPLATE = 'base_bootstrap.html'
-try:
-    from gpsfun.custom_settings import *
-except ImportError:
-    pass
+# try:
+#     from gpsfun.custom_settings import *
+# except ImportError:
+#     pass

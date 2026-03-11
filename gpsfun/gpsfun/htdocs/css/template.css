@@ -1,0 +1,275 @@
+/* CSS Document */
+/*__________________________________________________________________TAGS_____________________________________*/
+body, button, td, th, div, p {font:normal 12px Arial; color:#6f6f6f}
+input 					{color:#606d78}
+body 					{background:#fff url(../img/tail.gif) repeat-x 0 0; padding:25px 0px 0px 0px;}
+
+td 						{line-height:16px; color:#000;}
+
+a						{color:#000; text-decoration:none}
+a:visited 				{color:#215b00;}
+a:hover 				{color:#000; text-decoration:none}
+
+label					{color:#000;}
+p						{line-height:16px; padding:0px 0px 0px 0px;}
+
+/*__________________________________________________________________CONTENT_____________________________________*/
+
+.inputbox				{border:1px solid #46462f;}
+.article_indent, #component-contact	{padding:20px 0px 0px 0px;}
+.article_separator		{background:url(../img/article_separator.gif) repeat-x 0 50%; line-height:25px}
+
+.contentpaneopen td		{line-height:17px}
+.contentpaneopen p		{padding:0px 0px 0px 0px;}
+.contentpaneopen font	{color:#000}
+.contentpaneopen img	{margin:0px 15px 0px 0px;}
+.contentpaneopen ul		{padding:10px 0px 0px 0px;}
+.contentpaneopen li		{background:url(../img/li_bg2.gif) no-repeat 0 3px; padding:0px 0px 6px 12px; line-height:10px}
+.contentpaneopen li	a	{color:#5b8b1b !important; text-decoration:underline; display:block; padding:2px 0px 0px 0px; font-weight:bold}
+.contentpaneopen li	a:hover {text-decoration:none}
+
+/*______________________HEADING__________________*/
+
+.componentheading		{color:#b55c00; font-size:18px; font-weight:bold; padding:5px 0px 5px 0px; margin:0px 0px 10px 0px;}
+.contentheading			{color:#b55c00; font-size:14px; font-weight:bold; padding:6px 0px 0px 0px;}
+.buttonheading			{padding:10px 0px 0px 0px}
+
+/*______________________BUTTONS__________________*/
+
+.button, .validate		{color:#fff; font-size:12px; font-weight:normal; margin:0px 0px 0px 0px; padding:0px 0px 0px 0px; background:url(../img/button.gif); width:68px; height:20px; display:block; text-transform:none; text-align:center; border:none}
+
+/*______________________READ_MORE________________*/	
+
+a.readon				{color:#fff; font-size:12px; font-weight:normal; margin:0px 0px 0px 0px; padding:3px 0px 3px 15px; background:url(../img/readon.gif) no-repeat 0 0px; display:block; text-decoration:none; width:100px; float:right}
+a.readon:hover			{color:#fff; text-decoration:none}
+a.readon:visited 		{color:#fff;}
+.readmore				{padding:0px 0px 0px 0px; margin:5px 0px 0px 0px;}
+* html .readmore		{}
+
+/*______________________ITEMINFO__________________*/
+
+.iteminfo				{background:url(../img/iteminfo_gl.gif) repeat-x bottom; padding:0px 0px 6px 0px; margin:0px 0px 15px 0px;}
+.modifydate				{color:#5b8b1b; font-size:11px; padding:5px 0px 0px 0px;}
+.createdby				{color:#5b8b1b; font-weight:bold; font-size:11px; display:block; text-transform:none}
+.createdate				{color:#5b8b1b; font-size:12px; padding:0px 0px 4px 0px; margin:0px 0px 0px 0px; text-transform:none; border-bottom:2px solid #5b8b1b}
+.small					{color:#5b8b1b; font-weight:bold; font-size:11px; margin:5px 0px 3px 0px; text-transform:none }
+span.small				{background:url(../img/small.gif) no-repeat 0 0; padding:5px 0px 0px 0px; margin:0px 0px 0px 0px; text-transform:none}
+
+/*______________________BLOGMORE__________________*/
+
+.blog_more				{padding:10px 0px 10px 0px}
+.blog_more h2			{color:#5b8b1b; font-size:12px; background:none; padding:0px 0px 0px 0px;}
+.blog_more ul			{margin:10px 0px 0px 10px;}
+.blog_more a			{color:#5b8b1b;}
+.blog_more a:hover		{color:#5b8b1b; text-decoration:none;}			
+.blog_more strong		{color:#5b8b1b;}
+
+/*______________________PAGE_NAVIGATION___________*/
+
+.pagenav				{color:#000; font-size:11px; font-weight:normal}
+a.pagenav				{color:#5b8b1b; font-weight:bold}
+a.pagenav:hover			{color:#5b8b1b; text-decoration:none}
+.pagination_nav			{color:#000; background:url(../img/article_separator.gif) repeat-x 0 0; font-size:12px; padding:7px 0px 0px 0px;}
+
+.pagination				{margin-top:10px}
+.pagination	li			{float:left; padding:0px 5px 0px 5px;}	
+			
+/*______________________RESULT____________________*/
+.sectiontableentry0 td	{padding:5px 0px 5px 0px; border-bottom:1px solid #333;}
+.sectiontableentry1 td	{padding:5px 0px 5px 0px; border-bottom:1px solid #333; border-top:1px solid #000; background:#84ac49}
+.sectiontableentry2 td 	{padding:5px 0px 5px 0px;}
+
+.sectiontableentry0,
+.sectiontableentry1,
+.sectiontableentry2		{}
+
+.sectiontableentry1 a	{color:#fff}
+.sectiontableentry1 a:hover {color:#fff}
+.sp						{padding-right:4px !important}
+.sp2					{padding:0px 0px 0px 10px;}
+
+/*______________________POLL______________________*/
+
+.pollstableborder		{margin:10px 0px 0px 0px;}
+.poll					{}
+.poll thead td 			{font-size:11px; color:#6f6f6f; font-weight:bold !important; padding:10px 0px 0px 10px;}
+.pollstableborder td	{padding:2px 0px 2px 5px; vertical-align:top; text-align:left; font-size:12px}
+.pollstableborder label	{color:#294607; font-size:12px; padding:0px 0px 0px 5px; display:block}
+.article_separator		{display:block; height:5px; margin:5px 0px 10px 0px;}
+
+.display				{padding:0px 0px 10px 0px;}
+.display select			{border:1px solid #46462f; width:100px; height:16px}
+
+.sectiontableentry1 div, .sectiontableentry0 div {font-size:1px}
+/*________________________________________SEARCH____________________________________*/
+#search					{float:right; width:156px}
+.search_s7				{padding:20px 0px 0px 0px; }
+.inputbox_s7 			{width:155px; height:18px; border:1px solid #65883c; background:#acce84; margin:0px 0px 0px 0px; color:#294607; font-size:11px; padding:2px 0px 0px 5px; vertical-align:top; font-weight:bold}
+* html .inputbox_s7		{height:21px}
+.button_s7				{}
+
+/*_____________________________RESULT___________________________*/
+.search_result h3		{color:#1e3300; font-size:14px}
+.search_result p		{padding:10px 0px 0px 0px;}
+#search_searchword		{border:1px solid #999}
+legend					{color:#1e3300}
+
+.phrase 				{color:#000; margin:10px 10px 10px 0; padding:10px; width:60%; border:solid 1px #ccc; float:left;}
+.phrase .inputbox 		{background:#fff; color:#000; display:block; margin-top:10px; width:12em;}
+
+.phrase .inputbox option {background:#fff; border-bottom:solid 1px #333; padding:2px; }
+.phrase .inputbox option a:hover {color:#1e3300; background:#C00; border-color:#CFD0D6; }
+fieldset.word,fieldset.only { border:solid 1px #ccc;}
+
+.only 					{border:solid 0; margin:10px 0 0 10px; padding:5px 10px; line-height:1.3em;}
+.word 					{padding:10px 10px 10px 0; border:solid 0 !important;}
+.word input 			{background:#fff; color:#ff6614; font-weight:normal; margin:0 0 0 10px; padding:2px;}
+
+/*________________________________________BOXES________________________________________________________________*/
+
+.module					{margin:0px 0px 9px 0px; background:url(../img/box_bg.gif) no-repeat 0 0}
+.module div				{padding:0px 10px 0px 20px; width:100%}
+.module div div			{padding:0px 0px 0px 0px; }
+.module div div div		{background:none; width:160px}
+* html .module div div div {width:100%; }
+.module h3			{color:#00435c; font-size:14px; font-weight:bold; text-transform:none; padding:12px 0px 10px 0px; background:url(../img/box_h3.gif) no-repeat 0 0}
+.module .button			{margin:15px 0px 0px 0px; background:url(../img/button.gif); width:68px; height:20px; display:inline; color:#fff; font:bold 12px Arial}
+.module label			{color:#294607; font-size:12px; font-family:Arial}
+.module ul				{padding:0px 0px 15px 10px;}
+.module li				{padding:2px 0px 2px 0px; background:none }
+.module li a			{color:#052716; font-size:12px; font-weight:normal;  text-decoration:none; line-height:16px; padding:0px 0px 0px 14px; background:url(../img/bullet.gif) no-repeat 0px 8px; display:block}
+.module li a:hover		{color:#052716; text-decoration:underline}
+.module li a:visited	{color:#052716}
+
+
+.module_s3				{background:url(../img/nd_bg.gif) repeat-y 0 0}
+.module_s3 div			{background:url(../img/nd_top.gif) no-repeat 0 0; width:100%}
+.module_s3 div div		{padding:10px 10px 25px 23px; background:url(../img/nd_bot.gif) no-repeat 0 bottom}
+.module_s3 div div div	{padding:0px 0px 0px 0px; width:190px; color:#f9f0cf; background:none}
+.module_s3 h3			{color:#fff; font-size:12px; font-weight:bold; padding:10px 0px 10px 0px;}
+.module_s3 ul			{padding:4px 0px 0px 0px;}
+.module_s3 li			{padding:0px 0px 2px 0px;}			
+.module_s3 li strong a	{font-size:12px; color:#fff !important}
+.module_s3 li span		{padding:0px 0px 0px 15px; display:block; color:#fff}
+.module_s3 a			{color:#364628; font-size:11px; text-decoration:none; background:url(../img/bullet2.gif) no-repeat 0 6px; padding:0px 0px 2px 15px; display:block}
+.module_s3 a:hover		{color:#364628; text-decoration:underline}
+
+.module_s4				{margin:0px 0px 9px 0px; background:url(../img/box_bg.gif) repeat-y 0 0}
+.module_s4 div			{background:url(../img/box_bot.gif) no-repeat 0 bottom; width:100%}
+.module_s4 div div		{padding:4px; background:url(../img/box_top.gif) no-repeat 0 0}
+.module_s4 div div div	{width:100%; background:none}
+.module_s4 h3			{color:#fff; font-size:16px; font-weight:bold; text-transform:none; padding:7px 0px 10px 15px; background:url(../img/box1_h3.gif) no-repeat 0 0}
+
+/*________________________________________MAINMENU_____________________________________*/
+.module_menu			{margin:0px 0px 15px 0px; }
+.module_menu div		{width:100%}
+.module_menu div div	{padding:4px;}
+.module_menu div div div{width:100%; padding:0px 0px 0px 0px; background:none}
+.module_menu h3			{color:#00435c; font-size:14px; font-weight:bold; text-transform:none; padding:0px 0px 7px 15px; }
+.module_menu ul			{padding:0px 0px 15px 16px;}
+.module_menu li			{padding:2px 0px 2px 0px; background:none }
+.module_menu li a		{color:#b55c00; font-size:12px; font-weight:bold;  text-decoration:none; line-height:14px; padding:0px 0px 2px 10px; background:url(../img/menu_bullet.gif) no-repeat 0px 4px; display:block}
+.module_menu li a em	{font-style:normal}
+.module_menu li a:hover	{color:#b55c00; text-decoration:underline}
+.module_menu li a:visited{color:#b55c00}
+
+/*________________________________________TOPMENU_____________________________________*/
+
+#topmenu 				{margin:0px 0px 0px 0px; background:url(../img/topmenu_bg.gif) repeat-x 0 0}
+#topmenu .tr			{background:url(../img/topmenu_tr.gif) no-repeat right 0; height:44px;}
+#topmenu .tl			{background:url(../img/topmenu_tl.gif) no-repeat 0 0;}
+ul.menu-nav 			{padding:0px 0px 0px 0px; width:100%}
+ul.menu-nav li			{display:block; float:left;}
+ul.menu-nav li a  		{color:#294607 !important; font-weight:bold; font-size:12px; text-decoration:none; display:block; text-transform:none; text-align:center; padding:0px 28px 0px 35px; height:44px; no-repeat 0 0; float:left; border-left:1px solid #fff;}
+* html ul.menu-nav li a	{height:44px}
+ul.menu-nav li a span	{display:block; padding:16px 0px 0px 0px;}
+ul.menu-nav li a span em {font-style:normal;}
+
+ul.menu-nav li a:hover  {color:#294607 !important; font-weight:bold; font-size:12px; text-decoration:underline; background:url(../img/topmenu_act.gif) no-repeat 50% bottom}
+ul.menu-nav li a:hover span {padding:16px 0px 10px 0px;}
+
+ul.menu-nav li.active a  {color:#294607 !important; font-weight:bold; font-size:12px; text-decoration:underline; background:url(../img/topmenu_act.gif) no-repeat 50% bottom}
+ul.menu-nav li.active a span	{display:block; padding:16px 0px 10px 0px;}
+
+a.menu-nav:visited		{color:#294607}
+
+/*________________________________________LOGINFORM_____________________________________*/
+
+.module_s2				{margin:0px 0px 9px 0px; background:url(../img/login_bg.gif) repeat-y 0 0}
+.module_s2 div			{background:url(../img/login_top.gif) no-repeat 0 0; width:100%}
+.module_s2 div div		{padding:4px; background:url(../img/login_bot.gif) no-repeat 0 bottom}
+.module_s2 div div div	{width:165px; background:none; height:224px}
+.module_s2 h3			{color:#00435c; font-size:14px; font-weight:bold; text-transform:none; padding:12px 0px 3px 15px; background:url(../img/box_h3.gif) no-repeat 0 0}
+.module_s2 label		{color:#6f6f6f; padding:0px 0px 0px 1px; display:block; vertical-align:middle; font-size:12px; text-transform:lowercase;}
+.module_s2 p, label.remember {color:#6f6f6f; padding:0px 0px 0px 0px; font-size:12px; font-weight:normal;}
+.module_s2 a			{color:#b55c00 !important; font-size:12px; text-decoration:underline; font-weight:bold}
+.module_s2 a:hover		{color:#b55c00; text-decoration:none}
+.module_s2 form			{text-align:left; padding:0px 0px 10px 6px;}
+.module_s2 form div		{width:65px; margin:auto;}
+* html .module_s2 form div	{width:65px; margin:0px 0px 0px 0px;}
+.module_s2 .inputbox	{width:140px !important; height:18px;	border:1px solid #525252; margin:2px 0px 2px 0px; padding:0px 0px 0px 3px; color:#818181; vertical-align:middle; background:#fff;}	/* inputbox */
+.module_s2 .button		{border:none; background:url(../img/button.gif) no-repeat 0 0; width:68px; color:#fff; font-size:11px; font-weight:bold !important; margin:10px 0px 5px 0px; text-align:center; padding:0px 0px 0px 0px; font-family:Tahoma} /* button */
+#mod_login_remember		{margin:0px 10px 0px 0px; vertical-align:middle; background:none; border:none; float:left; display:block; width:12px}		/*checkbox*/
+
+.required				{border:1px solid #46462f; margin:0px 0px 0px 0px;}
+input.requred			{border:none !important}
+
+
+.breadcrumbs			{display:block; border-bottom:1px solid #84ac49; color:#00435c; font-size:12px; padding:0px 0px 12px 0px;}
+/*___________________________________________________________INDEX.PHP_STYLES_________________________________*/
+
+.main 					{width:100%;}
+
+#header					{background:url(../img/header_bg.jpg) repeat-x 0 0; margin:0px 0px 3px 0px;}
+#header div				{color:#fff; font:normal 12px Arial; line-height:18px}
+#header dl				{background:url(../img/header_right.jpg) no-repeat right 0;}
+#header dd				{background:url(../img/header_left.jpg) no-repeat 0 0; height:205px}
+#header dd .space			{padding:34px 10px 10px 10px;}
+#header dd span			{display:block; width:302px; height:44px; background:url(../img/header_t.gif) no-repeat 0 0; margin:0px 0px 15px 0px;}
+#header dd .line		{background:url(../img/header_line.gif) repeat-x 0 0; line-height:6px}
+#header a				{display:block; float:right; background:url(../img/header_readmore.gif) no-repeat 0 0; width:99px; height:45px; text-decoration:none}
+#top 					{height:51px}
+.logo					{margin:0px 0px 0px 30px;}
+
+#content				{padding:0px 0px 20px 0px;}
+#content .space			{padding:0px 2px 0px 2px;}
+.box_indent				{padding:10px 10px 10px 25px;}
+
+#wrapper				{background:url(../img/content_bg.gif) repeat-x 0 0}
+#wrapper .bg1			{background:url(../img/content_tr.gif) no-repeat right 0}
+#wrapper .bg2			{background:url(../img/content_tl.gif) no-repeat 0 0; padding:17px 29px 20px 29px;}
+
+
+td.c2					{background:#dceaef url(../img/c_l.gif) repeat-y right 0}
+.c2						{width:183px}
+.c2 .space				{padding:30px 0px 0px 3px !important;}
+.c1						{width:221px}
+.c1	.space				{padding:21px 5px 0px 0px;}
+
+#footer					{padding:0px 0px 0px 0px; background:url(../img/footer_bg.gif) repeat-x 0 0}
+#footer dl				{}
+#footer dd				{width:100%;}
+#footer .space 			{height:59px; padding:0px 7px 0px 7px; text-align:left;}
+#footer .space div		{padding:16px 0px 0px 20px; color:#5b8b1b !important; font-weight:bold; font-size:11px}
+#footer a				{color:#5b8b1b; font-size:11px; text-decoration:underline; font-weight:bold}
+#footer a:hover			{text-decoration:none}
+
+.space2					{padding:0px 20px 15px 30px;}
+.c_t					{background:url(../img/c_t.gif) repeat-x 0 0 #fff}
+.c_l					{background:url(../img/c_l.gif) repeat-y 0 0}
+.c_r					{background:url(../img/c_r.gif) repeat-y right 0}
+.c_b					{background:url(../img/c_b.gif) repeat-x 0 bottom}
+.c_tl					{background:url(../img/c_tl.gif) no-repeat 0 0}
+.c_tr					{background:url(../img/c_tr.gif) no-repeat right 0}
+.c_bl					{background:url(../img/c_bl.gif) no-repeat 0 bottom}
+.c_br					{background:url(../img/c_br.gif) no-repeat right bottom; padding:4px;}
+
+.b1, .b2, .b3			{display:block; width:212px; height:76px; text-decoration:none; float:left}
+.b1						{background:url(../img/b1.jpg) no-repeat 0 0; margin:0px 2px 0px 0px; }
+.b2						{background:url(../img/b2.jpg) no-repeat 0 0; margin:0px 2px 0px 0px;}
+.b3						{background:url(../img/b3.jpg) no-repeat 0 0;}
+#banners				{overflow:hidden}
+.locales {
+    float: right;
+    padding: 0px 10px 0px 0px;
+}

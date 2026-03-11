@@ -39,11 +39,11 @@ urlpatterns = [
     path('geokrety/map/', include('gpsfun.geokret.urls')),
     path('geokrety/api/', include('gpsfun.geokret.urls')),
     path('user/', include('gpsfun.user.urls')),
-    path('geoname/', include('gpsfun.geoname.urls')),
+    # path('geoname/', include('gpsfun.geoname.urls')),
     path('gpsfun-admin/', include('gpsfun.gpsfun_admin.urls')),
     path('accounts/', include('django_registration.backends.activation.urls')),
 
-    path('carpathians/routes/', include('gpsfun.carpathians.urls')),
+    # path('carpathians/routes/', include('gpsfun.carpathians.urls')),
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) \
   + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

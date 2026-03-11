@@ -1,0 +1,657 @@
+CachesMap = {
+    infowindow: null,
+    alertwin: null,
+    map: null,
+    mc: null,
+    geocoder: null,
+    markers: [],
+    //confluence_markers: [],
+    imageTR: null,
+    imageVI: null,
+    imageMS: null,
+    imageMV: null,
+    shadow: null,
+    cache_info_url: null,
+    change_country_url: null,
+    region_caches_url: null,
+    get_confluence_url: null,
+    get_things_url: null,
+    show_cache_types_url: null,
+    MAX_COUNT: 500,
+    marker_style: null,
+    vectorSource: null,
+    vectorLayer: null,
+    popup: null,
+    markers: null,
+    //pruneCluster: null,
+
+    setInformationWindow: function (obj) {
+        $.ajax({
+            url: CachesMap.cache_info_url,
+            type: 'GET',
+            dataType: 'JSON',
+            data: { 'cache_pid': obj.pid,
+                    'cache_site': obj.site_code
+            },
+            success: function(doc) {
+                if (doc.status != "OK") { return;}
+                //obj.setPopupContent(doc.content);
+                if (obj.getPopup()) {
+                    obj.setPopupContent(doc.content);
+                } else {
+                    obj.bindPopup(doc.content);
+                }
+            }
+        })
+    },
+
+    init: function(center, zoom) {
+        var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+        osmAttrib = '&copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+        osm = L.tileLayer(osmUrl, {maxZoom: 18, attribution: osmAttrib});
+
+        var map = L.map('map').setView(center, zoom).addLayer(osm);
+
+        L.marker([50.04, 36.159])
+            .addTo(map)
+            .bindPopup('A pretty CSS3 popup.<br />Easily customizable.')
+            .openPopup();
+
+        //var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        //osmAttrib = '&copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        //osm = L.tileLayer(osmUrl, {maxZoom: 18, attribution: osmAttrib});
+
+        //var OpenTopoMap = L.tileLayer('http://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+        //    maxZoom: 17,
+        //    attribution: 'Map data: &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+        //});
+
+        //var Esri_WorldImagery = L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        //    attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+        //    minZoom: 15
+        //});
+
+        //var yandex = L.tileLayer(
+        //    'http://vec{s}.maps.yandex.net/tiles?l=map&v=4.55.2&z={z}&x={x}&y={y}&scale=2&lang=ru_RU', {
+        //    subdomains: ['01', '02', '03', '04'],
+        //    attribution: '<a http="yandex.ru" target="_blank">Яндекс</a>',
+        //    reuseTiles: true,
+        //    updateWhenIdle: false
+        //  }
+        //);
+
+        //var HERE_hybridDay = L.tileLayer(
+        //    'http://{s}.{base}.maps.cit.api.here.com/maptile/2.1/{type}/{mapID}/hybrid.day/{z}/{x}/{y}/{size}/{format}?app_id={app_id}&app_code={app_code}&lg={language}', {
+        //    attribution: 'Map &copy; 1987-2014 <a href="http://developer.here.com">HERE</a>',
+        //    subdomains: '1234',
+        //    mapID: 'newest',
+        //    app_id: '053oEDBlB1koyGZIa8pj',
+        //    app_code: 'eTHqVLdXEek6IDFVJlUc2A',
+        //    base: 'aerial',
+        //    maxZoom: 20,
+        //    minZoom: 14,
+        //    type: 'maptile',
+        //    language: 'eng',
+        //    format: 'png8',
+        //    size: '256'
+        //});
+
+        //var map = L.map('map').setView(center, zoom).addLayer(osm);
+
+        var baseMaps = {
+            //"Esri_WorldImagery": Esri_WorldImagery,
+            //"OSM StreetMap": osm,
+            //"OpenTopoMap": OpenTopoMap,
+            //"Yandex": yandex,
+            //"HERE hybrid": HERE_hybridDay,
+            "OSM": osm
+
+        };
+
+        var overlayMaps = {};
+
+        //L.control.layers(baseMaps, overlayMaps).addTo(map);
+
+        L.control.scale(imperial=false).addTo(map);
+
+        CachesMap.markers = new Array();
+
+        map.on('moveend', CachesMap.loadThings);
+        map.on('zoomend', CachesMap.loadThings);
+
+        new L.control.mousePosition({
+            lngFormatter: function(lng) { return CachesMap.to_string(lng, ['E', 'W']);},
+            latFormatter: function(lat) { return CachesMap.to_string(lat, ['N', 'S']);},
+            separator: '&nbsp;'
+        }).addTo(map);
+
+        new L.Control.GeoSearch({
+            provider: new L.GeoSearch.Provider.OpenStreetMap()
+        }).addTo(map);
+
+        //CachesMap.pruneCluster = new PruneClusterForLeaflet();
+        //map.addLayer(CachesMap.pruneCluster);
+
+
+
+        CachesMap.map = map;
+
+        CachesMap.alertwin = L.popup({
+            closeOnClick: true,
+            })
+            .setLatLng(center)
+            .setContent('')
+
+
+        CachesMap.createIcons();
+
+        CachesMap.loadThings();
+    },
+
+    show_spinner: function() {
+        $('#map_spinner').show();
+    },
+
+    hide_spinner: function() {
+        $('#map_spinner').hide();
+    },
+
+    createIcons: function() {
+        CachesMap.default_marker = L.icon({
+            iconUrl: '/static/img/green_bulb.png',
+            shadowUrl: '/static/img/shadow-bulb.png',
+
+            iconSize:     [21.0, 34.0], // size of the icon
+            shadowSize:   [39.0, 34.0], // size of the shadow
+            iconAnchor:   [0, 0], // point of the icon which will correspond to marker's location
+            shadowAnchor: [0, 0],  // the same for the shadow
+            popupAnchor:  [10, 0] // point from which the popup should open relative to the iconAnchor
+        });
+
+        CachesMap.imageTR = L.icon({
+            iconUrl: '/static/img/su_tr_bulb.png',
+            shadowUrl: '/static/img/shadow-su_tr.png',
+
+            iconSize:     [21.0, 34.0], // size of the icon
+            shadowSize:   [39.0, 34.0], // size of the shadow
+            iconAnchor:   [0, 0], // point of the icon which will correspond to marker's location
+            shadowAnchor: [0, 0],  // the same for the shadow
+            popupAnchor:  [10, 0] // point from which the popup should open relative to the iconAnchor
+        });
+
+        CachesMap.imageTR = L.icon({
+            iconUrl: '/static/img/su_tr_bulb.png',
+            shadowUrl: '/static/img/shadow-su_tr.png',
+
+            iconSize:     [21.0, 34.0], // size of the icon
+            shadowSize:   [39.0, 34.0], // size of the shadow
+            iconAnchor:   [0, 0], // point of the icon which will correspond to marker's location
+            shadowAnchor: [0, 0],  // the same for the shadow
+            popupAnchor:  [10, 0] // point from which the popup should open relative to the iconAnchor
+        });
+
+        CachesMap.imageVI = L.icon({
+            iconUrl: '/static/img/su_vi_bulb.png',
+            shadowUrl: '/static/img/shadow-su_vi.png',
+
+            iconSize:     [21.0, 34.0], // size of the icon
+            shadowSize:   [31.0, 20.0], // size of the shadow
+            iconAnchor:   [0, 0], // point of the icon which will correspond to marker's location
+            shadowAnchor: [0, 0],  // the same for the shadow
+            popupAnchor:  [10, 0] // point from which the popup should open relative to the iconAnchor
+        });
+
+        CachesMap.imageMS = L.icon({
+            iconUrl: '/static/img/su_ms_bulb.png',
+            shadowUrl: '/static/img/shadow-su_ms1.png',
+
+            iconSize:     [21.0, 34.0], // size of the icon
+            shadowSize:   [31.0, 20.0], // size of the shadow
+            iconAnchor:   [0, 0], // point of the icon which will correspond to marker's location
+            shadowAnchor: [0, 0],  // the same for the shadow
+            popupAnchor:  [10, 0] // point from which the popup should open relative to the iconAnchor
+        });
+
+        CachesMap.imageMV = L.icon({
+            iconUrl: '/static/img/su_mv_bulb.png',
+            shadowUrl: '/static/img/shadow-su_mv.png',
+
+            iconSize:     [21.0, 34.0], // size of the icon
+            shadowSize:   [31.0, 20.0], // size of the shadow
+            iconAnchor:   [0, 0], // point of the icon which will correspond to marker's location
+            shadowAnchor: [0, 0],  // the same for the shadow
+            popupAnchor:  [10, 0] // point from which the popup should open relative to the iconAnchor
+        });
+
+        CachesMap.imageMV = L.icon({
+            iconUrl: '/static/img/su_mv_bulb.png',
+            shadowUrl: '/static/img/shadow-su_mv.png',
+
+            iconSize:     [21.0, 34.0], // size of the icon
+            shadowSize:   [31.0, 20.0], // size of the shadow
+            iconAnchor:   [0, 0], // point of the icon which will correspond to marker's location
+            shadowAnchor: [0, 0],  // the same for the shadow
+            popupAnchor:  [10, 0] // point from which the popup should open relative to the iconAnchor
+        });
+
+        CachesMap.imageH = L.icon({
+            iconUrl: '/static/img/tajnik24.png',
+            shadowUrl: '/static/img/shadow-tajnik24.png',
+
+            iconSize:     [26.0, 26.0], // size of the icon
+            shadowSize:   [40.0, 26.0], // size of the shadow
+            iconAnchor:   [0, 0], // point of the icon which will correspond to marker's location
+            shadowAnchor: [0, 0],  // the same for the shadow
+            popupAnchor:  [10, 0] // point from which the popup should open relative to the iconAnchor
+        });
+
+        CachesMap.imageP = L.icon({
+            iconUrl: '/static/img/dost32.png',
+            shadowUrl: '/static/img/shadow-dost32.png',
+
+            iconSize:     [26.0, 26.0], // size of the icon
+            shadowSize:   [40.0, 26.0], // size of the shadow
+            iconAnchor:   [0, 0], // point of the icon which will correspond to marker's location
+            shadowAnchor: [0, 0],  // the same for the shadow
+            popupAnchor:  [10, 0] // point from which the popup should open relative to the iconAnchor
+        });
+
+        CachesMap.imageQ = L.icon({
+            iconUrl: '/static/img/quest24.png',
+            shadowUrl: '/static/img/shadow-quest24.png',
+
+            iconSize:     [26.0, 26.0], // size of the icon
+            shadowSize:   [40.0, 26.0], // size of the shadow
+            iconAnchor:   [0, 0], // point of the icon which will correspond to marker's location
+            shadowAnchor: [0, 0],  // the same for the shadow
+            popupAnchor:  [10, 0] // point from which the popup should open relative to the iconAnchor
+        });
+
+        CachesMap.imageC = L.icon({
+            iconUrl: '/static/img/casket24.png',
+            shadowUrl: '/static/img/shadow-casket24.png',
+
+            iconSize:     [24.0, 24.0], // size of the icon
+            shadowSize:   [37.0, 24.0], // size of the shadow
+            iconAnchor:   [0, 0], // point of the icon which will correspond to marker's location
+            shadowAnchor: [0, 0],  // the same for the shadow
+            popupAnchor:  [10, 0] // point from which the popup should open relative to the iconAnchor
+        });
+
+        CachesMap.imageCon = L.icon({
+            iconUrl: '/static/img/confluence24.png',
+            shadowUrl: '/static/img/shadow-confluence24.png',
+
+            iconSize:     [24.0, 24.0], // size of the icon
+            shadowSize:   [37.0, 24.0], // size of the shadow
+            iconAnchor:   [0, 0], // point of the icon which will correspond to marker's location
+            shadowAnchor: [0, 0],  // the same for the shadow
+            popupAnchor:  [10, 0] // point from which the popup should open relative to the iconAnchor
+        });
+
+        CachesMap.imageG = L.icon({
+            iconUrl: '/static/img/benchmark24.png',
+            shadowUrl: '/static/img/shadow-benchmark24.png',
+            iconSize:     [24.0, 24.0], // size of the icon
+            shadowSize:   [37.0, 24.0], // size of the shadow
+            iconAnchor:   [0, 0], // point of the icon which will correspond to marker's location
+            shadowAnchor: [0, 0],  // the same for the shadow
+            popupAnchor:  [10, 0] // point from which the popup should open relative to the iconAnchor
+        });
+
+        CachesMap.imageOPTR = L.icon({
+            iconUrl: '/static/img/traditional-s.png',
+            shadowUrl: '/static/img/shadow-op-tr.png',
+            iconSize:     [32.0, 32.0], // size of the icon
+            shadowSize:   [49.0, 32.0], // size of the shadow
+            iconAnchor:   [0, 0], // point of the icon which will correspond to marker's location
+            shadowAnchor: [0, 0],  // the same for the shadow
+            popupAnchor:  [10, 0] // point from which the popup should open relative to the iconAnchor
+        });
+
+        CachesMap.imageOPMS = L.icon({
+            iconUrl: '/static/img/multi-s.png',
+            shadowUrl: '/static/img/shadow-op-ms.png',
+            iconSize:     [32.0, 32.0], // size of the icon
+            shadowSize:   [49.0, 32.0], // size of the shadow
+            iconAnchor:   [0, 0], // point of the icon which will correspond to marker's location
+            shadowAnchor: [0, 0],  // the same for the shadow
+            popupAnchor:  [10, 0] // point from which the popup should open relative to the iconAnchor
+        });
+
+        CachesMap.imageQZ = L.icon({
+            iconUrl: '/static/img/quiz-s.png',
+            shadowUrl: '/static/img/shadow-op-qz.png',
+            iconSize:     [32.0, 32.0], // size of the icon
+            shadowSize:   [49.0, 32.0], // size of the shadow
+            iconAnchor:   [0, 0], // point of the icon which will correspond to marker's location
+            shadowAnchor: [0, 0],  // the same for the shadow
+            popupAnchor:  [10, 0] // point from which the popup should open relative to the iconAnchor
+        });
+
+        CachesMap.imageOT = L.icon({
+            iconUrl: '/static/img/unknown-s.png',
+            shadowUrl: '/static/img/shadow-op-other.png',
+            iconSize:     [32.0, 32.0], // size of the icon
+            shadowSize:   [49.0, 32.0], // size of the shadow
+            iconAnchor:   [0, 0], // point of the icon which will correspond to marker's location
+            shadowAnchor: [0, 0],  // the same for the shadow
+            popupAnchor:  [10, 0] // point from which the popup should open relative to the iconAnchor
+        });
+
+        CachesMap.imageMOV = L.icon({
+            iconUrl: '/static/img/moving-s.png',
+            shadowUrl: '/static/img/shadow-op-mv.png',
+            iconSize:     [32.0, 32.0], // size of the icon
+            shadowSize:   [49.0, 32.0], // size of the shadow
+            iconAnchor:   [0, 0], // point of the icon which will correspond to marker's location
+            shadowAnchor: [0, 0],  // the same for the shadow
+            popupAnchor:  [10, 0] // point from which the popup should open relative to the iconAnchor
+        });
+
+        CachesMap.imageOPVI = L.icon({
+            iconUrl: '/static/img/virtual-s.png',
+            shadowUrl: '/static/img/shadow-op-vi.png',
+            iconSize:     [32.0, 32.0], // size of the icon
+            shadowSize:   [49.0, 32.0], // size of the shadow
+            iconAnchor:   [0, 0], // point of the icon which will correspond to marker's location
+            shadowAnchor: [0, 0],  // the same for the shadow
+            popupAnchor:  [10, 0] // point from which the popup should open relative to the iconAnchor
+        });
+
+        CachesMap.imageOCTR = L.icon({
+            iconUrl: '/static/img/occom_tr.png',
+            shadowUrl: '/static/img/shadow-occom.png',
+            iconSize:     [24.0, 30.0], // size of the icon
+            shadowSize:   [40.0, 30.0], // size of the shadow
+            iconAnchor:   [0, 0], // point of the icon which will correspond to marker's location
+            shadowAnchor: [0, 0],  // the same for the shadow
+            popupAnchor:  [10, 0] // point from which the popup should open relative to the iconAnchor
+        });
+
+        CachesMap.imageOCMS = L.icon({
+            iconUrl: '/static/img/occom_ms.png',
+            shadowUrl: '/static/img/shadow-occom.png',
+            iconSize:     [24.0, 30.0], // size of the icon
+            shadowSize:   [40.0, 30.0], // size of the shadow
+            iconAnchor:   [0, 0], // point of the icon which will correspond to marker's location
+            shadowAnchor: [0, 0],  // the same for the shadow
+            popupAnchor:  [10, 0] // point from which the popup should open relative to the iconAnchor
+        });
+
+        CachesMap.imageOCQZ = L.icon({
+            iconUrl: '/static/img/occom_qz.png',
+            shadowUrl: '/static/img/shadow-occom.png',
+            iconSize:     [24.0, 30.0], // size of the icon
+            shadowSize:   [40.0, 30.0], // size of the shadow
+            iconAnchor:   [0, 0], // point of the icon which will correspond to marker's location
+            shadowAnchor: [0, 0],  // the same for the shadow
+            popupAnchor:  [10, 0] // point from which the popup should open relative to the iconAnchor
+        });
+
+        CachesMap.imageOCVI = L.icon({
+            iconUrl: '/static/img/occom_vi.png',
+            shadowUrl: '/static/img/shadow-occom.png',
+            iconSize:     [24.0, 30.0], // size of the icon
+            shadowSize:   [40.0, 30.0], // size of the shadow
+            iconAnchor:   [0, 0], // point of the icon which will correspond to marker's location
+            shadowAnchor: [0, 0],  // the same for the shadow
+            popupAnchor:  [10, 0] // point from which the popup should open relative to the iconAnchor
+        });
+
+
+        CachesMap.rocketIcon = L.BeautifyIcon.icon({
+            icon: 'bus',
+            borderColor: '#b3334f',
+            textColor: '#b3334f'
+        });
+
+
+//    CachesMap.iconPoint = new google.maps.MarkerImage("/static/img/c_b.gif",
+//        new google.maps.Size(6.0, 6.0),
+//        new google.maps.Point(0, 0),
+//        new google.maps.Point(6.0, 6.0)
+//    );
+//    CachesMap.iconConfluence = new google.maps.MarkerImage("/static/img/icon50l.png",
+//        new google.maps.Size(16.0, 16.0),
+//        new google.maps.Point(0, 0),
+//        new google.maps.Point(8.0, 8.0)
+//    );
+//    CachesMap.shadowConfluence = CachesMap.shadow;
+    },
+
+    iconByType: function(site_code, type_code) {
+        return CachesMap.rocketIcon;
+    if (site_code == 'GC_SU') {
+        if (type_code=='TR') {
+        return CachesMap.imageTR;
+        }
+        if (type_code=='VI') {
+        return CachesMap.imageVI;
+        }
+        if (type_code=='MV') {
+        return CachesMap.imageMV;
+        }
+        if (type_code=='MS') {
+        return CachesMap.imageMS;
+        }
+    }
+    if (site_code == 'SHUKACH') {
+        if (type_code=='H') {
+        return CachesMap.imageH;
+        }
+        if (type_code=='Q') {
+        return CachesMap.imageQ;
+        }
+        if (type_code=='P') {
+        return CachesMap.imageP;
+        }
+        if (type_code=='C') {
+        return CachesMap.imageC;
+        }
+        if (type_code=='G') {
+        return CachesMap.imageG;
+        }
+        if (type_code=='Con') {
+        return CachesMap.imageCon;
+        }
+    }
+    if ((site_code == 'OCPL') || (site_code == 'OCUK') ||
+        (site_code == 'OCNL') || (site_code == 'OCUS') ||
+        (site_code == 'OCDE') || (site_code == 'OCCZ')){
+        if ((type_code=='TR') || (type_code=='DR')){
+        return CachesMap.imageOPTR;
+        }
+        if (type_code=='MS') {
+        return CachesMap.imageOPMS;
+        }
+        if ((type_code=='QZ') || (type_code=='MT')) {
+        return CachesMap.imageQZ;
+        }
+        if (type_code=='OT') {
+        return CachesMap.imageOT;
+        }
+        if (type_code=='MO') {
+        return CachesMap.imageMOV;
+        }
+        if (type_code=='VI') {
+        return CachesMap.imageOPVI;
+        }
+        if (type_code=='WC') {
+        return CachesMap.imageOPVI;
+        }
+    }
+    if (site_code == 'OC_COM') {
+        if (type_code=='TR') {
+        return CachesMap.imageOCTR;
+        }
+        if (type_code=='VI') {
+        return CachesMap.imageOCVI;
+        }
+        if (type_code=='OT') {
+        return CachesMap.imageOCQZ;
+        }
+        if (type_code=='MS') {
+        return CachesMap.imageOCMS;
+        }
+    }
+    return CachesMap.default_marker
+    },
+
+    showAlert: function(count) {
+        var bounds = CachesMap.map.getBounds();
+        var lat = (3*bounds.getNorthEast().lat + 2*bounds.getSouthWest().lat)/5.0;
+        var lon = (bounds.getSouthWest().lng + bounds.getNorthEast().lng)/2.0
+
+        CachesMap.alertwin.setContent(gettext('There are ')+ count +gettext('  geocaches on the map. <br/>Please magnify the view to display the geocaches.'));
+        CachesMap.alertwin.setLatLng([lat, lon])
+        CachesMap.alertwin.openOn(CachesMap.map);
+    },
+
+    hideAlert: function(count) {
+       CachesMap.map.closePopup(CachesMap.alertwin);
+    },
+
+    getMapBounds: function() {
+        return CachesMap.map.getBounds();
+        },
+
+    getCenter: function() {
+        return CachesMap.map.getCenter();
+    },
+
+    loadThings: function() {
+        CachesMap.show_spinner();
+        CachesMap.hideAlert();
+        bounds = CachesMap.getMapBounds();
+        map_center = CachesMap.getCenter();
+        //alert(bounds);
+        if (bounds) {
+            $.ajax({
+                url: CachesMap.get_things_url,
+                type: 'GET',
+                dataType: 'JSON',
+                data: {
+                    'left': bounds.getWest(),
+                    'top': bounds.getNorth(),
+                    'right': bounds.getEast(),
+                    'bottom': bounds.getSouth(),
+                    'center_lat': map_center.lat,
+                    'center_lon': map_center.lon,
+                    'zoom': CachesMap.map.getZoom(),
+                },
+                success: function(doc) {
+                    CachesMap.removeAllMarkers();
+                    CachesMap.hide_spinner();
+                    CachesMap.showFound(doc.count);
+                    //alert(doc.count);
+                    if (doc.count>CachesMap.MAX_COUNT) {
+                        CachesMap.showAlert(doc.count);
+                    } else {
+                        CachesMap.hideAlert();
+                        CachesMap.addMarkers(doc.caches, doc.points);
+                    }
+                }
+            });
+        }
+    },
+
+    showCacheTypes: function(o) {
+        this.show_spinner();
+        type_selected = new Array();
+        $("[type=checkbox]").each(function(){
+            var _input = $(this);
+            if (_input.is(':checked')) {
+                type_selected.push(_input.val());
+            }
+        });
+
+        $.ajax({
+            url: CachesMap.show_cache_types_url,
+            type: 'GET',
+            dataType: 'JSON',
+            data: {'type': type_selected},
+            success: function(doc) {
+                if (doc.status != "OK") { return;}
+                CachesMap.loadThings();
+                CachesMap.hide_spinner();
+            }
+        })
+    },
+
+
+    removeAllMarkers: function () {
+        //alert('remove all');
+        //CachesMap.pruneCluster.RemoveMarkers();
+        for(i=0;i<CachesMap.markers.length;i++) {
+            CachesMap.map.removeLayer(CachesMap.markers[i]);
+        }
+    },
+
+    addMarkers: function(caches_list, points_list) {
+        if (caches_list.length) {
+            $('#import_data').show();
+        } else {
+            $('#import_data').hide();
+        }
+        if (!caches_list.length) return;
+
+        for (var i=0;i<caches_list.length;i++) {
+            //var TheMarker = new PruneCluster.Marker(caches_list[i].latitude_degree, caches_list[i].longitude_degree);
+
+            //var RedIcon = L.ExtraMarkers.icon({
+            //    icon: 'fa-coffee',
+            //    markerColor: 'red',
+            //    shape: 'square',
+            //    prefix: 'fa'
+            //  });
+
+            //var TheMarker = L.marker([51.941196,4.512291], {icon: redMarker,}).addTo(map);
+            var TheMarker = new L.marker(
+                [caches_list[i].latitude_degree, caches_list[i].longitude_degree]
+                //{icon: CachesMap.iconByType(caches_list[i].site_code, caches_list[i].type_code)}
+                );
+            //var TheMarker = new L.marker(
+            //    [caches_list[i].latitude_degree, caches_list[i].longitude_degree],
+            //    {icon: CachesMap.iconByType(caches_list[i].site_code, caches_list[i].type_code)});
+            //TheMarker.data.icon = CachesMap.iconByType(caches_list[i].site_code, caches_list[i].type_code);
+            TheMarker.title = caches_list[i].name;
+            TheMarker.pid = caches_list[i].pid;
+            TheMarker.site = caches_list[i].site;
+            TheMarker.site_code = caches_list[i].site_code;
+
+            TheMarker.popup = " ";
+            TheMarker.on('click', function () {
+                    CachesMap.setInformationWindow(this);
+                });
+            //CachesMap.pruneCluster.RegisterMarker(TheMarker);
+            CachesMap.markers.push(TheMarker);
+            CachesMap.map.addLayer(CachesMap.markers[i]);
+        }
+
+    },
+
+    to_string: function(x, signs) {
+        var D = signs[0];
+        if(x < 0) {
+            x = -x;
+            D = signs[1];
+        }
+
+        var degs = x | 0;
+        var minutes = ((x - degs)*60);
+        var s = degs + "° " + minutes.toFixed(3) + "'";
+        return D + " " + s;
+    },
+
+    showFound: function(cnt) {
+        var txt = '';
+        if (cnt) {
+            txt = gettext("found:") + ' ' + cnt;
+        }
+        document.getElementById('id_count').innerHTML = txt;
+    }
+}
+
+
+
